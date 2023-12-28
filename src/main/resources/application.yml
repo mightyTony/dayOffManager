@@ -1,0 +1,30 @@
+server:
+  port: 4860
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/dayOffManager?serverTime=Asia/Seoul
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100 # 유저 많으면 나중에 이거 바꿔야 할 지도 ?
+
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    suffix: .html
+#    cache: true
+#    mode: HTML
+#    encoding: UTF-8
+
+#swagger:
+#  enable: true
+#  base-package: mightytony.sideproject.dayoffmanager
+#  path:
+#    - /api/.*

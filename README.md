@@ -34,3 +34,8 @@
         - 달 마다 휴가 몇 개 썼는 지 보여야 함(색으로? 숫자로?)
           - 반차는 뭐 우째야 되노 
             - (연차 자료형을 소숫점으로 해야하나? 반반차 추가 고려 해야함?) 
+
+-- -- 
+```
+1. querydsl boot 3.0 설정 : https://docs.google.com/document/d/1j0jcJ9EoXMGzwAA2H0b9TOvRtpwlxI5Dtn3sRtuXQas/edit?pli=1#heading=h.vfy9wirpglmx
+2. 스웨거 주소 : http://localhost:4860/swagger-ui/index.html#
