@@ -11,6 +11,7 @@
     - S3(? 유저 증명사진 저장 시 약관 필요 할 듯)
     - CloudFront
     - System Manager
+    - GitHub, GitHubAction, CodeBuild, Codedeploy
 
 - ## 구현 기능
     - 공통
