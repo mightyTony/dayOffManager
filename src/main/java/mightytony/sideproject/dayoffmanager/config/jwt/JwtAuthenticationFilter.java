@@ -17,6 +17,19 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends GenericFilterBean {
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * @apiNote doFilter()
+     * 1. resolveToken() 메서드를 사용하여 요청 헤더에서 JWT 토큰을 추출
+     * 2. JwtTokenProvider의 validateToken() 메서드로 JWT 토큰 유효성 검증
+     * 3. 토큰이 유효하면 JwtTokenProvider의 getAuthentication() 메서드로 인증 객체 가져와서 SecurityContext에 저장
+     * => 요청을 처리하는 동안 인증 정보가 유지된다.
+     * 4. filterChain.doFilter() 를 호출하여 다음 필터로 요청 전달
+     *
+     * @apiNote resolveToken()
+     * 1. 주어진 HttpServletRequest에서 토큰 정보를 추출하는 역할
+     * 2. "Authorization" 헤더에서 "Bearer" 접두사로 시작하는 토큰을 추출하여 반환
+     */
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // 1. Request Header에서 JWT 토큰 추출
@@ -45,16 +58,4 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         return null;
     }
 
-    /**
-     * @apiNote doFilter()
-     * 1. resolveToken() 메서드를 사용하여 요청 헤더에서 JWT 토큰을 추출
-     * 2. JwtTokenProvider의 validateToken() 메서드로 JWT 토큰 유효성 검증
-     * 3. 토큰이 유효하면 JwtTokenProvider의 getAuthentication() 메서드로 인증 객체 가져와서 SecurityContext에 저장
-     * => 요청을 처리하는 동안 인증 정보가 유지된다.
-     * 4. filterChain.doFilter() 를 호출하여 다음 필터로 요청 전달
-     *
-     * @apiNote resolveToken()
-     * 1. 주어진 HttpServletRequest에서 토큰 정보를 추출하는 역할
-     * 2. "Authorization" 헤더에서 "Bearer" 접두사로 시작하는 토큰을 추출하여 반환
-     */
 }

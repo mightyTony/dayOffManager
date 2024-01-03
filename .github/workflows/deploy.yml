@@ -1,0 +1,42 @@
+name: CD with Gradle
+
+# 언제 이 파일의 내용이 실행될 것인지 정의합니다.
+# 여기서는 main 브랜치에 코드가 push 되거나 pull_request되었을 때 실행할 것을 말하고 있습니다.
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+# 워크 플로우가 깃 레포에 대한 권한을 읽기만 가능하게 설정
+permissions:
+  contents: read
+
+# 워크 플로우에서 할 작업 정의 한다.
+jobs:
+
+  # 작업 환경 = 우분투 최신 버전
+  build:
+    runs-on: ubuntu-latest
+
+    # 깃허브에서 제공하는 checkout 액션 사용
+    steps:
+      # 지정한 저장소에서 코드를 워크플로우 환경으로 가져오도록 하는 github Action
+      - uses: actions/checkout@v3
+
+      # openjdk 17 버전 환경 세팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version : '17'
+          distribution: "adopt"
+
+      # Github secrets로 부터 데이터 받아서, 워크 플로우에 파일을 생성
+      # application.properties 를 코드 내에 두지 않겠다.
+      - name: Make application.properties
+        run: |
+          cd ./src/main/resources
+          touch ./application.properties
+          echo "${{ secrets.PROPERTIES }}" > ./application.properties
+        shell: bash
+
