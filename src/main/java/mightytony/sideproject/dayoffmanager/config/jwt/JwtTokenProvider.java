@@ -17,11 +17,10 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
-import static mightytony.sideproject.dayoffmanager.config.Constants.ACCESS_TOKEN_EXPIRED_TIME;
-import static mightytony.sideproject.dayoffmanager.config.Constants.REFRESH_TOKEN_EXPIRED_TIME;
+import static mightytony.sideproject.dayoffmanager.common.Constants.ACCESS_TOKEN_EXPIRED_TIME;
+import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
 @Slf4j
 @Component

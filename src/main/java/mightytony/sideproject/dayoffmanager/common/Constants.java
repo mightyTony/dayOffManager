@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.config;
+package mightytony.sideproject.dayoffmanager.common;
 
 public final class Constants {
 
