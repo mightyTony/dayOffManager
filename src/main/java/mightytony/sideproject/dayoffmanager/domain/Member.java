@@ -5,11 +5,13 @@ import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 유저 테이블
@@ -39,11 +41,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
 //    @Comment("직급")
 //    private String position;
 
-    @ElementCollection(targetClass = MemberRole.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<MemberRole> roles;
-
     @Column(name = "phone_number")
     @Comment("휴대폰 번호")
     private String phoneNumber;
@@ -52,7 +49,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Comment("프로필 사진")
     private String profileImage;
 
-    @Column(name = "hire_date", updatable = false, nullable = false)
+    @Column(name = "hire_date", updatable = false) //nullable = false
     @Comment("입사 날짜")
     private LocalDateTime hireDate;
 
@@ -60,38 +57,66 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Comment("퇴사 날짜")
     private LocalDateTime resignationDate; // null = 재직 중
 
+    @ElementCollection(targetClass = MemberRole.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<MemberRole> roles;
+
+    @Builder.Default
+    @Comment("삭제 여부")
+    @Column(name = "delete_yn", nullable = false)
+    private String deleteYn = "N";
+
+    @Comment("삭제 일시")
+    @Column(name = "deleted_date")
+    private LocalDateTime deleteDate;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.roles.stream()
+                .map(roles -> new SimpleGrantedAuthority("ROLE_" + roles.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return this.name;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        // fixme
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        // fixme
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        // fixme
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        // fixme
+        return true;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void  delete() {
+
     }
 }

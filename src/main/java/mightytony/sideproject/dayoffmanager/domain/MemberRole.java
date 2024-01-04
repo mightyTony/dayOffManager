@@ -1,5 +1,8 @@
 package mightytony.sideproject.dayoffmanager.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum MemberRole {
     EMPLOYEE("사원"),
     TEAM_LEADER("팀장"),

@@ -25,6 +25,10 @@ public class QMember extends EntityPathBase<Member> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
+    public final DateTimePath<java.time.LocalDateTime> deleteDate = createDateTime("deleteDate", java.time.LocalDateTime.class);
+
+    public final StringPath deleteYn = createString("deleteYn");
+
     public final NumberPath<Integer> employeeNumber = createNumber("employeeNumber", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> hireDate = createDateTime("hireDate", java.time.LocalDateTime.class);
