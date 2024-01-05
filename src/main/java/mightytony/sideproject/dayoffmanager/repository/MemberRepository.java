@@ -5,4 +5,6 @@ import mightytony.sideproject.dayoffmanager.repository.query.QueryMemberReposito
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long>, QueryMemberRepository {
+
+    Member findByName(String name);
 }
