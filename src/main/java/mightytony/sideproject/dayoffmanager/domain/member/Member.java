@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.domain;
+package mightytony.sideproject.dayoffmanager.domain.member;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +9,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,11 +23,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "tb_member")
+//@Table(name = "tb_member")
 public class Member extends BaseTimeEntity implements UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
+    @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
 
     @Column(name = "employee_number", nullable = false, unique = true, updatable = false)
@@ -57,11 +59,6 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Comment("퇴사 날짜")
     private LocalDateTime resignationDate; // null = 재직 중
 
-    @ElementCollection(targetClass = MemberRole.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<MemberRole> roles;
-
     @Builder.Default
     @Comment("삭제 여부")
     @Column(name = "delete_yn", nullable = false)
@@ -71,10 +68,18 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "deleted_date")
     private LocalDateTime deleteDate;
 
+    //    @ElementCollection(targetClass = MemberRole.class, fetch = FetchType.EAGER)
+//    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
+//    @Enumerated(EnumType.STRING)
+//    private Set<MemberRole> roles;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-                .map(roles -> new SimpleGrantedAuthority("ROLE_" + roles.name()))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 

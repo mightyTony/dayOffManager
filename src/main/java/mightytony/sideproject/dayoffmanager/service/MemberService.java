@@ -4,5 +4,5 @@ import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 
 public interface MemberService {
 
-    public JwtToken sign_in(String username, String password);
+    public JwtToken signIn(String username, String password);
 }

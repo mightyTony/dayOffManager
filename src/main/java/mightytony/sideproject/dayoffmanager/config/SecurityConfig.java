@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -29,6 +30,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // FIXME : 테스트 해봐야함 잘 되는 건지
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(
+                "/favicon.ico",
+                "/swagger-ui/**",
+                "/swagger-resource/**",
+                "/error",
+                "/v3/api-docs/**");
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
@@ -39,7 +51,7 @@ public class SecurityConfig {
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
-                        .requestMatchers("/members/sign-in","/swagger-ui/*").permitAll()
+                        .requestMatchers("/","/members/sign-in","/swagger-ui/**").permitAll()
                         // 해당하는 API에 대해서는 유저의 권한이 "USER"인 사람만 가능
                         .requestMatchers("/members/test").hasRole("USER")
                         // 그 이외의 요청 API는 인증이 필요하다.
