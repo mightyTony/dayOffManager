@@ -1,8 +1,8 @@
-package mightytony.sideproject.dayoffmanager.service.impl;
+package mightytony.sideproject.dayoffmanager.member.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import mightytony.sideproject.dayoffmanager.domain.member.Member;
-import mightytony.sideproject.dayoffmanager.repository.MemberRepository;
+import mightytony.sideproject.dayoffmanager.member.domain.member.Member;
+import mightytony.sideproject.dayoffmanager.member.repository.MemberRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

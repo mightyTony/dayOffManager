@@ -1,18 +1,19 @@
-package mightytony.sideproject.dayoffmanager.domain.member;
+package mightytony.sideproject.dayoffmanager.member.domain.member;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
+import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -23,25 +24,33 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-//@Table(name = "tb_member")
 public class Member extends BaseTimeEntity implements UserDetails {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue @Comment("고유 번호")
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    @Comment("회사")
+    private Company company;
 
     @Column(name = "employee_number", nullable = false, unique = true, updatable = false)
     @Comment("사번")
     private Integer employeeNumber;
 
+    @Column(nullable = false)
     @Comment("비밀번호")
     private String password;
 
+    @Column(nullable = false)
     @Comment("이름")
     private String name;
 
-//    @Comment("직급")
-//    private String position;
+    @Email
+    @Column(nullable = false, unique = true)
+    @Comment("이메일")
+    private String email;
 
     @Column(name = "phone_number")
     @Comment("휴대폰 번호")
@@ -53,11 +62,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Column(name = "hire_date", updatable = false) //nullable = false
     @Comment("입사 날짜")
-    private LocalDateTime hireDate;
+    private LocalDate hireDate;
 
     @Column(name = "resignation_date")
     @Comment("퇴사 날짜")
-    private LocalDateTime resignationDate; // null = 재직 중
+    private LocalDate resignationDate; // null = 재직 중
 
     @Builder.Default
     @Comment("삭제 여부")
@@ -66,20 +75,16 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Comment("삭제 일시")
     @Column(name = "deleted_date")
-    private LocalDateTime deleteDate;
+    private LocalDate deleteDate;
 
-    //    @ElementCollection(targetClass = MemberRole.class, fetch = FetchType.EAGER)
-//    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
-//    @Enumerated(EnumType.STRING)
-//    private Set<MemberRole> roles;
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Comment("직급")
+    private List<MemberRole> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
+                .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
 
@@ -121,7 +126,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.name = name;
     }
 
-    public void  delete() {
+    public void delete() {
 
     }
 }

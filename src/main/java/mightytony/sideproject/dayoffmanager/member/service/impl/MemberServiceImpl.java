@@ -1,11 +1,11 @@
-package mightytony.sideproject.dayoffmanager.service.impl;
+package mightytony.sideproject.dayoffmanager.member.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
-import mightytony.sideproject.dayoffmanager.repository.MemberRepository;
-import mightytony.sideproject.dayoffmanager.service.MemberService;
+import mightytony.sideproject.dayoffmanager.member.repository.MemberRepository;
+import mightytony.sideproject.dayoffmanager.member.service.MemberService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;

@@ -4,6 +4,7 @@ import ch.qos.logback.classic.BasicConfigurator;
 import lombok.RequiredArgsConstructor;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
+import mightytony.sideproject.dayoffmanager.member.domain.member.MemberRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,8 +53,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
                         .requestMatchers("/","/members/sign-in","/swagger-ui/**").permitAll()
-                        // 해당하는 API에 대해서는 유저의 권한이 "USER"인 사람만 가능
-                        .requestMatchers("/members/test").hasRole("USER")
+                        // 해당하는 API에 대해서는 유저의 권한이 팀장, 관리자인 사람만 가능
+                        .requestMatchers("/members/test").hasAnyRole(MemberRole.TEAM_LEADER.name(), MemberRole.ADMIN.name())
                         // 그 이외의 요청 API는 인증이 필요하다.
                         .anyRequest().authenticated()
                 )

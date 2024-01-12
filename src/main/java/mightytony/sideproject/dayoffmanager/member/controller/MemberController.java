@@ -1,17 +1,10 @@
-package mightytony.sideproject.dayoffmanager.controller;
+package mightytony.sideproject.dayoffmanager.member.controller;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
-import mightytony.sideproject.dayoffmanager.domain.member.dto.SignInDto;
-import mightytony.sideproject.dayoffmanager.service.MemberService;
+import mightytony.sideproject.dayoffmanager.member.domain.member.dto.SignInDto;
+import mightytony.sideproject.dayoffmanager.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +21,7 @@ public class MemberController {
      * @param signInDto
      * @return  JWT 토큰
      */
-//    @Operation(summary = "회원 가입 요청", description = "회원 가입, 토큰 부여", tags = {"Member Controller"})
+//    @Operation(summary = "로그인", description = "회원 로그인, 토큰 부여", tags = {"Member Controller"})
 //    @ApiResponses({
 //            @ApiResponse(responseCode = "201", description = "CREATED",
 //            content = @Content(schema = @Schema(implementation = )))

@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.controller;
+package mightytony.sideproject.dayoffmanager.member.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

@@ -1,7 +1,7 @@
-package mightytony.sideproject.dayoffmanager.repository;
+package mightytony.sideproject.dayoffmanager.member.repository;
 
-import mightytony.sideproject.dayoffmanager.domain.member.Member;
-import mightytony.sideproject.dayoffmanager.repository.query.QueryMemberRepository;
+import mightytony.sideproject.dayoffmanager.member.domain.member.Member;
+import mightytony.sideproject.dayoffmanager.member.repository.query.QueryMemberRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

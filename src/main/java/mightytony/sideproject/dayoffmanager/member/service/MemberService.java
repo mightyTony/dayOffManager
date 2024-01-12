@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.service;
+package mightytony.sideproject.dayoffmanager.member.service;
 
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 

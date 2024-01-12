@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.controller;
+package mightytony.sideproject.dayoffmanager.company.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

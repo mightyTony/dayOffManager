@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.domain.member.dto;
+package mightytony.sideproject.dayoffmanager.member.domain.member.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
