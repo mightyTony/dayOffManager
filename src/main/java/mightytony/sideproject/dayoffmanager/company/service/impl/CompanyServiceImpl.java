@@ -12,10 +12,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
 
     @Override
-    public boolean isDuplicate() {
-        if(true){
-
-        }
-        return false;
+    public boolean isDuplicate(String businessNumber) {
+        return companyRepository.existsByBusinessNumber(businessNumber);
     }
 }

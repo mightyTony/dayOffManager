@@ -28,9 +28,11 @@ public class CompanyController {
 
         // 1. 이미 등록 된 회사인지 체크
         boolean isDuplicate;
-        isDuplicate =companyService.isDuplicate();
+        isDuplicate = companyService.isDuplicate(req.getBusinessNumber());
         // 2. 등록
+        if(isDuplicate == false) {
 
+        }
         // 3. 결과
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
