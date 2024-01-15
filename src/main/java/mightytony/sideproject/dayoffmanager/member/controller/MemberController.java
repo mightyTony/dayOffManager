@@ -35,7 +35,7 @@ public class MemberController {
         log.info("request username = {}, password = {} ", username,password );
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        return ResponseEntity.status(201).body(jwtToken);
+        return ResponseEntity.status(200).body(jwtToken);
     }
 
     @PostMapping("/test")

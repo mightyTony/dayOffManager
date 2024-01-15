@@ -15,6 +15,7 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100 # 유저 많으면 나중에 이거 바꿔야 할 지도 ?
+        #show_sql: true
 
 jwt:
   secret: 4800704315a5e0e160425575ae7fa00502eff8acbbe962a369d4cd60a39efaa0

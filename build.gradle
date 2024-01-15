@@ -38,8 +38,8 @@ dependencies {
 //    // 타임리프에도 스프링 시큐리티 통합 모듈 사용하기 위해 의존성 추가 (Security 6버전)
 //    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-    // query parameter log
-    //implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+     //query parameterlog
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
     // swagger
     // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.vacation.domain.Vacation;
 import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -58,7 +59,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Column(name = "profile_image")
     @Comment("프로필 사진")
-    private String profileImage;
+    @Builder.Default
+    private String profileImage = "default.jpg";
 
     @Column(name = "hire_date", updatable = false) //nullable = false
     @Comment("입사 날짜")
@@ -66,7 +68,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Column(name = "resignation_date")
     @Comment("퇴사 날짜")
-    private LocalDate resignationDate; // null = 재직 중
+    @Builder.Default
+    private LocalDate resignationDate = null; // null = 재직 중
 
     @Builder.Default
     @Comment("삭제 여부")
@@ -81,6 +84,23 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Comment("직급")
     private List<MemberRole> roles = new ArrayList<>();
 
+    @Column(name = "vacation_count", nullable = false)
+    @Comment("휴가 개수")
+    private double vacationCount = 15.0;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Vacation> vacations = new ArrayList<>();
+
+
+    /**
+     *  휴가 메서드
+     * */
+
+
+    /**
+     * Security 관련 메서드
+     * @return
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
