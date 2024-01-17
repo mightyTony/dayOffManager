@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CompanyRepository extends JpaRepository<Company, Long>, QueryCompanyRepository {
     boolean existsByBusinessNumber(String businessNumber);
+
+    Company findByBusinessNumber(String businessNumber);
 }

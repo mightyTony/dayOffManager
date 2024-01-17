@@ -4,17 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CreateCompanyRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.UpdateCompanyRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.mapper.CompanyMapper;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.CompositeName;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,4 +67,13 @@ public class CompanyServiceImpl implements CompanyService {
 
         return companyMapper.toDTO(company);
     }
+
+    @Transactional
+    @Override
+    public void updateCompany(UpdateCompanyRequestDto req) {
+        // 1. 해당 업체 있는지 존재 확인
+
+        // 2. 수정
+    }
+
 }

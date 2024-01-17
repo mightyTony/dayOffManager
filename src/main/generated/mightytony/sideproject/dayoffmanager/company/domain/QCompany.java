@@ -23,6 +23,10 @@ public class QCompany extends EntityPathBase<Company> {
 
     public final StringPath businessNumber = createString("businessNumber");
 
+    public final DatePath<java.time.LocalDate> deleteDate = createDate("deleteDate", java.time.LocalDate.class);
+
+    public final StringPath deleteYn = createString("deleteYn");
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath primaryRepresentName1 = createString("primaryRepresentName1");

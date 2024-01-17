@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CreateCompanyRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.UpdateCompanyRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
-import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CreateCompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.mapper.CompanyMapper;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,6 @@ public class CompanyController {
 
     // 의존성 주입
     private final CompanyService companyService;
-    private final CompanyMapper companyMapper;
 
     /**
      * 회원 가입
@@ -40,7 +39,7 @@ public class CompanyController {
         if(isDuplicate) {
            ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else {
-            Company company = companyService.save(req);
+            companyService.save(req);
         }
         // 3. 결과
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -48,7 +47,7 @@ public class CompanyController {
 
     /**
      * @apiNote 모든 업체 조회
-     * @return
+     *
      */
     @GetMapping("/")
     public ResponseEntity<List<Company>> getAllCompany() {
@@ -65,4 +64,23 @@ public class CompanyController {
 
         return ResponseEntity.ok(companyResponseDto);
     }
+
+    /*
+     * 업체 수정 api
+     */
+    // FIXME 고쳐야해
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateCompany(@RequestBody @Valid UpdateCompanyRequestDto req) {
+        // 1. 등록 된 회사인지 체크
+        if(req.getBussinessNumber() != null && !req.getBussinessNumber().isEmpty()) {
+            // 잘못된 요청이라는 예외 메시지
+        }
+
+        companyService.updateCompany(req);
+        return ResponseEntity.ok().build();
+    }
+
+    /*
+      업체 삭제 api
+     */
 }

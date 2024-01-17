@@ -9,13 +9,15 @@ import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
+
 /**
  * 회사 테이블
  */
 @Entity // jpa가 여기 작성된것을 테이블로 인식할 수 있도록 선언
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @ToString
+@Getter
 public class Company  {
 //extends BaseTimeEntity
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) // @Id : pk 설정, @GeneratedValue : 생성전략설정
@@ -34,9 +36,15 @@ public class Company  {
     @Column(name = "primary_represent_name", nullable = false)
     private String primaryRepresentName1;
 
-    @Comment("상표")
+    @Comment("상호 명")
     @Column(name = "brand_name", nullable = false)
     private String brandName;
+
+    @Column(name = "delete_yn")
+    private String deleteYn = "N";
+
+    @Column(name = "delete_date")
+    private LocalDate deleteDate;
 
     @Builder
     public Company(String businessNumber, String startDate, String primaryRepresentName1, String brandName) {
@@ -49,4 +57,9 @@ public class Company  {
     // 양방향
 //    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Member> members = new ArrayList<>();
+
+    public void delete() {
+        this.deleteYn = "Y";
+        this.deleteDate = LocalDate.now();
+    }
 }
