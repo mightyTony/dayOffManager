@@ -2,6 +2,7 @@ package mightytony.sideproject.dayoffmanager.company.service;
 
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CreateCompanyRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 
 import java.util.List;
 
@@ -11,4 +12,6 @@ public interface CompanyService {
     Company save(CreateCompanyRequestDto req);
 
     List<Company> findAll();
+
+    CompanyResponseDto findById(Long id);
 }

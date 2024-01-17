@@ -27,33 +27,33 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
     //jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-//    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-//
-//    // 타임리프에도 스프링 시큐리티 통합 모듈 사용하기 위해 의존성 추가 (Security 6버전)
-//    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-
      //query parameterlog
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
-
     // swagger
     // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-
     //test 롬복 사용
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
     //Querydsl 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // mapStruct
+    // https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
+    // https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor
+    testAnnotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
+    // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
+    implementation("org.mapstruct:mapstruct:1.5.3.Final")
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok-mapstruct-binding
+    implementation("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

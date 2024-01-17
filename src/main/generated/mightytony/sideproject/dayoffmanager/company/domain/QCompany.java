@@ -19,19 +19,11 @@ public class QCompany extends EntityPathBase<Company> {
 
     public static final QCompany company = new QCompany("company");
 
-    public final mightytony.sideproject.dayoffmanager.common.domain.QBaseTimeEntity _super = new mightytony.sideproject.dayoffmanager.common.domain.QBaseTimeEntity(this);
-
     public final StringPath brandName = createString("brandName");
 
     public final StringPath businessNumber = createString("businessNumber");
 
-    //inherited
-    public final DatePath<java.time.LocalDate> createdDate = _super.createdDate;
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    //inherited
-    public final DatePath<java.time.LocalDate> modifiedDate = _super.modifiedDate;
 
     public final StringPath primaryRepresentName1 = createString("primaryRepresentName1");
 
