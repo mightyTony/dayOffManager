@@ -1,9 +1,12 @@
 package mightytony.sideproject.dayoffmanager.config.jwt;
 
+import ch.qos.logback.core.spi.ErrorCodes;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.exception.CustomException;
+import mightytony.sideproject.dayoffmanager.exception.ExceptionStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,10 +51,13 @@ public class JwtTokenProvider {
 
         // Access Token 생성
         Date accessTokenExpiresTime = new Date(now + ACCESS_TOKEN_EXPIRED_TIME );
+//        log.info("############## now = {}, ACCESS_TOKEN_EXPIRED_TIME = {}", now, ACCESS_TOKEN_EXPIRED_TIME);
+//        log.info("############## accessTokenExpiresTime = {}", accessTokenExpiresTime);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
                 .setExpiration(accessTokenExpiresTime)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         //Refresh Token 생성
@@ -113,15 +119,14 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            log.info("유효하지 않은 토큰 입니다", e);
+            throw new CustomException(ExceptionStatus.TokenSecurityExceptionOrMalformdJwtException);
         } catch (ExpiredJwtException e) {
-            log.info("만료된 토큰 입니다.",e);
+            throw new CustomException(ExceptionStatus.TokenExpiredJwtException);
         } catch (UnsupportedJwtException e) {
-            log.info("지원하지 않는 토큰 입니다.",e);
+            throw new CustomException(ExceptionStatus.TokenUnsupportedJwtException);
         } catch (IllegalArgumentException e) {
-            log.info("올바른 형식이 아니거나 토큰이 비어 있습니다.",e);
+            throw new CustomException(ExceptionStatus.TokenIllegalArgumentException);
         }
-        return false;
     }
 
     // accessToken 토큰 키를 통해 파싱

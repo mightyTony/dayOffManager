@@ -5,10 +5,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
-import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CreateCompanyRequestDto;
-import mightytony.sideproject.dayoffmanager.company.domain.dto.request.UpdateCompanyRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
-import mightytony.sideproject.dayoffmanager.company.mapper.CompanyMapper;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,17 +29,8 @@ public class CompanyController {
      * 회원 가입
      */
     @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody @Valid CreateCompanyRequestDto req) {
-
-        // 1. 이미 등록 된 회사인지 체크
-        boolean isDuplicate;
-        isDuplicate = companyService.isDuplicate(req.getBusinessNumber());
-        // 2. 중복 아닐 시 등록
-        if(isDuplicate) {
-           ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } else {
-            companyService.save(req);
-        }
+    public ResponseEntity<String> join(@RequestBody @Valid CompanyCreateRequestDto req) {
+        companyService.save(req);
         // 3. 결과
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -70,12 +60,7 @@ public class CompanyController {
      */
     // FIXME 고쳐야해
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCompany(@RequestBody @Valid UpdateCompanyRequestDto req) {
-        // 1. 등록 된 회사인지 체크
-        if(req.getBussinessNumber() != null && !req.getBussinessNumber().isEmpty()) {
-            // 잘못된 요청이라는 예외 메시지
-        }
-
+    public ResponseEntity<Void> updateCompany(@RequestBody @Valid CompanyUpdateRequestDto req) {
         companyService.updateCompany(req);
         return ResponseEntity.ok().build();
     }
@@ -83,4 +68,10 @@ public class CompanyController {
     /*
       업체 삭제 api
      */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
+        companyService.deleteCompany(id);
+
+        return ResponseEntity.ok().build();
+    }
 }

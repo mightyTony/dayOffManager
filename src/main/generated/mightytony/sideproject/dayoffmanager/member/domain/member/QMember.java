@@ -56,6 +56,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final ListPath<MemberRole, EnumPath<MemberRole>> roles = this.<MemberRole, EnumPath<MemberRole>>createList("roles", MemberRole.class, EnumPath.class, PathInits.DIRECT2);
 
+    public final StringPath userId = createString("userId");
+
     public final NumberPath<Double> vacationCount = createNumber("vacationCount", Double.class);
 
     public final ListPath<mightytony.sideproject.dayoffmanager.vacation.domain.Vacation, mightytony.sideproject.dayoffmanager.vacation.domain.QVacation> vacations = this.<mightytony.sideproject.dayoffmanager.vacation.domain.Vacation, mightytony.sideproject.dayoffmanager.vacation.domain.QVacation>createList("vacations", mightytony.sideproject.dayoffmanager.vacation.domain.Vacation.class, mightytony.sideproject.dayoffmanager.vacation.domain.QVacation.class, PathInits.DIRECT2);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-01-17T16:42:36+0900",
+    date = "2024-01-19T14:54:14+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.9 (Amazon.com Inc.)"
 )
 @Component
@@ -21,11 +21,6 @@ public class CompanyMapperImpl implements CompanyMapper {
 
         CompanyResponseDto companyResponseDto = new CompanyResponseDto();
 
-        companyResponseDto.setBusinessNumber( entity.getBusinessNumber() );
-        companyResponseDto.setStartDate( entity.getStartDate() );
-        companyResponseDto.setPrimaryRepresentName1( entity.getPrimaryRepresentName1() );
-        companyResponseDto.setBrandName( entity.getBrandName() );
-
         return companyResponseDto;
     }
 
@@ -35,13 +30,13 @@ public class CompanyMapperImpl implements CompanyMapper {
             return null;
         }
 
-        Company.CompanyBuilder company = Company.builder();
+        String businessNumber = null;
+        String startDate = null;
+        String primaryRepresentName1 = null;
+        String brandName = null;
 
-        company.businessNumber( dto.getBusinessNumber() );
-        company.startDate( dto.getStartDate() );
-        company.primaryRepresentName1( dto.getPrimaryRepresentName1() );
-        company.brandName( dto.getBrandName() );
+        Company company = new Company( businessNumber, startDate, primaryRepresentName1, brandName );
 
-        return company.build();
+        return company;
     }
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;
@@ -61,5 +62,9 @@ public class Company  {
     public void delete() {
         this.deleteYn = "Y";
         this.deleteDate = LocalDate.now();
+    }
+
+    public void update(CompanyUpdateRequestDto req) {
+        this.brandName = req.getBrandName();
     }
 }

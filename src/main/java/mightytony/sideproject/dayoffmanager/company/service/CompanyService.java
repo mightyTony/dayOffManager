@@ -1,8 +1,8 @@
 package mightytony.sideproject.dayoffmanager.company.service;
 
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
-import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CreateCompanyRequestDto;
-import mightytony.sideproject.dayoffmanager.company.domain.dto.request.UpdateCompanyRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 
 import java.util.List;
@@ -10,11 +10,13 @@ import java.util.List;
 public interface CompanyService {
     boolean isDuplicate(String businessNumber);
 
-    Company save(CreateCompanyRequestDto req);
+    Company save(CompanyCreateRequestDto req);
 
     List<Company> findAll();
 
     CompanyResponseDto findById(Long id);
 
-    void updateCompany(UpdateCompanyRequestDto req);
+    void updateCompany(CompanyUpdateRequestDto req);
+
+    void deleteCompany(Long id);
 }

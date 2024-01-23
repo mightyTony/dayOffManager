@@ -1,0 +1,27 @@
+package mightytony.sideproject.dayoffmanager.exception;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@RequiredArgsConstructor
+public enum ExceptionStatus {
+
+    BUSINESSNUMBER_IS_ALREADY_EXIST(400,"이미 등록되어 있는 사업자등록번호 입니다."),
+    NOT_FOUND_COMPANY(404, "해당 사업자등록번호로 된 업체가 존재하지 않습니다."),
+
+
+    // Token
+    TokenSecurityExceptionOrMalformdJwtException(400, "유효하지 않은 JWT 서명 입니다."),
+    TokenExpiredJwtException(400, "만료된 토큰 입니다."),
+    TokenUnsupportedJwtException(400, "지원하지 않는 토큰 입니다"),
+    TokenIllegalArgumentException(400, "올바른 형식이 아니거나 토큰이 비어있습니다."),
+    RefreshTokenValidException(400, "리프래시 토큰이 존재 하지 않습니다."),
+    TokenNeedReIssue(303, "액세스 토큰이 만료되었습니다. 재발급 해주세요."),
+    InvalidAccessToken(400, "액세스 토큰이 유효하지 않습니다.");
+
+    private final int statusCode;
+    //private final HttpStatus;
+    private final String message;
+}

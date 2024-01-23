@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Schema(description = "업체 등록 dto")
 //@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CreateCompanyRequestDto {
+public class CompanyCreateRequestDto {
 
     @NotNull
     @Size(min = 10, max = 10, message = "사업자등록번호는 10자리여야 합니다.")

@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false)
     @Comment("비밀번호")
     private String password;
+
+    @Column(name = "user_id", nullable = false)
+    @Comment("유저 아이디")
+    private String userId;
 
     @Column(nullable = false)
     @Comment("이름")
@@ -80,9 +85,12 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(name = "deleted_date")
     private LocalDate deleteDate;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Comment("직급")
-    private List<MemberRole> roles = new ArrayList<>();
+    @Column(name = "roles", nullable = false)
+    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.EMPLOYEE));
 
     @Column(name = "vacation_count", nullable = false)
     @Comment("휴가 개수")
