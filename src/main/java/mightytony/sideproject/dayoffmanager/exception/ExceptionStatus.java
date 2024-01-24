@@ -24,9 +24,10 @@ public enum ExceptionStatus {
     InvalidAccessToken(400, "액세스 토큰이 유효하지 않습니다."),
     TokenMissingAuthorities(400, "권한 정보가 없는 토큰 입니다."),
 
-    // Member
-    Not_Found_User(404, "해당 유저를 찾을 수 없습니다."),
-    User_Already_Existed(400, "해당 아이디는 이미 등록되어있습니다.");
+    // Member (유저)
+    NOT_FOUND_USER(404, "해당 유저를 찾을 수 없습니다."),
+    User_Already_Existed(400, "해당 아이디는 이미 등록되어있습니다."),
+    PASSWORD_INVALID(400, "비밀번호 틀렸어요");
 
     private final int statusCode;
     //private final HttpStatus;

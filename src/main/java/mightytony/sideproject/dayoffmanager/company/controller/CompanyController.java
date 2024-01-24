@@ -1,5 +1,8 @@
 package mightytony.sideproject.dayoffmanager.company.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,10 @@ public class CompanyController {
     /**
      * 회원 가입
      */
+    @Operation(summary = "기업 등록")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "created")
+    })
     @PostMapping("/join")
     public ResponseEntity<String> join(@RequestBody @Valid CompanyCreateRequestDto req) {
         companyService.save(req);
@@ -39,6 +46,7 @@ public class CompanyController {
      * @apiNote 모든 업체 조회
      *
      */
+    @Operation(summary = "모든 등록 된 기업 조회")
     @GetMapping("/")
     public ResponseEntity<List<Company>> getAllCompany() {
 
@@ -47,6 +55,7 @@ public class CompanyController {
         return ResponseEntity.ok(allCompany);
     }
 
+    @Operation(summary = "Id로 기업 조회")
     @GetMapping("/{id}")
     public ResponseEntity<CompanyResponseDto> getCompanyById(@PathVariable Long id) {
 
@@ -59,6 +68,7 @@ public class CompanyController {
      * 업체 수정 api
      */
     // FIXME 고쳐야해
+    @Operation(summary = "특정 기업 수정")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCompany(@RequestBody @Valid CompanyUpdateRequestDto req) {
         companyService.updateCompany(req);
@@ -68,6 +78,7 @@ public class CompanyController {
     /*
       업체 삭제 api
      */
+    @Operation(summary = "기업 삭제")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
         companyService.deleteCompany(id);

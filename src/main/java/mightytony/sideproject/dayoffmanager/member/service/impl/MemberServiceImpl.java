@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -33,6 +35,13 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public JwtToken signIn(String userId, String password) {
+        // ID 체크
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ExceptionStatus.NOT_FOUND_USER));
+        // 비번 체크
+        if(!passwordEncoder.matches(password, member.getPassword())){
+            throw new CustomException(ExceptionStatus.PASSWORD_INVALID);
+        }
         // 1. username + password 기반으로 Authentication 객체 생성
         // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
