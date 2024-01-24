@@ -19,7 +19,6 @@ import java.util.List;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
 
     // 전달 받은 아이디를 DB에서 조회해서 있는지 체크 한다.
     @Override

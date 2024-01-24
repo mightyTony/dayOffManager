@@ -110,13 +110,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
     }
 
     /**
-     *  휴가 메서드
-     * */
-
-
-    /**
      * Security 관련 메서드
-     * @return
+     *
      */
 
     /* 유저의 권한 목록, 권한 반환 */

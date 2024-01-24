@@ -20,7 +20,6 @@ public class MemberRepositoryTest {
                 .name("tony")
                 .password("1234")
                 .phoneNumber("01053612197")
-                .employeeNumber(1234123)
                 .email("sdf@test.com")
                 .build();
 

@@ -5,7 +5,7 @@ import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCrea
 
 public interface MemberService {
 
-    public JwtToken signIn(String username, String password);
+    JwtToken signIn(String username, String password);
 
     void signUp(MemberCreateRequestDto req);
 }
