@@ -1,8 +1,8 @@
-package mightytony.sideproject.dayoffmanager.member.service.impl;
+package mightytony.sideproject.dayoffmanager.config;
 
 import lombok.RequiredArgsConstructor;
-import mightytony.sideproject.dayoffmanager.member.domain.member.Member;
-import mightytony.sideproject.dayoffmanager.member.domain.member.MemberRole;
+import mightytony.sideproject.dayoffmanager.member.domain.Member;
+import mightytony.sideproject.dayoffmanager.member.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.member.repository.MemberRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 전달 받은 아이디를 DB에서 조회해서 있는지 체크 한다.
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
@@ -40,7 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 //                .roles(member.getRoles().toArray(new String[0]))
 //                .build();
                 .username(member.getUsername())
-                .password(passwordEncoder.encode(member.getPassword()))
+                .password(member.getPassword())
                 .roles(roles.stream().map(MemberRole::name).toArray(String[]::new))
                 .accountExpired(!member.isAccountNonExpired())
                 .accountLocked(!member.isAccountNonLocked())

@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.member.domain.member;
+package mightytony.sideproject.dayoffmanager.member.domain;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QMember extends EntityPathBase<Member> {
 
-    private static final long serialVersionUID = -71448430L;
+    private static final long serialVersionUID = -301974730L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -35,7 +35,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath email = createString("email");
 
-    public final NumberPath<Integer> employeeNumber = createNumber("employeeNumber", Integer.class);
+    public final StringPath employeeNumber = createString("employeeNumber");
 
     public final DatePath<java.time.LocalDate> hireDate = createDate("hireDate", java.time.LocalDate.class);
 

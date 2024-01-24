@@ -1,10 +1,9 @@
 package mightytony.sideproject.dayoffmanager.config;
 
-import ch.qos.logback.classic.BasicConfigurator;
 import lombok.RequiredArgsConstructor;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
-import mightytony.sideproject.dayoffmanager.member.domain.member.MemberRole;
+import mightytony.sideproject.dayoffmanager.member.domain.MemberRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -31,7 +29,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // FIXME : 테스트 해봐야함 잘 되는 건지
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(
@@ -52,7 +49,7 @@ public class SecurityConfig {
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
-                        .requestMatchers("/","/members/sign-in","/swagger-ui/**","/company/*", "/members/*").permitAll()
+                        .requestMatchers("/","/members/sign-in","/swagger-ui/**","/company/*","/members/sign-up").permitAll()
                         // 해당하는 API에 대해서는 유저의 권한이 팀장, 관리자인 사람만 가능
                         .requestMatchers("/members/test").hasAnyRole(MemberRole.TEAM_LEADER.name(), MemberRole.ADMIN.name())
                         // 그 이외의 요청 API는 인증이 필요하다.

@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.member.domain.member;
+package mightytony.sideproject.dayoffmanager.member.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+//@Builder
 public class Member extends BaseTimeEntity implements UserDetails {
 
     @Id @GeneratedValue @Comment("고유 번호")
@@ -37,9 +37,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Comment("회사")
     private Company company;
 
-    @Column(name = "employee_number", nullable = false, unique = true, updatable = false)
+    @Column(name = "employee_number", unique = true)
     @Comment("사번")
-    private Integer employeeNumber;
+    private String employeeNumber;
 
     @Column(nullable = false)
     @Comment("비밀번호")
@@ -64,7 +64,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Column(name = "profile_image")
     @Comment("프로필 사진")
-    @Builder.Default
+    //@Builder.Default
     private String profileImage = "default.jpg";
 
     @Column(name = "hire_date", updatable = false) //nullable = false
@@ -73,10 +73,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @Column(name = "resignation_date")
     @Comment("퇴사 날짜")
-    @Builder.Default
+//    @Builder.Default
     private LocalDate resignationDate = null; // null = 재직 중
 
-    @Builder.Default
+//    @Builder.Default
     @Comment("삭제 여부")
     @Column(name = "delete_yn", nullable = false)
     private String deleteYn = "N";
@@ -86,11 +86,11 @@ public class Member extends BaseTimeEntity implements UserDetails {
     private LocalDate deleteDate;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
+//    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Comment("직급")
     @Column(name = "roles", nullable = false)
-    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.EMPLOYEE));
+    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.ADMIN));
 
     @Column(name = "vacation_count", nullable = false)
     @Comment("휴가 개수")
@@ -99,6 +99,15 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Vacation> vacations = new ArrayList<>();
 
+    @Builder
+    public Member(String password, String userId, String name, String email, String phoneNumber, String profileImage) {
+        this.password = password;
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.profileImage = profileImage;
+    }
 
     /**
      *  휴가 메서드
@@ -109,6 +118,8 @@ public class Member extends BaseTimeEntity implements UserDetails {
      * Security 관련 메서드
      * @return
      */
+
+    /* 유저의 권한 목록, 권한 반환 */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()

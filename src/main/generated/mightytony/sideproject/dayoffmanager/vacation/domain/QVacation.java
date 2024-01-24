@@ -28,7 +28,7 @@ public class QVacation extends EntityPathBase<Vacation> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final mightytony.sideproject.dayoffmanager.member.domain.member.QMember member;
+    public final mightytony.sideproject.dayoffmanager.member.domain.QMember member;
 
     public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
 
@@ -52,7 +52,7 @@ public class QVacation extends EntityPathBase<Vacation> {
 
     public QVacation(Class<? extends Vacation> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new mightytony.sideproject.dayoffmanager.member.domain.member.QMember(forProperty("member"), inits.get("member")) : null;
+        this.member = inits.isInitialized("member") ? new mightytony.sideproject.dayoffmanager.member.domain.QMember(forProperty("member"), inits.get("member")) : null;
     }
 
 }

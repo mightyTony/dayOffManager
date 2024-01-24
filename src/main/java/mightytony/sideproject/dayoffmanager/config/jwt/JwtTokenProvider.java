@@ -1,12 +1,12 @@
 package mightytony.sideproject.dayoffmanager.config.jwt;
 
-import ch.qos.logback.core.spi.ErrorCodes;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ExceptionStatus;
+import mightytony.sideproject.dayoffmanager.member.domain.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,9 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static mightytony.sideproject.dayoffmanager.common.Constants.ACCESS_TOKEN_EXPIRED_TIME;
@@ -47,6 +45,9 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+
+        //log.info("!!!!!!!!!!!!!authorities = {}", authorities);
+
         long now = (new Date()).getTime();
 
         // Access Token 생성
@@ -56,9 +57,12 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
+                // TODO
+                .addClaims(addUserInformation(authentication))
                 .setExpiration(accessTokenExpiresTime)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
 
         //Refresh Token 생성
         String refreshToken = Jwts.builder()
@@ -73,6 +77,24 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    // 추가 정보 claim에 담기
+    private Map<String, Object> addUserInformation(Authentication authentication) {
+        Map<String, Object> addToClaim = new HashMap<>();
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        // 추가 정보 가져오기
+        if (userDetails instanceof Member) {
+            Member member = (Member) userDetails;
+            addToClaim.put("email", member.getEmail());
+            addToClaim.put("userId", member.getUserId());
+        }
+        // 추가 할 사항이 있다면 여기에
+
+        return addToClaim;
+    }
+
+
     /**
      * @apiNote : Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
      * 주어진 Access Token을 복호화하여 사용자의 인증 정보(Authentication)를 생성
@@ -86,10 +108,8 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String accessToken) {
         // Jwt 토큰 복호화
         Claims claims = parseClaims(accessToken);
-
         if(claims.get("auth") == null) {
-            // fixme : 예외처리 하드하게 되어있음.
-            throw new RuntimeException("권한 정보가 없는 토큰 입니다.");
+            throw new CustomException(ExceptionStatus.TokenMissingAuthorities);
 
         }
 
@@ -142,5 +162,4 @@ public class JwtTokenProvider {
         }
     }
 
-    // JWT를 통해 username + password 인증 수행.
 }

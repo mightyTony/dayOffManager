@@ -1,12 +1,10 @@
 package mightytony.sideproject.dayoffmanager.member.repository;
 
-import mightytony.sideproject.dayoffmanager.member.domain.member.Member;
-import org.assertj.core.api.Assertions;
+import mightytony.sideproject.dayoffmanager.member.domain.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest

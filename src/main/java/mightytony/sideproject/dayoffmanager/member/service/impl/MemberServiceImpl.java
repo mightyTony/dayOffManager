@@ -4,11 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
+import mightytony.sideproject.dayoffmanager.exception.CustomException;
+import mightytony.sideproject.dayoffmanager.exception.ExceptionStatus;
+import mightytony.sideproject.dayoffmanager.member.domain.Member;
+import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.member.repository.MemberRepository;
 import mightytony.sideproject.dayoffmanager.member.service.MemberService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +26,11 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
+    private final PasswordEncoder passwordEncoder;
     /**
      * authenticate() 메서드를 통해 Member 검증 진행
      */
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public JwtToken signIn(String userId, String password) {
         // 1. username + password 기반으로 Authentication 객체 생성
@@ -41,4 +46,27 @@ public class MemberServiceImpl implements MemberService {
 
         return jwtToken;
     }
+
+    @Transactional
+    @Override
+    public void signUp(MemberCreateRequestDto req) {
+        // 1. 이미 존재하는 지 체크
+        if(memberRepository.existsMemberByUserIdAndPhoneNumber(req.getUserId(), req.getPhoneNumber())){
+           throw new CustomException(ExceptionStatus.User_Already_Existed);
+        }
+        // 2. 가입 (가입 할 땐 회사 등록을 안 함)
+        Member member = Member.builder()
+                .userId(req.getUserId())
+                .password(passwordEncoder.encode(req.getPassword()))
+                .name(req.getName())
+                .email(req.getEmail())
+                .phoneNumber(req.getPhoneNumber())
+                .profileImage(req.getProfileImage())
+                .build();
+
+        memberRepository.save(member);
+
+        //log.info("member save = {}", memberRepository.save(member));
+    }
+
 }
