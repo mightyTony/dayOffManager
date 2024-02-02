@@ -19,6 +19,7 @@ spring:
 
 jwt:
   secret: 4800704315a5e0e160425575ae7fa00502eff8acbbe962a369d4cd60a39efaa0
+  issuer: mightytonykr@gmail.com
 
 #  thymeleaf:
 #    prefix: classpath:/templates/
