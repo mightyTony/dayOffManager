@@ -29,6 +29,9 @@ public class JwtTokenProvider {
 
     private final Key key;
 
+    @Value("${jwt.issuer}")
+    private String issuer;
+
     //yml의 secret 값 가져와서 key에 저장
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -49,7 +52,7 @@ public class JwtTokenProvider {
         //log.info("!!!!!!!!!!!!!authorities = {}", authorities);
 
         long now = (new Date()).getTime();
-
+        Date nowdate = new Date();
         // Access Token 생성
         Date accessTokenExpiresTime = new Date(now + ACCESS_TOKEN_EXPIRED_TIME );
 //        log.info("############## now = {}, ACCESS_TOKEN_EXPIRED_TIME = {}", now, ACCESS_TOKEN_EXPIRED_TIME);
@@ -57,6 +60,8 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
+                .setIssuer(issuer)
+                .setIssuedAt(nowdate)
                 // TODO
                 .addClaims(addUserInformation(authentication))
                 .setExpiration(accessTokenExpiresTime)

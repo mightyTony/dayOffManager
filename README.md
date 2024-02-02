@@ -43,3 +43,4 @@
 ```
 1. querydsl boot 3.0 설정 : https://docs.google.com/document/d/1j0jcJ9EoXMGzwAA2H0b9TOvRtpwlxI5Dtn3sRtuXQas/edit?pli=1#heading=h.vfy9wirpglmx
 2. 스웨거 주소 : http://localhost:4860/swagger-ui/index.html#
+3. security+jwt 참고 : https://suddiyo.tistory.com/category/Spring
