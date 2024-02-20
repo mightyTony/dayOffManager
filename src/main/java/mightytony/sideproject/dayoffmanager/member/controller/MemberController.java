@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,15 +42,6 @@ public class MemberController {
 
         return ResponseEntity.status(200).body(jwtToken);
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<String> logOut(HttpServletRequest req) {
-        String authorizationHeader = req.getHeader("Authorization");
-
-        return ResponseEntity.ok(authorizationHeader);
-    }
-
-
 
     @Operation(summary = "테스트", description = "권한 인가 테스트")
     @PostMapping("/test")
