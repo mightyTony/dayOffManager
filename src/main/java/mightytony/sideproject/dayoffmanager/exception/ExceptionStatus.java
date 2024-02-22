@@ -23,6 +23,9 @@ public enum ExceptionStatus {
     TokenNeedReIssue(303, "액세스 토큰이 만료되었습니다. 재발급 해주세요."),
     InvalidAccessToken(400, "액세스 토큰이 유효하지 않습니다."),
     TokenMissingAuthorities(400, "권한 정보가 없는 토큰 입니다."),
+    AlreadyLogout(403, "로그아웃 하여 토큰이 만료 되었습니다."),
+    RedisUtilNullException(500, "레디스 서버 문제 입니다."),
+
 
     // Member (유저)
     NOT_FOUND_USER(404, "해당 유저를 찾을 수 없습니다."),

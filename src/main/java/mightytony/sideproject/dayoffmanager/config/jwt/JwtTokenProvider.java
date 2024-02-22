@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ExceptionStatus;
 import mightytony.sideproject.dayoffmanager.member.domain.Member;
@@ -28,18 +29,19 @@ import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKE
 public class JwtTokenProvider {
 
     private final Key key;
-
+    private final RedisUtil redisUtil;
     @Value("${jwt.issuer}")
     private String issuer;
 
-    //yml의 secret 값 가져와서 key에 저장
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+    //yml 의 secret 값 가져와서 key 에 저장
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**
-     * User의 정보를 가지고 AccessToken, RefreshToken을 생성하는 메서드
+     * User 의 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
      * Access Token : 인증된 사용자의 권한 정보와 만료 시간을 담고 있음
      * Refresh Token : Access Token 의 갱신을 위해 사용 됨
      */
@@ -82,7 +84,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    // 추가 정보 claim에 담기
+    // 추가 정보 claim 에 담기
     private Map<String, Object> addUserInformation(Authentication authentication) {
         Map<String, Object> addToClaim = new HashMap<>();
 
@@ -102,13 +104,13 @@ public class JwtTokenProvider {
 
     /**
      * @apiNote : Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
-     * 주어진 Access Token을 복호화하여 사용자의 인증 정보(Authentication)를 생성
-     * 토큰 안의 Claims에서 권한 정보를 추출, User 객체를 생성하여 Authentication 객체로 변환
+     * 주어진 Access Token 을 복호화하여 사용자의 인증 정보(Authentication)를 생성
+     * 토큰 안의 Claims 에서 권한 정보를 추출, User 객체를 생성하여 Authentication 객체로 변환
      * 과정
-     * 1. Claims에서 권한 정보를 가져옴. 'auth' 클레임은 토큰에 저장된 권한 정보를 나타 냄
+     * 1. Claims 에서 권한 정보를 가져옴. 'auth' 클레임은 토큰에 저장된 권한 정보를 나타 냄
      * 2. 가져온 권한 정보를 SimpleGrantedAuthority 객체로 변환하여 컬렉션에 추가
      * 3. UserDetails 객체를 생성하여 주체, 권한 정보, 기타 필요 정보를 설정
-     * 4. UsernamepasswordAuthenticationToken 객체를 생성해 주체와 권한 정보를 포함한 인증(Authentication) 객체를 생성
+     * 4. Username passwordAuthenticationToken 객체를 생성해 주체와 권한 정보를 포함한 인증(Authentication) 객체를 생성
      */
     public Authentication getAuthentication(String accessToken) {
         // Jwt 토큰 복호화
@@ -142,6 +144,13 @@ public class JwtTokenProvider {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+            if(redisUtil == null) {
+                throw new CustomException(ExceptionStatus.RedisUtilNullException);
+            }
+            // 만약 해당 토큰이 블랙리스트에(redis) 있다면 에러를 내자
+            if(redisUtil.hasKeyBlackList(token)) {
+                throw new CustomException(ExceptionStatus.AlreadyLogout);
+            }
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             throw new CustomException(ExceptionStatus.TokenSecurityExceptionOrMalformdJwtException);
