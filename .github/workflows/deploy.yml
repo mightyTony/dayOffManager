@@ -65,9 +65,9 @@ jobs:
       # 빌드 파일 .zip으로 압축하기
       - name: 빌드 파일 .zip으로 압축하기
         run: |
-          mkdir deploy_$GITHUB_SHA
-          cp ./build/libs/*.jar ./deploy_$GITHUB_SHA/
-          zip -r -qq -j "./$GITHUB_SHA.zip" ./deploy_$GITHUB_SHA
+          mkdir deploy
+          cp ./build/libs/*.jar ./deploy
+          zip -r -qq -j "./$GITHUB_SHA.zip" ./deploy
 
       - name: AWS Credentials 설정  
         uses: aws-actions/configure-aws-credentials@v1
