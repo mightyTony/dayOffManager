@@ -68,7 +68,7 @@ jobs:
           zip -r -qq -j ./$GITHUB_SHA.zip ./deploy_$GITHUB_SHA
 
       - name: Configure AWS Credentials 
-        uses: aws-actions/configure-aws-credential@v1
+        uses: aws-actions/configure-aws-credentials@v1
         with: 
           aws-access-key-id : ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
