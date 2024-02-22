@@ -10,7 +10,7 @@ on:
 # 환경 변수 설정
 env:
   # s3 이름
-  S3_BUCKET_NAME: s3-dayoffmanager
+  S3_BUCKET_NAME: s3-dayoffmanager/dev-cicd
   # Codedeploy App 이름 
   CODE_DEPLOY_APPLICATION_NAME: Codedeploy-dayoffmanager
   # Codedeploy Group 이름 
