@@ -10,7 +10,7 @@ on:
 # 환경 변수 설정
 env:
   # s3 이름
-  S3_BUCKET_NAME: s3-dayoffmanager/dev-cicd
+  S3_BUCKET_NAME: s3-dayoffmanager-dev-cicd
   # Codedeploy App 이름 
   CODE_DEPLOY_APPLICATION_NAME: Codedeploy-dayoffmanager
   # Codedeploy Group 이름 
@@ -87,10 +87,9 @@ jobs:
         run: echo "::set-output name=name::${{ github.run_number }}-$GITHUB_SHA.zip"
 
       - name: 압축된 빌드 파일 S3에 업로드 하기 
-        run: aws s3 cp --region ap-northeast-2 "./$GITHUB_SHA.zip" "${{ secrets.S3URL }}/${{ steps.filename.outputs.name }}"
+        run: aws s3 cp --region ap-northeast-2 "./$GITHUB_SHA.zip" "s3://${{ env.S3_BUCKET_NAME }}/${{ steps.filename.outputs.name }}"
 
       # Codedeploy
       - name: Code Deploy
-        #run: aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name dpg-dayoffmanager  --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=${{ steps.filename.outputs.name }}.zip
         run: aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name dpg-dayoffmanager --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key="${{ steps.filename.outputs.name }}"
 
