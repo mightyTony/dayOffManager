@@ -74,5 +74,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      #- name: Upload to S3
+      #  run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip ${{ secrets.S3URL }}/$GITHUB_SHA.zip
+
+      - name: Determine File Name
+        id: filename
+        run: echo "::set-output name=name::${{ github.run_number }}-$GITHUB_SHA.zip"
+
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip ${{ secrets.S3URL }}/$GITHUB_SHA.zip
+        run: aws s3 cp --region ap-northeast-2 "./$GITHUB_SHA.zip" "${{ secrets.S3URL }}/${{ steps.filename.outputs.name }}"
