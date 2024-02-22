@@ -65,6 +65,7 @@ jobs:
         run: |
           mkdir deploy_$GITHUB_SHA
           cp ./build/libs/*.jar ./deploy_$GITHUB_SHA/
+          zip_filename="$GITHUB_RUN_NUMBER-$GITHUB_SHA"
           zip -r -qq -j ./$GITHUB_SHA.zip ./deploy_$GITHUB_SHA
 
       - name: Configure AWS Credentials 
