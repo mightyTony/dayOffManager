@@ -53,7 +53,7 @@ jobs:
           cd ./src/main/resources
           touch ./application-dev.yml
           echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
-          shell: bash
+        shell: bash
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
