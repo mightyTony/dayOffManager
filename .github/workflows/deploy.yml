@@ -66,7 +66,10 @@ jobs:
       - name: 빌드 파일 .zip으로 압축하기
         run: |
           mkdir deploy
-          cp ./build/libs/*.jar ./deploy
+          cp ./build/libs/*.jar ./deploy/
+          cp ./Dockerfile ./deploy/
+          cp ./scripts/*.sh ./deploy/
+          cp ./appspec.yml ./deploy/
           zip -r -qq -j "./$GITHUB_SHA.zip" ./deploy
 
       - name: AWS Credentials 설정  
@@ -85,3 +88,10 @@ jobs:
 
       - name: 압축된 빌드 파일 S3에 업로드 하기 
         run: aws s3 cp --region ap-northeast-2 "./$GITHUB_SHA.zip" "${{ secrets.S3URL }}/${{ steps.filename.outputs.name }}"
+
+      # Codedeploy
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }}
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --deployment-group-name {{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+          --s3-location bucket=${{ secrets.S3URL }},bundleType=zip,key=${{ steps.filename.outputs.name }}
