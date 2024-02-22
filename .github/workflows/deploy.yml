@@ -76,4 +76,4 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 $zip_filename ${{ secrets.S3URL }}/$zip_filename
+        run: aws s3 cp --region ap-northeast-2 "${zip_filename}.zip" "${{ secrets.S3URL }}/${zip_filename}.zip"
