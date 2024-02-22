@@ -93,6 +93,7 @@ jobs:
       - name: Code Deploy
         run: |
           aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-          --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --deployment-group-name dpg-dayoffmanager \
-          --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key="${{ github.run_number }}-$GITHUB_SHA.zip"
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name dpg-dayoffmanager \
+            --s3-location bucket="${{ env.S3_BUCKET_NAME }}",bundleType=zip,key="${{ github.run_number }}-$GITHUB_SHA.zip"
+
