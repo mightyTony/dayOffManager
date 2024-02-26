@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
-                        .requestMatchers("/","/members/sign-in","/swagger-ui/**","/company/*","/members/sign-up").permitAll()
+                        .requestMatchers("/","/members/sign-in","/swagger-ui/**","/company/*","/members/sign-up","/healthcheck").permitAll()
                         // 해당하는 API에 대해서는 유저의 권한이 팀장, 관리자인 사람만 가능
                         .requestMatchers("/members/test").hasAnyRole(MemberRole.TEAM_LEADER.name(), MemberRole.ADMIN.name())
                         // 그 이외의 요청 API는 인증이 필요하다.

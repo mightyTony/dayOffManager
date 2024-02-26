@@ -1,6 +1,7 @@
 package mightytony.sideproject.dayoffmanager.company.mapper;
 
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import org.mapstruct.Mapper;
 
@@ -17,4 +18,6 @@ public interface CompanyMapper {
     CompanyResponseDto toDTO(Company entity);
 
     Company toEntity(CompanyResponseDto dto);
+
+
 }

@@ -7,6 +7,7 @@ import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ExceptionStatus;
 import mightytony.sideproject.dayoffmanager.member.domain.Member;
+import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberAdminPromotionRequestDto;
 import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.member.repository.MemberRepository;
 import mightytony.sideproject.dayoffmanager.member.service.MemberService;
@@ -22,7 +23,6 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
@@ -56,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
         return jwtToken;
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     @Override
     public void signUp(MemberCreateRequestDto req) {
         // 1. 이미 존재하는 지 체크
@@ -76,6 +76,16 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
 
         //log.info("member save = {}", memberRepository.save(member));
+    }
+
+    @Override
+    public void sendRequestToMaster(MemberAdminPromotionRequestDto req) {
+        // 1. Member 존재 확인
+        Member member = memberRepository.findByUserId(req.getUserId())
+                .orElseThrow(() -> new CustomException(ExceptionStatus.NOT_FOUND_USER));
+        // 2. 요청 마스터에게 전달
+
+        // 3. 마스터에게 요청 있는 지 체크
     }
 
 }

@@ -9,11 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/company")
+@RequestMapping("/app/v1/company")
 @Tag(name = "회사(업체)", description = "회사 관련 api 입니다")
 public class CompanyController {
 
@@ -43,11 +45,12 @@ public class CompanyController {
     }
 
     /**
-     * @apiNote 모든 업체 조회
+     * @apiNote 모든 기업 조회
      *
      */
     @Operation(summary = "모든 등록 된 기업 조회")
     @GetMapping("/")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<List<Company>> getAllCompany() {
 
         List<Company> allCompany = companyService.findAll();
@@ -64,22 +67,33 @@ public class CompanyController {
         return ResponseEntity.ok(companyResponseDto);
     }
 
+    @Operation(summary = "기업 특수 조건 조회")
+    @PostMapping("/getCompany")
+    public ResponseEntity<CompanyResponseDto> getCompanyByCondition(@RequestBody @Valid CompanyRequestDto req) {
+
+        CompanyResponseDto companyResponseDto = companyService.findByCondition(req);
+
+        return ResponseEntity.ok(companyResponseDto);
+    }
+
     /*
-     * 업체 수정 api
+     * 기업 수정 api
      */
     // FIXME 고쳐야해
     @Operation(summary = "특정 기업 수정")
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<Void> updateCompany(@RequestBody @Valid CompanyUpdateRequestDto req) {
         companyService.updateCompany(req);
         return ResponseEntity.ok().build();
     }
 
     /*
-      업체 삭제 api
+      기업 삭제 api
      */
     @Operation(summary = "기업 삭제")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
         companyService.deleteCompany(id);
 

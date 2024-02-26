@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
+import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberAdminPromotionRequestDto;
 import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberLoginRequestDto;
 import mightytony.sideproject.dayoffmanager.member.service.MemberService;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/app/v1/members")
 @Tag(name = "유저(멤버)", description = "유저 관련 api 입니다")
 public class MemberController {
 
@@ -60,10 +61,18 @@ public class MemberController {
 
     // 권한 테스트용 , 로그인 한 유저의 권한(auth)가 'ADMIN' 이거나 'TEAM_LEADER' 만 해당 메서드 접속 가능
     @GetMapping("/just")
+    @Operation(summary = "권한 체크(어드민,팀장)")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'TEAM_LEADER')")
     public String just() {
         return "just Success";
     }
 
+    @Operation
+    @PostMapping("/admin-request")
+    public ResponseEntity<Void> requestAdminPromotion(@RequestBody MemberAdminPromotionRequestDto req) {
+        //
+        memberService.sendRequestToMaster(req);
 
+        return ResponseEntity.accepted().build();
+    }
 }

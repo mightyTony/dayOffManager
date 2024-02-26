@@ -90,7 +90,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Comment("직급")
     @Column(name = "roles", nullable = false)
-    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.ADMIN));
+    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.UNEMPLOYED));
 
     @Column(name = "vacation_count", nullable = false)
     @Comment("휴가 개수")

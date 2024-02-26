@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CreateCompanyResponseDto {
 
-    private String buisinessNumber;
+    private String businessNumber;
     private String startDate;
     private String primaryRepresentName1;
     private String brandName;

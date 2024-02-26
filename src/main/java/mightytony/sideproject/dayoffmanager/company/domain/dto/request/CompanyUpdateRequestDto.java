@@ -1,5 +1,6 @@
 package mightytony.sideproject.dayoffmanager.company.domain.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -8,11 +9,12 @@ import lombok.Data;
 @Data
 public class CompanyUpdateRequestDto {
 
+    @JsonIgnore
     private Long id;
 
     @Schema(description = "사업자 등록번호")
     @NotNull
-    private String bussinessNumber;
+    private String businessNumber;
 
     @Schema(description = "대표자 성명")
     @NotNull

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.mapper.CompanyMapper;
@@ -108,6 +109,19 @@ public class CompanyServiceImpl implements CompanyService {
 
         // 2. 삭제 (soft delete)
         company.delete();
+    }
+
+    @Override
+    public CompanyResponseDto findByCondition(CompanyRequestDto req) {
+        // 1. 기업 조회
+        Company company = companyRepository.findByConditions(req);
+
+        log.info("SM company = {}", company);
+        if (company.getBusinessNumber() == null){
+            throw new CustomException(ExceptionStatus.NOT_FOUND_COMPANY);
+        }
+        log.info("SM dto = {}", companyMapper.toDTO(company));
+        return companyMapper.toDTO(company);
     }
 
 }
