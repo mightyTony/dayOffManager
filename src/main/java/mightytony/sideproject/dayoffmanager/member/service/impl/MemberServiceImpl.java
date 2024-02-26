@@ -78,6 +78,7 @@ public class MemberServiceImpl implements MemberService {
         //log.info("member save = {}", memberRepository.save(member));
     }
 
+    // TODO : Promotion 테이블과 연동해서 로직 만들어야 함
     @Override
     public void sendRequestToMaster(MemberAdminPromotionRequestDto req) {
         // 1. Member 존재 확인
