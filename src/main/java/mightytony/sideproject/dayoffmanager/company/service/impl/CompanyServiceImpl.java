@@ -10,12 +10,11 @@ import mightytony.sideproject.dayoffmanager.company.mapper.CompanyMapper;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
-import mightytony.sideproject.dayoffmanager.exception.ExceptionStatus;
+import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +40,7 @@ public class CompanyServiceImpl implements CompanyService {
 //            throw new IllegalArgumentException("이미 등록된 사업자등록번호 입니다.");
 //        }
         if (isDuplicate) {
-            throw new CustomException(ExceptionStatus.BUSINESSNUMBER_IS_ALREADY_EXIST);
+            throw new CustomException(ResponseCode.BUSINESSNUMBER_IS_ALREADY_EXIST);
         }
 
         // 2. Company req Dto -> Company
@@ -78,7 +77,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyResponseDto findById(Long id) {
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionStatus.NOT_FOUND_COMPANY));
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
 
         return companyMapper.toDTO(company);
     }
@@ -93,7 +92,7 @@ public class CompanyServiceImpl implements CompanyService {
         // 1. 해당 업체 있는지 존재 확인
         //Company company = companyRepository.findByBusinessNumber(req.getBussinessNumber());
         Company company = companyRepository.findById(req.getId())
-                .orElseThrow(() -> new CustomException(ExceptionStatus.NOT_FOUND_COMPANY));
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
         // 2. 수정
         company.update(req);
         // 3. 저장
@@ -104,7 +103,7 @@ public class CompanyServiceImpl implements CompanyService {
     public void deleteCompany(Long id) {
         // 1. 해당 업체 있는지 확인
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionStatus.NOT_FOUND_COMPANY));
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
 
         // 2. 삭제 (soft delete)
         company.delete();

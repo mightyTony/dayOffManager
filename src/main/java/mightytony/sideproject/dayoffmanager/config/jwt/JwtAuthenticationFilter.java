@@ -6,6 +6,8 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import mightytony.sideproject.dayoffmanager.exception.CustomException;
+import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -35,11 +37,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         // 1. Request Header에서 JWT 토큰 추출
         String token = resolveToken((HttpServletRequest) request);
 
-        // 2. validateToken으로 토큰 유효성 검사
+        // 2. 토큰 유효성 검사
         // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
-        if(token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(token != null) {
+            // 2-1. 토큰 검증
+            if(jwtTokenProvider.validateToken(token)){
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                throw new CustomException(ResponseCode.InvalidAccessToken);
+            }
         }
 
         // 3. 다음 필터로 이동
@@ -47,7 +54,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     }
 
     // Request Header에서 토큰 정보 추출
-    private String resolveToken(HttpServletRequest request) {
+    public String resolveToken(HttpServletRequest request) {
         // 1. 헤더 중 Authorization 헤더를 가져 옴
         String bearerToken = request.getHeader("Authorization");
 
