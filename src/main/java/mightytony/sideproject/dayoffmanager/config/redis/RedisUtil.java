@@ -6,7 +6,10 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+
+import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
 @Component
 @RequiredArgsConstructor
@@ -15,16 +18,19 @@ public class RedisUtil {
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisTemplate<String, Object> redisBlackListTemplate;
 
-    public void set(String key, Object o, int minutes) {
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
-        redisTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
+    public void saveRefreshToken(String refreshToken, String userId) {
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(userId.getClass()));
+        //redisTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
+        //redisTemplate.opsForValue().set(refreshToken, userId, Duration.ofMillis(REFRESH_TOKEN_EXPIRED_TIME));
+        redisTemplate.opsForValue().set(refreshToken, userId, Duration.ofMinutes(1));
     }
 
-    public Object get(String key) {
+
+    public Object getRefreshToken(String key) {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public boolean delete(String key) {
+    public boolean deleteRefreshToken(String key) {
         return Boolean.TRUE.equals(redisTemplate.delete(key));
     }
 
@@ -32,7 +38,7 @@ public class RedisUtil {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
-    public void setBlackList(String key, Object o, int minutes) {
+    public void addToBlackList(String key, Object o, int minutes) {
         redisBlackListTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
         redisBlackListTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
     }

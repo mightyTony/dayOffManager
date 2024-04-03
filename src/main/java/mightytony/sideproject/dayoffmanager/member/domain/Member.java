@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.config.UserDetailImpl;
 import mightytony.sideproject.dayoffmanager.vacation.domain.Vacation;
 import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 //@Builder
-public class Member extends BaseTimeEntity implements UserDetails {
+public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue @Comment("고유 번호")
     @Column(name = "member_id", updatable = false, unique = true, nullable = false)
@@ -90,7 +91,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Comment("직급")
     @Column(name = "roles", nullable = false)
-    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.UNEMPLOYED));
+    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.USER));
 
     @Column(name = "vacation_count", nullable = false)
     @Comment("휴가 개수")
@@ -112,9 +113,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
     /**
      * Security 관련 메서드
      *
-     */
+     *//*
 
-    /* 유저의 권한 목록, 권한 반환 */
+    *//* 유저의 권한 목록, 권한 반환 *//*
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
@@ -162,5 +163,5 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     public void delete() {
 
-    }
+    }*/
 }

@@ -6,7 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
-import mightytony.sideproject.dayoffmanager.exception.ExceptionStatus;
+import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import mightytony.sideproject.dayoffmanager.member.domain.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,9 +49,6 @@ public class JwtTokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
-
-        //log.info("!!!!!!!!!!!!!authorities = {}", authorities);
 
         long now = (new Date()).getTime();
         Date nowdate = new Date();
@@ -116,7 +113,7 @@ public class JwtTokenProvider {
         // Jwt 토큰 복호화
         Claims claims = parseClaims(accessToken);
         if(claims.get("auth") == null) {
-            throw new CustomException(ExceptionStatus.TokenMissingAuthorities);
+            throw new CustomException(ResponseCode.TokenMissingAuthorities);
 
         }
 
@@ -145,21 +142,21 @@ public class JwtTokenProvider {
                     .build()
                     .parseClaimsJws(token);
             if(redisUtil == null) {
-                throw new CustomException(ExceptionStatus.RedisUtilNullException);
+                throw new CustomException(ResponseCode.RedisUtilNullException);
             }
             // 만약 해당 토큰이 블랙리스트에(redis) 있다면 에러를 내자
             if(redisUtil.hasKeyBlackList(token)) {
-                throw new CustomException(ExceptionStatus.AlreadyLogout);
+                throw new CustomException(ResponseCode.AlreadyLogout);
             }
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            throw new CustomException(ExceptionStatus.TokenSecurityExceptionOrMalformdJwtException);
+            throw new CustomException(ResponseCode.TokenSecurityExceptionOrMalformdJwtException);
         } catch (ExpiredJwtException e) {
-            throw new CustomException(ExceptionStatus.TokenExpiredJwtException);
+            throw new CustomException(ResponseCode.TokenExpiredJwtException);
         } catch (UnsupportedJwtException e) {
-            throw new CustomException(ExceptionStatus.TokenUnsupportedJwtException);
+            throw new CustomException(ResponseCode.TokenUnsupportedJwtException);
         } catch (IllegalArgumentException e) {
-            throw new CustomException(ExceptionStatus.TokenIllegalArgumentException);
+            throw new CustomException(ResponseCode.TokenIllegalArgumentException);
         }
     }
 
@@ -176,4 +173,24 @@ public class JwtTokenProvider {
         }
     }
 
+    public boolean isTokenExpired(String accessToken) {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+
+            return claims.getExpiration().before(new Date());
+    }
+
+    // Access token 남은 시간 구하기
+    public Long getTokenExpiration(String accessToken) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody().getExpiration();
+
+        return expiration.getTime();
+    }
 }

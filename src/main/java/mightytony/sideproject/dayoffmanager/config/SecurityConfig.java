@@ -1,6 +1,8 @@
 package mightytony.sideproject.dayoffmanager.config;
 
 import lombok.RequiredArgsConstructor;
+import mightytony.sideproject.dayoffmanager.config.jwt.JwtAccessDeniedHandler;
+import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationEntryPoint;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.member.domain.MemberRole;
@@ -25,6 +27,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     // 비밀번호 암호화 방식이 여러 개 있지만 그 중에서 BCrypt 채택
     @Bean
@@ -56,11 +60,15 @@ public class SecurityConfig {
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
-                        .requestMatchers("/","/members/sign-in","/swagger-ui/**","/company/*","/members/sign-up","/healthcheck").permitAll()
+                        .requestMatchers("/","/members/sign-in","/swagger-ui/**","/company/*","/members/sign-up","/members/logout").permitAll()
                         // 해당하는 API에 대해서는 유저의 권한이 팀장, 관리자인 사람만 가능
                         .requestMatchers("/members/test").hasAnyRole(MemberRole.TEAM_LEADER.name(), MemberRole.ADMIN.name())
                         // 그 이외의 요청 API는 인증이 필요하다.
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling((except) -> except
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 // 내가 커스텀 한 필터인 Jwt 인증 필터를 UsernamePasswordAuthenticationFilter 의 앞에서 실행 하게 하겠다.
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

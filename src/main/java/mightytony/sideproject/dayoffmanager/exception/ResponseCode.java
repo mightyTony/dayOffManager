@@ -1,11 +1,13 @@
 package mightytony.sideproject.dayoffmanager.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ExceptionStatus {
+@AllArgsConstructor
+public enum ResponseCode {
     /**
      *  커스텀 에러 코드, 에러코드를 커스텀으로 만들어 에러의 원인을 쉽게 찾을 수 있다.
      */
@@ -15,6 +17,7 @@ public enum ExceptionStatus {
     NOT_FOUND_COMPANY(404, "해당 사업자등록번호로 된 업체가 존재하지 않습니다."),
 
     // Token
+    NOT_EXIST_TOKEN(400,"존재 하지 않는 토큰"),
     TokenSecurityExceptionOrMalformdJwtException(400, "유효하지 않은 JWT 서명 입니다."),
     TokenExpiredJwtException(400, "만료된 토큰 입니다."),
     TokenUnsupportedJwtException(400, "지원하지 않는 토큰 입니다"),
@@ -32,7 +35,6 @@ public enum ExceptionStatus {
     User_Already_Existed(400, "해당 아이디는 이미 등록되어있습니다."),
     PASSWORD_INVALID(400, "비밀번호 틀렸어요");
 
-    private final int statusCode;
-    //private final HttpStatus;
-    private final String message;
+    private int statusCode;
+    private String message;
 }

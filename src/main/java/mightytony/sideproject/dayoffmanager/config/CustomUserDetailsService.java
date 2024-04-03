@@ -39,13 +39,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 //                .password(passwordEncoder.encode(member.getPassword()))
 //                .roles(member.getRoles().toArray(new String[0]))
 //                .build();
-                .username(member.getUsername())
+                .username(member.getUserId())
                 .password(member.getPassword())
                 .roles(roles.stream().map(MemberRole::name).toArray(String[]::new))
-                .accountExpired(!member.isAccountNonExpired())
-                .accountLocked(!member.isAccountNonLocked())
-                .credentialsExpired(!member.isCredentialsNonExpired())
-                .disabled(!member.isEnabled())
+//                .accountExpired(!member.isAccountNonExpired())
+//                .accountLocked(!member.isAccountNonLocked())
+//                .credentialsExpired(!member.isCredentialsNonExpired())
+//                .disabled(!member.isEnabled())
                 .build();
     }
 }
