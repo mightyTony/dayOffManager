@@ -5,6 +5,7 @@ import mightytony.sideproject.dayoffmanager.config.jwt.JwtAccessDeniedHandler;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationEntryPoint;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
+import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.member.domain.MemberRole;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final RedisUtil redisUtil;
 
     // 비밀번호 암호화 방식이 여러 개 있지만 그 중에서 BCrypt 채택
     @Bean
@@ -71,7 +73,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 // 내가 커스텀 한 필터인 Jwt 인증 필터를 UsernamePasswordAuthenticationFilter 의 앞에서 실행 하게 하겠다.
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisUtil), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -87,7 +89,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
-        src.registerCorsConfiguration("/api/**", config);
+        src.registerCorsConfiguration("/**", config);
         return src;
     }
 

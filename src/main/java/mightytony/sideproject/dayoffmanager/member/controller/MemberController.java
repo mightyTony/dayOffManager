@@ -18,6 +18,7 @@ import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCrea
 import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberLoginRequestDto;
 import mightytony.sideproject.dayoffmanager.member.service.MemberService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
@@ -47,18 +48,22 @@ public class MemberController {
         String password = req.getPassword();
         JwtToken jwtToken = memberService.signIn(userId, password);
 
-        /*
-
-         */
         response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())
+                .httpOnly(true)
+                .maxAge(REFRESH_TOKEN_EXPIRED_TIME)
+                .path("/")
+                .secure(true)
+                .sameSite("None")
+                .build();
+        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+        /* 기존 쿠키 방식
         Cookie refreshCookie = new Cookie("refresh", jwtToken.getRefreshToken());
         refreshCookie.setHttpOnly(true);
         refreshCookie.setMaxAge((int) (REFRESH_TOKEN_EXPIRED_TIME / 1000));
         refreshCookie.setPath("/");
         response.addCookie(refreshCookie);
-        /*
-
-         */
+        */
         return ResponseEntity.status(200).build();
     }
 
@@ -85,7 +90,7 @@ public class MemberController {
     }
 
     @PostMapping("/logout")
-    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN','MASTER','TEAM_LEADER','USER')")
+    //@PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN','MASTER','TEAM_LEADER','USER')")
     public ResponseEntity<Void> logOut(HttpServletRequest request) {
         // 1. jwt 토큰 추출
         memberService.logOut(request);

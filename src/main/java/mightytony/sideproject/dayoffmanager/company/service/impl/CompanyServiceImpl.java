@@ -109,4 +109,17 @@ public class CompanyServiceImpl implements CompanyService {
         company.delete();
     }
 
+//    @Override
+//    public CompanyResponseDto findByCondition(CompanyRequestDto req) {
+//        // 1. 기업 조회
+//        Company company = companyRepository.findByConditions(req);
+//
+//        log.info("SM company = {}", company);
+//        if (company.getBusinessNumber() == null){
+//            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+//        }
+//        log.info("SM dto = {}", companyMapper.toDTO(company));
+//        return companyMapper.toDTO(company);
+//    }
+
 }

@@ -1,8 +1,10 @@
 package mightytony.sideproject.dayoffmanager.member.service.impl;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
@@ -19,6 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.time.Duration;
 
 import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
@@ -91,7 +96,7 @@ public class MemberServiceImpl implements MemberService {
     public void logOut(HttpServletRequest request) {
         // FIXME 나중엔 이거 리프레시 토큰 따로 쿠키에 저장 하고 싶다..
         // 1. 헤더에서 accessToken, refreshToken 가져오기 ( Authorization, Refresh 헤더에 저장)
-        String accessToken = getTokenFromRequest(request);
+        String accessToken = getAccessTokenFromRequest(request);
 
         // 2. Access Token 검증
         if(!jwtTokenProvider.validateToken(accessToken)) {
@@ -103,35 +108,51 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(ResponseCode.TokenExpiredJwtException);
         }
 
-        // 4. RefreshToken 검증
+        // 4. 유저 정보 추출
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
         String username = authentication.getName();
-        log.info("@@@@@@@@@@@@@@@@@@@@username = {}", username);
 
-        // 5. RefreshToken redis 삭제
+        // 5. 리프레시 토큰 추출
+        String refreshToken = getRefreshTokenFromCookie(request);
 
-        // 6. accesstoken redis 블랙리스트 추가
+        // 6. RefreshToken redis 블랙리스트 추가
+        if(refreshToken != null) {
+            // 6-1 RefreshToken 이 이미 블랙리스트에 있는 가?
+            if(redisUtil.isTokenInBlackList(refreshToken, username)){
+                throw new CustomException(ResponseCode.AlreadyLogout);
+            }
 
-        // 클라이언트에 응답
+            long refreshTokenExpiredTime = jwtTokenProvider.getTokenExpiredTime(refreshToken);
+            redisUtil.setTokenAddToBlackList(refreshToken, "BL:" + username, refreshTokenExpiredTime);
+        }
+
+        // 7. AccessToken redis 블랙리스트 추가
+        if (accessToken != null) {
+            long accessTokenExpiredTime = jwtTokenProvider.getTokenExpiredTime(accessToken);
+            redisUtil.setTokenAddToBlackList(accessToken, "BL:" + username, accessTokenExpiredTime);
+        }
     }
 
-    private String getTokenFromRequest(HttpServletRequest request) {
+    private String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh"))
+                    return cookie.getValue();
+            }
+        }
+        return null;
+    }
 
-        // 1. accessToken
-        String accessToken = request.getHeader("Authorization");
-        System.out.println("accessToken = " + accessToken);
+    private String getAccessTokenFromRequest(HttpServletRequest request) {
+        // 1. 헤더 중 Authorization 헤더를 가져 옴
+        String bearerToken = request.getHeader("Authorization");
 
-        /*
-        // 2. refreshToken
-        String refreshToken = request.getHeader("Refresh");
-
-        JwtToken jwtToken = JwtToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-        */
-
-        return accessToken;
+        // 2. Authorization 헤더 value 가 Bearer로 시작 한다면 그 뒤 값 반환.
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
 }
