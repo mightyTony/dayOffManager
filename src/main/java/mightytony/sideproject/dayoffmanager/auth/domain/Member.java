@@ -1,23 +1,17 @@
-package mightytony.sideproject.dayoffmanager.member.domain;
+package mightytony.sideproject.dayoffmanager.auth.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
-import mightytony.sideproject.dayoffmanager.config.UserDetailImpl;
 import mightytony.sideproject.dayoffmanager.vacation.domain.Vacation;
 import org.hibernate.annotations.Comment;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 유저 테이블

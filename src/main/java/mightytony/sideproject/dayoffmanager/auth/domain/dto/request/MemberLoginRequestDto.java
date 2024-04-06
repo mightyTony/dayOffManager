@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.member.domain.dto.request;
+package mightytony.sideproject.dayoffmanager.auth.domain.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,12 +1,12 @@
-package mightytony.sideproject.dayoffmanager.member.repository;
+package mightytony.sideproject.dayoffmanager.auth.repository;
 
-import mightytony.sideproject.dayoffmanager.member.domain.Member;
-import mightytony.sideproject.dayoffmanager.member.repository.query.QueryMemberRepository;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.repository.query.QueryAuthRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, QueryMemberRepository {
+public interface AuthRepository extends JpaRepository<Member, Long>, QueryAuthRepository {
 
     //Optional<Member> findByName(String name);
 

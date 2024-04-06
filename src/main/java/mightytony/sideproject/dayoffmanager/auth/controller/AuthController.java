@@ -1,39 +1,36 @@
-package mightytony.sideproject.dayoffmanager.member.controller;
+package mightytony.sideproject.dayoffmanager.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponseWrapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberLoginRequestDto;
+import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
+import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
-import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCreateRequestDto;
-import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberLoginRequestDto;
-import mightytony.sideproject.dayoffmanager.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
+import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/auth")
 @Tag(name = "유저(멤버)", description = "유저 관련 api 입니다")
-public class MemberController {
+public class AuthController {
 
-    private final MemberService memberService;
+    private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "로그인", description = "회원 로그인, 토큰 부여")
@@ -42,11 +39,11 @@ public class MemberController {
             //content = @Content(schema = @Schema(implementation = MemberCreateRequestDto.class)))
             )
     })
-    @PostMapping("/sign-in")
+    @PostMapping("/login")
     public ResponseEntity<Void> signIn(@RequestBody MemberLoginRequestDto req, HttpServletResponse response) {
         String userId = req.getUserId();
         String password = req.getPassword();
-        JwtToken jwtToken = memberService.signIn(userId, password);
+        JwtToken jwtToken = authService.signIn(userId, password);
 
         response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())
@@ -69,15 +66,16 @@ public class MemberController {
 
     @Operation(summary = "테스트", description = "권한 인가 테스트")
     @PostMapping("/test")
-    public String test() {
-        return "success";
+    public ResponseEntity<BasicResponse<Void>> test() {
+
+        return ResponseUtil.ok();
     }
 
     @Operation(summary = "유저 회원가입")
-    @PostMapping("/sign-up")
+    @PostMapping("/join")
     public ResponseEntity<Void> signUp(@RequestBody @Valid MemberCreateRequestDto req) {
         // 1. member 회원 가입 (이미 가입했는지 체크 로직)
-        memberService.signUp(req);
+        authService.signUp(req);
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 CREATED
     }
@@ -93,7 +91,7 @@ public class MemberController {
     //@PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN','MASTER','TEAM_LEADER','USER')")
     public ResponseEntity<Void> logOut(HttpServletRequest request) {
         // 1. jwt 토큰 추출
-        memberService.logOut(request);
+        authService.logOut(request);
 
         return ResponseEntity.ok().build();
     }

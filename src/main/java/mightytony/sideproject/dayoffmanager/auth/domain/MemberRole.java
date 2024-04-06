@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.member.domain;
+package mightytony.sideproject.dayoffmanager.auth.domain;
 
 import lombok.Getter;
 

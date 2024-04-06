@@ -1,14 +1,13 @@
 package mightytony.sideproject.dayoffmanager.config;
 
 import lombok.RequiredArgsConstructor;
-import mightytony.sideproject.dayoffmanager.member.domain.Member;
-import mightytony.sideproject.dayoffmanager.member.domain.MemberRole;
-import mightytony.sideproject.dayoffmanager.member.repository.MemberRepository;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
+import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final MemberRepository memberRepository;
+    private final AuthRepository memberRepository;
 
     // 전달 받은 아이디를 DB에서 조회해서 있는지 체크 한다.
     @Override

@@ -2,7 +2,7 @@ package mightytony.sideproject.dayoffmanager.vacation.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import mightytony.sideproject.dayoffmanager.member.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;

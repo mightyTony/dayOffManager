@@ -53,6 +53,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                 throw new CustomException(ResponseCode.InvalidAccessToken);
             }
         }
+        // TODO refreshToken 검증
+        if(refreshToken != null){
+
+        }
 
         // 4. 다음 필터로 이동
         filterChain.doFilter(request,response);

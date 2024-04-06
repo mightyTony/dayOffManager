@@ -1,10 +1,10 @@
-package mightytony.sideproject.dayoffmanager.member.service;
+package mightytony.sideproject.dayoffmanager.auth.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
-import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCreateRequestDto;
 
-public interface MemberService {
+public interface AuthService {
 
     JwtToken signIn(String username, String password);
 

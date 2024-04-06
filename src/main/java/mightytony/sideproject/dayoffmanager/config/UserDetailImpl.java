@@ -2,8 +2,7 @@ package mightytony.sideproject.dayoffmanager.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import mightytony.sideproject.dayoffmanager.member.domain.Member;
-import mightytony.sideproject.dayoffmanager.member.domain.MemberRole;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

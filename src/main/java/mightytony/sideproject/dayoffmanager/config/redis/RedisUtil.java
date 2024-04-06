@@ -1,6 +1,7 @@
 package mightytony.sideproject.dayoffmanager.config.redis;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -15,13 +16,15 @@ import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKE
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void saveRefreshToken(String refreshToken, String userId) {
         //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(userId.getClass()));
-        //redisTemplate.opsForValue().set(key, o, minutes, TimeUnit.MINUTES);
+        //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(refreshToken.getClass()));
+        redisTemplate.setKeySerializer(new Jackson2JsonRedisSerializer<>(refreshToken.getClass()));
         //redisTemplate.opsForValue().set(refreshToken, userId, Duration.ofMillis(REFRESH_TOKEN_EXPIRED_TIME));
         redisTemplate.opsForValue().set(refreshToken, userId, Duration.ofMillis(REFRESH_TOKEN_EXPIRED_TIME));
     }
@@ -39,10 +42,22 @@ public class RedisUtil {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
-    public void setTokenAddToBlackList(String key, Object o, long expirationRestTime) {
-        //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
-        //redisTemplate.setKeySerializer(new StringRedisSerializer(StandardCharsets.UTF_8));
-        redisTemplate.opsForValue().set(key, o, expirationRestTime);
+    public void setAccessTokenAddToBlackList(String token, String username) {
+        //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
+        redisTemplate.setKeySerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
+
+        log.info("=============Username length : {}", username.length());
+        log.info("=============Key length : {}",token.length());
+        redisTemplate.opsForValue().set(token, username, Duration.ofHours(1));
+    }
+
+    public void setRefreshTokenAddToBlackList(String token, String username) {
+        //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
+        redisTemplate.setKeySerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
+
+        log.info("=============Username length : {}", username.length());
+        log.info("=============Key length : {}",token.length());
+        redisTemplate.opsForValue().set(token, username, Duration.ofDays(14));
     }
 
 //    public void accessTokenAddToBlackList(String key, Object o, long expirationRestTime) {
@@ -56,7 +71,7 @@ public class RedisUtil {
             return false; // 토큰에 해당하는 값이 없으면 블랙리스트에 없다고 판단
         }
         String blackListValue = "BL:" + userId;
-        //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(userId.getClass()));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
         return value.equals(blackListValue);
     }
 

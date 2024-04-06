@@ -1,39 +1,33 @@
-package mightytony.sideproject.dayoffmanager.member.service.impl;
+package mightytony.sideproject.dayoffmanager.auth.service.impl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
+import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
-import mightytony.sideproject.dayoffmanager.member.domain.Member;
-import mightytony.sideproject.dayoffmanager.member.domain.dto.request.MemberCreateRequestDto;
-import mightytony.sideproject.dayoffmanager.member.repository.MemberRepository;
-import mightytony.sideproject.dayoffmanager.member.service.MemberService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.time.Duration;
-
-import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
-public class MemberServiceImpl implements MemberService {
+public class AuthServiceImpl implements AuthService {
 
-    private final MemberRepository memberRepository;
+    private final AuthRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
@@ -94,7 +88,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void logOut(HttpServletRequest request) {
-        // FIXME 나중엔 이거 리프레시 토큰 따로 쿠키에 저장 하고 싶다..
         // 1. 헤더에서 accessToken, refreshToken 가져오기 ( Authorization, Refresh 헤더에 저장)
         String accessToken = getAccessTokenFromRequest(request);
 
@@ -122,14 +115,16 @@ public class MemberServiceImpl implements MemberService {
                 throw new CustomException(ResponseCode.AlreadyLogout);
             }
 
-            long refreshTokenExpiredTime = jwtTokenProvider.getTokenExpiredTime(refreshToken);
-            redisUtil.setTokenAddToBlackList(refreshToken, "BL:" + username, refreshTokenExpiredTime);
+            // 로그
+            log.info("=======================refreshToken = {}", refreshToken);
+            log.info("========================username = {}", username);
+            //
+            redisUtil.setRefreshTokenAddToBlackList(refreshToken, "BL:" + username);
         }
 
         // 7. AccessToken redis 블랙리스트 추가
         if (accessToken != null) {
-            long accessTokenExpiredTime = jwtTokenProvider.getTokenExpiredTime(accessToken);
-            redisUtil.setTokenAddToBlackList(accessToken, "BL:" + username, accessTokenExpiredTime);
+            redisUtil.setAccessTokenAddToBlackList(accessToken, "BL:" + username);
         }
     }
 

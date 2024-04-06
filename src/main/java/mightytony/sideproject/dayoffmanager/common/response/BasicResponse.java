@@ -8,24 +8,27 @@ import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 @Data
 @AllArgsConstructor
 @Builder
-public class ApiResponse<T> {
+public class BasicResponse<T> {
     private int code;
     private String message;
     private T data;
 
-    public static <T> ApiResponse<T> res(ResponseCode responseCode) {
+
+    public static <T> BasicResponse<T> res(ResponseCode responseCode) {
         return res(responseCode.getStatusCode(), responseCode.getMessage());
     }
 
-    public static <T> ApiResponse<T> res(final int responseCode, final String responseMessage) {
+    public static <T> BasicResponse<T> res(final int responseCode, final String responseMessage) {
         return res(responseCode, responseMessage, null);
     }
 
-    public static <T> ApiResponse<T> res(final int responseCode, final String responseMessage, final T t) {
-        return ApiResponse.<T>builder()
+    public static <T> BasicResponse<T> res(final int responseCode, final String responseMessage, final T t) {
+        return BasicResponse.<T>builder()
                 .data(t)
                 .code(responseCode)
                 .message(responseMessage)
                 .build();
     }
+
 }
+
