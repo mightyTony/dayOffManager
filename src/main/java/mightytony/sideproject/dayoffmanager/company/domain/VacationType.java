@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.vacation.domain;
+package mightytony.sideproject.dayoffmanager.company.domain;
 
 import lombok.Getter;
 

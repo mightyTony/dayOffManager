@@ -4,13 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
@@ -30,17 +26,17 @@ public class RedisUtil {
     }
 
 
-    public Object getRefreshToken(String key) {
-        return redisTemplate.opsForValue().get(key);
-    }
+//    public Object getRefreshToken(String key) {
+//        return redisTemplate.opsForValue().get(key);
+//    }
 
-    public boolean deleteRefreshToken(String key) {
-        return Boolean.TRUE.equals(redisTemplate.delete(key));
-    }
+//    public boolean deleteRefreshToken(String key) {
+//        return Boolean.TRUE.equals(redisTemplate.delete(key));
+//    }
 
-    public boolean hasKey(String key) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
-    }
+//    public boolean hasKey(String key) {
+//        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+//    }
 
     public void setAccessTokenAddToBlackList(String token, String username) {
         //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
@@ -76,15 +72,15 @@ public class RedisUtil {
     }
 
 
-    public Object getBlackList(String key, String username) {
-        return redisTemplate.opsForValue().get(key);
-    }
+//    public Object getBlackList(String key, String username) {
+//        return redisTemplate.opsForValue().get(key);
+//    }
 
-    public boolean deleteBlackList(String key) {
-        return Boolean.TRUE.equals(redisTemplate.delete(key));
-    }
+//    public boolean deleteBlackList(String key) {
+//        return Boolean.TRUE.equals(redisTemplate.delete(key));
+//    }
 
-    public boolean hasKeyBlackList(String key) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
-    }
+//    public boolean hasKeyBlackList(String key) {
+//        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+//    }
 }

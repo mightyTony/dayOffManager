@@ -60,6 +60,8 @@ public class AuthServiceImpl implements AuthService {
         // Redis 에 refresh token 저장
         redisUtil.saveRefreshToken(jwtToken.getRefreshToken(), authentication.getName());
 
+        log.info("CONNECT : {} 님이 로그인 하였습니다.", authentication.getName());
+
         return jwtToken;
     }
 
@@ -82,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
 
         memberRepository.save(member);
 
-        //log.info("member save = {}", memberRepository.save(member));
+        log.info("JOIN: {}({}) 님이 회원 등록 하였습니다.", member.getUserId(), member.getName());
     }
 
     @Override
@@ -116,8 +118,8 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 로그
-            log.info("=======================refreshToken = {}", refreshToken);
-            log.info("========================username = {}", username);
+            //log.info("=======================refreshToken = {}", refreshToken);
+            //log.info("========================username = {}", username);
             //
             redisUtil.setRefreshTokenAddToBlackList(refreshToken, "BL:" + username);
         }
@@ -126,6 +128,9 @@ public class AuthServiceImpl implements AuthService {
         if (accessToken != null) {
             redisUtil.setAccessTokenAddToBlackList(accessToken, "BL:" + username);
         }
+
+        // 로그아웃 로그
+        log.info("LOGOUT: {}님이 로그아웃 하였습니다.", username);
     }
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {

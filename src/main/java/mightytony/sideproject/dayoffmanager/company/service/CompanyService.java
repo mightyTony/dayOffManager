@@ -18,5 +18,7 @@ public interface CompanyService {
 
     void updateCompany(CompanyUpdateRequestDto req);
 
-    void deleteCompany(Long id);
+    void deleteCompany(String brandName);
+
+    CompanyResponseDto findByBrandName(String brandName);
 }

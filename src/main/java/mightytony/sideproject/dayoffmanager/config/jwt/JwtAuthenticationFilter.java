@@ -6,7 +6,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
@@ -21,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisUtil redisUtil;
+    //private final RedisUtil redisUtil;
 
     /**
      * @apiNote doFilter()

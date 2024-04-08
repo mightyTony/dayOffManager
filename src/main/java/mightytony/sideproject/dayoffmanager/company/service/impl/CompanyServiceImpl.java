@@ -36,9 +36,6 @@ public class CompanyServiceImpl implements CompanyService {
         // 1. 중복 인지 체크
         boolean isDuplicate = isDuplicate(req.getBusinessNumber());
 
-//        if(isDuplicate){
-//            throw new IllegalArgumentException("이미 등록된 사업자등록번호 입니다.");
-//        }
         if (isDuplicate) {
             throw new CustomException(ResponseCode.BUSINESSNUMBER_IS_ALREADY_EXIST);
         }
@@ -51,6 +48,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .brandName(req.getBrandName())
                 .build();
 
+        log.info("기업 등록 : COMPANY : {}", NewCompany.getBrandName());
         // 3. Save And Return
         return companyRepository.save(NewCompany);
     }
@@ -100,13 +98,27 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public void deleteCompany(Long id) {
+    public void deleteCompany(String brandName) {
         // 1. 해당 업체 있는지 확인
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
+        Company company = companyRepository.findByBrandName(brandName);
+
+        if(company == null) {
+            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+        }
 
         // 2. 삭제 (soft delete)
-        company.delete();
+        companyRepository.deleteByBrandName(brandName);
+
+        // Log
+        log.info("기업 삭제 : {}", company.getBrandName());
+    }
+
+    @Override
+    public CompanyResponseDto findByBrandName(String brandName) {
+
+        Company foundCompany = companyRepository.findByBrandName(brandName);
+        CompanyResponseDto dto = companyMapper.toDTO(foundCompany);
+        return dto;
     }
 
 //    @Override
@@ -121,5 +133,6 @@ public class CompanyServiceImpl implements CompanyService {
 //        log.info("SM dto = {}", companyMapper.toDTO(company));
 //        return companyMapper.toDTO(company);
 //    }
+
 
 }

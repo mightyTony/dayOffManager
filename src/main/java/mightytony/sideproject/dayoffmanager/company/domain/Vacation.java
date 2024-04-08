@@ -1,4 +1,4 @@
-package mightytony.sideproject.dayoffmanager.vacation.domain;
+package mightytony.sideproject.dayoffmanager.company.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,27 +18,18 @@ public class Vacation {
     @Comment("휴가 고유 번호")
     private Long id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "employee_id")
     @Comment("유저 ID")
-    private Member member;
-
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
-
-    @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    private Employee employee;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Comment("휴가 유형")
     private VacationType vacationType;
 
-    @Comment("휴가 기간 연차(1.0), 반차(0.5)")
-    private double duration;
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
+    @Comment("휴가 시간(1~8)")
+    private Integer duration;
 
 }
