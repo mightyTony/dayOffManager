@@ -7,9 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
+import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
-import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
@@ -23,7 +24,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/app/v1/company")
+@RequestMapping("/companies")
 @Tag(name = "회사(업체)", description = "회사 관련 api 입니다")
 public class CompanyController {
 
@@ -38,65 +39,69 @@ public class CompanyController {
             @ApiResponse(responseCode = "201", description = "created")
     })
     @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody @Valid CompanyCreateRequestDto req) {
+    public ResponseEntity<BasicResponse<Void>> join(@RequestBody @Valid CompanyCreateRequestDto req) {
         companyService.save(req);
-        // 3. 결과
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        return ResponseUtil.ok();
+        //return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * @apiNote 모든 기업 조회
+     * @apiNote 모든 업체 조회
      *
      */
     @Operation(summary = "모든 등록 된 기업 조회")
     @GetMapping("/")
-    @PreAuthorize("hasAuthority('MASTER')")
-    public ResponseEntity<List<Company>> getAllCompany() {
+    public ResponseEntity<BasicResponse<List<Company>>> getAllCompany() {
 
         List<Company> allCompany = companyService.findAll();
 
-        return ResponseEntity.ok(allCompany);
+        return ResponseUtil.ok(allCompany);
     }
 
-    @Operation(summary = "Id로 기업 조회")
+
+/*    @Operation(summary = "Id로 기업 조회")
     @GetMapping("/{id}")
-    public ResponseEntity<CompanyResponseDto> getCompanyById(@PathVariable Long id) {
+    public ResponseEntity<BasicResponse<CompanyResponseDto>> getCompanyById(@PathVariable Long id) {
 
         CompanyResponseDto companyResponseDto = companyService.findById(id);
 
-        return ResponseEntity.ok(companyResponseDto);
-    }
+        //return ResponseEntity.ok(companyResponseDto);
 
-    @Operation(summary = "기업 특수 조건 조회")
-    @PostMapping("/getCompany")
-    public ResponseEntity<CompanyResponseDto> getCompanyByCondition(@RequestBody @Valid CompanyRequestDto req) {
+        return ResponseUtil.ok(companyResponseDto);
+    }*/
 
-        CompanyResponseDto companyResponseDto = companyService.findByCondition(req);
+    @Operation(summary = "상호명으로 기업 저회")
+    @GetMapping("/{brandName}")
+    public ResponseEntity<BasicResponse<CompanyResponseDto>> getCompanyByBrandName(@RequestParam String brandName) {
 
-        return ResponseEntity.ok(companyResponseDto);
+        CompanyResponseDto response = companyService.findByBrandName(brandName);
+
+        return ResponseUtil.ok(response);
     }
 
     /*
-     * 기업 수정 api
+     * 업체 수정 api
      */
-    // FIXME 고쳐야해
     @Operation(summary = "특정 기업 수정")
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('MASTER')")
-    public ResponseEntity<Void> updateCompany(@RequestBody @Valid CompanyUpdateRequestDto req) {
+    @PreAuthorize("hasRole('MASTER')")
+    public ResponseEntity<BasicResponse<Void>> updateCompany(@RequestBody @Valid CompanyUpdateRequestDto req) {
         companyService.updateCompany(req);
-        return ResponseEntity.ok().build();
+        //return ResponseEntity.ok().build();
+        return ResponseUtil.ok();
     }
 
     /*
-      기업 삭제 api
+      업체 삭제 api
      */
     @Operation(summary = "기업 삭제")
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('MASTER')")
-    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
-        companyService.deleteCompany(id);
+    @PreAuthorize("hasRole('MASTER')")
+    public ResponseEntity<BasicResponse<Void>> deleteCompany(@RequestParam String brandName) {
+        companyService.deleteCompany(brandName);
 
-        return ResponseEntity.ok().build();
+        //return ResponseEntity.ok().build();
+        return ResponseUtil.ok();
     }
 }

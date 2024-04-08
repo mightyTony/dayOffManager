@@ -5,7 +5,8 @@ import mightytony.sideproject.dayoffmanager.config.jwt.JwtAccessDeniedHandler;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationEntryPoint;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
-import mightytony.sideproject.dayoffmanager.member.domain.MemberRole;
+import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final RedisUtil redisUtil;
 
     // 비밀번호 암호화 방식이 여러 개 있지만 그 중에서 BCrypt 채택
     @Bean
@@ -60,9 +62,9 @@ public class SecurityConfig {
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
-                        .requestMatchers("/","/members/sign-in","/swagger-ui/**","/company/*","/members/sign-up","/members/logout").permitAll()
+                        .requestMatchers("/","/auth/login","/swagger-ui/**","/auth/join","/auth/logout").permitAll()
                         // 해당하는 API에 대해서는 유저의 권한이 팀장, 관리자인 사람만 가능
-                        .requestMatchers("/members/test").hasAnyRole(MemberRole.TEAM_LEADER.name(), MemberRole.ADMIN.name())
+                        .requestMatchers("/auth/test").hasAnyRole(MemberRole.TEAM_LEADER.name(), MemberRole.ADMIN.name())
                         // 그 이외의 요청 API는 인증이 필요하다.
                         .anyRequest().authenticated()
                 )
@@ -87,7 +89,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
-        src.registerCorsConfiguration("/api/**", config);
+        src.registerCorsConfiguration("/**", config);
         return src;
     }
 

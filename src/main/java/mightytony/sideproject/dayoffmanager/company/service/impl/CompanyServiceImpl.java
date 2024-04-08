@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
-import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.mapper.CompanyMapper;
@@ -37,9 +36,6 @@ public class CompanyServiceImpl implements CompanyService {
         // 1. 중복 인지 체크
         boolean isDuplicate = isDuplicate(req.getBusinessNumber());
 
-//        if(isDuplicate){
-//            throw new IllegalArgumentException("이미 등록된 사업자등록번호 입니다.");
-//        }
         if (isDuplicate) {
             throw new CustomException(ResponseCode.BUSINESSNUMBER_IS_ALREADY_EXIST);
         }
@@ -52,6 +48,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .brandName(req.getBrandName())
                 .build();
 
+        log.info("기업 등록 : COMPANY : {}", NewCompany.getBrandName());
         // 3. Save And Return
         return companyRepository.save(NewCompany);
     }
@@ -101,26 +98,41 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public void deleteCompany(Long id) {
+    public void deleteCompany(String brandName) {
         // 1. 해당 업체 있는지 확인
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
+        Company company = companyRepository.findByBrandName(brandName);
+
+        if(company == null) {
+            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+        }
 
         // 2. 삭제 (soft delete)
-        company.delete();
+        companyRepository.deleteByBrandName(brandName);
+
+        // Log
+        log.info("기업 삭제 : {}", company.getBrandName());
     }
 
     @Override
-    public CompanyResponseDto findByCondition(CompanyRequestDto req) {
-        // 1. 기업 조회
-        Company company = companyRepository.findByConditions(req);
+    public CompanyResponseDto findByBrandName(String brandName) {
 
-        log.info("SM company = {}", company);
-        if (company.getBusinessNumber() == null){
-            throw new CustomException(ExceptionStatus.NOT_FOUND_COMPANY);
-        }
-        log.info("SM dto = {}", companyMapper.toDTO(company));
-        return companyMapper.toDTO(company);
+        Company foundCompany = companyRepository.findByBrandName(brandName);
+        CompanyResponseDto dto = companyMapper.toDTO(foundCompany);
+        return dto;
     }
+
+//    @Override
+//    public CompanyResponseDto findByCondition(CompanyRequestDto req) {
+//        // 1. 기업 조회
+//        Company company = companyRepository.findByConditions(req);
+//
+//        log.info("SM company = {}", company);
+//        if (company.getBusinessNumber() == null){
+//            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+//        }
+//        log.info("SM dto = {}", companyMapper.toDTO(company));
+//        return companyMapper.toDTO(company);
+//    }
+
 
 }

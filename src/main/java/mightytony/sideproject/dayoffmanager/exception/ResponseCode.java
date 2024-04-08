@@ -9,8 +9,11 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public enum ResponseCode {
     /**
-     *  커스텀 에러 코드, 에러코드를 커스텀으로 만들어 에러의 원인을 쉽게 찾을 수 있다.
+     *  커스텀 응답 코드, 에러코드를 커스텀으로 만들어 에러의 원인을 쉽게 찾을 수 있다.
      */
+
+    // 공통
+    SUCCESS(200, "success"),
 
     //Company
     BUSINESSNUMBER_IS_ALREADY_EXIST(400,"이미 등록되어 있는 사업자등록번호 입니다."),

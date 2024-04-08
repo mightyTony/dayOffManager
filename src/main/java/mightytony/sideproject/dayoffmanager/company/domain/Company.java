@@ -9,8 +9,12 @@ import lombok.*;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 회사 테이블
@@ -19,6 +23,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@SQLDelete(sql = "UPDATE Company SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Company  {
 //extends BaseTimeEntity
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) // @Id : pk 설정, @GeneratedValue : 생성전략설정
@@ -41,8 +47,8 @@ public class Company  {
     @Column(name = "brand_name", nullable = false)
     private String brandName;
 
-    @Column(name = "delete_yn")
-    private String deleteYn = "N";
+    @Column(name = "deleted")
+    private Boolean deleted = Boolean.FALSE;
 
     @Column(name = "delete_date")
     private LocalDate deleteDate;
@@ -55,14 +61,14 @@ public class Company  {
         this.brandName = brandName;
     }
 
-    // 양방향
+    //양방향
 //    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Member> members = new ArrayList<>();
+//    private List<Employee> employees = new ArrayList<>();
 
-    public void delete() {
-        this.deleteYn = "Y";
-        this.deleteDate = LocalDate.now();
-    }
+//    public void delete() {
+//        this.deleteYn = "Y";
+//        this.deleteDate = LocalDate.now();
+//    }
 
     public void update(CompanyUpdateRequestDto req) {
         this.brandName = req.getBrandName();

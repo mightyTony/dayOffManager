@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
-import mightytony.sideproject.dayoffmanager.member.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -49,6 +49,9 @@ public class JwtTokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+
+
+        //log.info("!!!!!!!!!!!!!authorities = {}", authorities);
 
         long now = (new Date()).getTime();
         Date nowdate = new Date();
@@ -145,7 +148,9 @@ public class JwtTokenProvider {
                 throw new CustomException(ResponseCode.RedisUtilNullException);
             }
             // 만약 해당 토큰이 블랙리스트에(redis) 있다면 에러를 내자
-            if(redisUtil.hasKeyBlackList(token)) {
+            Authentication authentication = getAuthentication(token);
+            String userId = authentication.getName();
+            if(redisUtil.isTokenInBlackList(token,userId)) {
                 throw new CustomException(ResponseCode.AlreadyLogout);
             }
             return true;
@@ -174,6 +179,7 @@ public class JwtTokenProvider {
     }
 
     public boolean isTokenExpired(String accessToken) {
+        try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
@@ -181,16 +187,23 @@ public class JwtTokenProvider {
                     .getBody();
 
             return claims.getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            // 만료된 토큰 예외 처리
+            throw new CustomException(ResponseCode.TokenExpiredJwtException);
+        }
     }
 
-    // Access token 남은 시간 구하기
-    public Long getTokenExpiration(String accessToken) {
-        Date expiration = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(accessToken)
-                .getBody().getExpiration();
-
-        return expiration.getTime();
+    public long getTokenExpiredTime(String token) {
+        try{
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            // Expiration() -> Date
+            return claims.getExpiration().getTime();
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ResponseCode.TokenExpiredJwtException);
+        }
     }
 }
