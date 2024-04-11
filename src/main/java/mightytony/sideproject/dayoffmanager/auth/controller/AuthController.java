@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberLoginRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
@@ -26,7 +27,7 @@ import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKE
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @Tag(name = "유저(멤버)", description = "유저 관련 api 입니다")
 public class AuthController {
 
@@ -126,5 +127,10 @@ public ResponseEntity<BasicResponse<Void>> signIn(@RequestBody MemberLoginReques
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/master")
+    public ResponseEntity<BasicResponse<Void>> masterRegister(@RequestBody @Valid MemberCreateMasterRequestDto req) {
+        authService.registerMaster(req);
 
+        return ResponseUtil.ok();
+    }
 }

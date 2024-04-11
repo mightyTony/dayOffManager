@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
@@ -20,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.Collections;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -68,10 +72,18 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public void signUp(MemberCreateRequestDto req) {
-        // 1. 이미 존재하는 지 체크
-        if(memberRepository.existsMemberByUserIdAndPhoneNumberAndEmail(req.getUserId(), req.getPhoneNumber(), req.getEmail())){
-           throw new CustomException(ResponseCode.User_Already_Existed);
+
+        // 1. 이미 있는 지 체크
+        if (memberRepository.existsMemberByUserId(req.getUserId())){
+            throw new CustomException(ResponseCode.User_Already_Existed);
         }
+        if (memberRepository.existsMemberByPhoneNumber(req.getPhoneNumber())) {
+            throw new CustomException(ResponseCode.PHONE_NUMBER_EXISTED);
+        }
+        if(memberRepository.existsMemberByEmail(req.getEmail())) {
+            throw new CustomException(ResponseCode.EMAIL_EXISTED);
+        }
+
         // 2. 가입 (가입 할 땐 회사 등록을 안 함)
         Member member = Member.builder()
                 .userId(req.getUserId())
@@ -79,7 +91,8 @@ public class AuthServiceImpl implements AuthService {
                 .name(req.getName())
                 .email(req.getEmail())
                 .phoneNumber(req.getPhoneNumber())
-                .profileImage(req.getProfileImage())
+                .roles(Collections.singletonList(MemberRole.USER))
+                //.profileImage(req.getProfileImage())
                 .build();
 
         memberRepository.save(member);
@@ -133,6 +146,35 @@ public class AuthServiceImpl implements AuthService {
         log.info("LOGOUT: {}님이 로그아웃 하였습니다.", username);
     }
 
+    @Override
+    @Transactional(readOnly = false)
+    public void registerMaster(MemberCreateMasterRequestDto req) {
+        // 1. 이미 존재하는 지 체크
+        if (memberRepository.existsMemberByUserId(req.getUserId())){
+            throw new CustomException(ResponseCode.User_Already_Existed);
+        }
+        if (memberRepository.existsMemberByPhoneNumber(req.getPhoneNumber())) {
+            throw new CustomException(ResponseCode.PHONE_NUMBER_EXISTED);
+        }
+        if(memberRepository.existsMemberByEmail(req.getEmail())) {
+            throw new CustomException(ResponseCode.EMAIL_EXISTED);
+        }
+        // 2. 가입 (가입 할 땐 회사 등록을 안 함)
+        Member member = Member.builder()
+                .userId(req.getUserId())
+                .password(passwordEncoder.encode(req.getPassword()))
+                .name(req.getName())
+                .email(req.getEmail())
+                .phoneNumber(req.getPhoneNumber())
+                .profileImage(req.getProfileImage())
+                .roles(Collections.singletonList(MemberRole.MASTER))
+                .build();
+
+        memberRepository.save(member);
+
+        log.info("JOIN: {}({}) 님이 회원(마스터) 등록 하였습니다.", member.getUserId(), member.getName());
+    }
+
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if(cookies != null) {
@@ -144,7 +186,7 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 
-    private String getAccessTokenFromRequest(HttpServletRequest request) {
+    public String getAccessTokenFromRequest(HttpServletRequest request) {
         // 1. 헤더 중 Authorization 헤더를 가져 옴
         String bearerToken = request.getHeader("Authorization");
 

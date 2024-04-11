@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/companies")
-@Tag(name = "회사(업체)", description = "회사 관련 api 입니다")
+@Tag(name = "회사(업체)", description = "회사 관련 api / 로그인 필요")
 public class CompanyController {
 
     // 의존성 주입
