@@ -25,12 +25,12 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE member_id = ?")
 @Where(clause = "deleted = false")
 @SuperBuilder
 public class Member {
 
-    @Id @GeneratedValue @Comment("고유 번호")
+    @Id @GeneratedValue @Comment("고유 번호") @Column(name = "member_id")
     private Long id;
 
     @Column(nullable = false)

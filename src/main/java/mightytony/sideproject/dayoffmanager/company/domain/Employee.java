@@ -24,6 +24,9 @@ public class Employee extends Member {
 
 //    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long employee_id;
+    //
+//    @Column(name = "member_id")
+//    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
@@ -49,8 +52,8 @@ public class Employee extends Member {
     @Comment("휴가 개수")
     private double vacationCount = 0.0;
 
-    @Column(unique = true)
-    private String email;
+//    @Column(unique = true)
+//    private String email;
 
     @Builder.Default
     @Column(name = "deleted", nullable = false)

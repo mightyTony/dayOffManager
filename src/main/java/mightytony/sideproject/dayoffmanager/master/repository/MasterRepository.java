@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MasterRepository extends JpaRepository<Employee, Long> {
 
     //Member findMemberByUserId(String userId);
+    boolean existsByEmail(String email);
 }

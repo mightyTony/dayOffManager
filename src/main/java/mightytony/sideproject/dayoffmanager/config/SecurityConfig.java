@@ -39,18 +39,18 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring()
-//                .requestMatchers("/api/docs/**")
-                .requestMatchers(
-                "/favicon.ico",
-                "/swagger-ui/**",
-                "/swagger-resource/**",
-                "/error",
-                "/v3/api-docs/**")
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web.ignoring()
+////                .requestMatchers("/api/docs/**")
+//                .requestMatchers(
+//                "/favicon.ico",
+//                "/swagger-ui/**",
+//                "/swagger-resource/**",
+//                "/error",
+//                "/v3/api-docs/**")
+//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,6 +60,10 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.disable())
                 // JWT 를 사용하기 때문에 세션을 사용하지 않음
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/favicon.ico","/swagger-ui/**","/swagger-resource/**","/error","/v3/api-docs/**").permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                )
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
                         // FIXME : master 나중에 막아야함

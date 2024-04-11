@@ -39,20 +39,39 @@ public class MasterServiceImpl implements MasterService {
         if(targetCompany == null) {
             throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
         }
+
+        // 3. 이메일 중복 검사
+        if(masterRepository.existsByEmail(targetUser.getEmail())){
+           throw new CustomException(ResponseCode.EMAIL_EXISTED);
+        }
+
         // 3. 해당 유저 회사에 관리자로 등록
         Employee employee = Employee.builder()
-                .userId(targetUser.getUserId())
-                .password(targetUser.getPassword())
-                .name(targetUser.getName())
+                .company(targetCompany)
                 .email(targetUser.getEmail())
+                .userId(targetUser.getUserId())
+                .name(targetUser.getName())
+                .password(targetUser.getPassword())
                 .phoneNumber(targetUser.getPhoneNumber())
                 .profileImage(targetUser.getProfileImage())
                 .roles(new ArrayList<>(targetUser.getRoles()))
-                .company(targetCompany)
-                //.employeeNumber()
-                //.hireDate(LocalDate.now())
-                //.vacationCount(0.0)
                 .build();
+//        Employee employee = Employee.builder()
+//                .userId(targetUser.getUserId())
+//                .password(targetUser.getPassword())
+//                .name(targetUser.getName())
+//                .email(targetUser.getEmail())
+//                .phoneNumber(targetUser.getPhoneNumber())
+//                .profileImage(targetUser.getProfileImage())
+//                .roles(new ArrayList<>(targetUser.getRoles()))
+//                .company(targetCompany)
+//                //.employeeNumber()
+//                //.hireDate(LocalDate.now())
+//                //.vacationCount(0.0)
+//                .build();
+        log.info("########################targetUser.toString() : {}", targetUser.getEmail());
+        log.info("########################employee.toString() : {}",employee.getEmail());
+        log.info("########################company.toString(): {}" , targetCompany.getBrandName());
         // 4. 등록
         masterRepository.save(employee);
 
