@@ -6,4 +6,6 @@ import org.springframework.http.ResponseEntity;
 public interface MasterService {
 
     String inviteAdminToCompany(MasterInviteAdminRequestDto dto);
+
+    // deleteCompany(String );
 }

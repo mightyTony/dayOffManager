@@ -6,10 +6,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
+import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
@@ -32,6 +35,7 @@ import java.util.Collections;
 public class AuthServiceImpl implements AuthService {
 
     private final AuthRepository memberRepository;
+    private final CompanyRepository companyRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
@@ -46,6 +50,13 @@ public class AuthServiceImpl implements AuthService {
         // ID 체크
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
+
+        // 회사 승인 체크
+        MemberStatus status = member.getStatus();
+        if (status != null && (status.equals(MemberStatus.REJECTED) || status.equals(MemberStatus.PENDING))) {
+            throw new CustomException(ResponseCode.NOT_APPROVED);
+        }
+
         // 비번 체크
         if(!passwordEncoder.matches(password, member.getPassword())){
             throw new CustomException(ResponseCode.PASSWORD_INVALID);
@@ -83,8 +94,13 @@ public class AuthServiceImpl implements AuthService {
         if(memberRepository.existsMemberByEmail(req.getEmail())) {
             throw new CustomException(ResponseCode.EMAIL_EXISTED);
         }
+        if(companyRepository.existsByBrandName(req.getBrandName())){
+            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+        }
 
         // 2. 가입 (가입 할 땐 회사 등록을 안 함)
+        Company company = companyRepository.findByBrandName(req.getBrandName());
+
         Member member = Member.builder()
                 .userId(req.getUserId())
                 .password(passwordEncoder.encode(req.getPassword()))
@@ -92,7 +108,10 @@ public class AuthServiceImpl implements AuthService {
                 .email(req.getEmail())
                 .phoneNumber(req.getPhoneNumber())
                 .roles(Collections.singletonList(MemberRole.USER))
+                //.deleted(Boolean.FALSE)
                 //.profileImage(req.getProfileImage())
+                .company(company)
+                //.status(MemberStatus.PENDING)
                 .build();
 
         memberRepository.save(member);
@@ -168,6 +187,8 @@ public class AuthServiceImpl implements AuthService {
                 .phoneNumber(req.getPhoneNumber())
                 .profileImage(req.getProfileImage())
                 .roles(Collections.singletonList(MemberRole.MASTER))
+                .status(MemberStatus.APPROVED)
+                //.deleted(Boolean.FALSE)
                 .build();
 
         memberRepository.save(member);

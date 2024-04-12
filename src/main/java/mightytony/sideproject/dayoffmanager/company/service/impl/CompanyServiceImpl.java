@@ -107,7 +107,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         // 2. 삭제 (soft delete)
-        companyRepository.deleteByBrandName(brandName);
+        companyRepository.deleteCompany(brandName);
 
         // Log
         log.info("기업 삭제 : {}", company.getBrandName());

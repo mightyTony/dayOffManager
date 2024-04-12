@@ -2,6 +2,7 @@ package mightytony.sideproject.dayoffmanager.company.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import org.hibernate.annotations.Comment;
 
 @Getter
@@ -17,9 +18,9 @@ public class DayOff {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "member_id")
     @Comment("유저 ID")
-    private Employee employee;
+    private Member employee;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

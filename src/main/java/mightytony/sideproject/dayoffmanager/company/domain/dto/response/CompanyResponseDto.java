@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 
+import java.time.LocalDate;
+
 @Data
 public class CompanyResponseDto {
 
@@ -11,4 +13,6 @@ public class CompanyResponseDto {
     private String startDate;
     private String primaryRepresentName1;
     private String brandName;
+    private Boolean deleted = Boolean.FALSE;
+    private LocalDate deleteDate;
 }

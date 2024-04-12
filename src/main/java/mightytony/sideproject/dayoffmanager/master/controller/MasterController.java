@@ -14,10 +14,7 @@ import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.master.domain.dto.request.MasterInviteAdminRequestDto;
 import mightytony.sideproject.dayoffmanager.master.service.MasterService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 마스터(홈페이지 관리자)
@@ -42,4 +39,6 @@ public class MasterController {
 
         return ResponseUtil.ok(ret);
     }
+
+
 }

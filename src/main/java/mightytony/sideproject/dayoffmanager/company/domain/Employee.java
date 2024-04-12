@@ -1,3 +1,4 @@
+/*
 package mightytony.sideproject.dayoffmanager.company.domain;
 
 import jakarta.persistence.*;
@@ -62,3 +63,4 @@ public class Employee extends Member {
 
 }
 
+*/

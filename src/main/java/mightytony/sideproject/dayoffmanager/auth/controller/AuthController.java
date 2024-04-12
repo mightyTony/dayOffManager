@@ -64,42 +64,35 @@ public class AuthController {
 //        */
 //        return ResponseEntity.status(200).build();
 //    }
-@Operation(summary = "로그인", description = "회원 로그인, 토큰 부여")
-@ApiResponses({
-        @ApiResponse(responseCode = "201", description = "CREATED"
-                //content = @Content(schema = @Schema(implementation = MemberCreateRequestDto.class)))
-        )
-})
-@PostMapping("/login")
-public ResponseEntity<BasicResponse<Void>> signIn(@RequestBody MemberLoginRequestDto req, HttpServletResponse response) {
-    String userId = req.getUserId();
-    String password = req.getPassword();
-    JwtToken jwtToken = authService.signIn(userId, password);
+    @Operation(summary = "로그인", description = "회원 로그인, 토큰 부여")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "CREATED"
+                    //content = @Content(schema = @Schema(implementation = MemberCreateRequestDto.class)))
+            )
+    })
+    @PostMapping("/login")
+    public ResponseEntity<BasicResponse<Void>> signIn(@RequestBody MemberLoginRequestDto req, HttpServletResponse response) {
+        String userId = req.getUserId();
+        String password = req.getPassword();
+        JwtToken jwtToken = authService.signIn(userId, password);
 
-    response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
-    ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())
-            .httpOnly(true)
-            .maxAge(REFRESH_TOKEN_EXPIRED_TIME)
-            .path("/")
-            .secure(true)
-            .sameSite("None")
-            .build();
-    response.setHeader("Set-Cookie", refreshTokenCookie.toString());
-        /* 기존 쿠키 방식
-        Cookie refreshCookie = new Cookie("refresh", jwtToken.getRefreshToken());
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setMaxAge((int) (REFRESH_TOKEN_EXPIRED_TIME / 1000));
-        refreshCookie.setPath("/");
-        response.addCookie(refreshCookie);
-        */
-    return ResponseUtil.ok(); //ResponseEntity.status(200).build();
-}
-
-    @Operation(summary = "테스트", description = "권한 인가 테스트")
-    @PostMapping("/test")
-    public ResponseEntity<BasicResponse<Void>> test() {
-
-        return ResponseUtil.ok();
+        response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())
+                .httpOnly(true)
+                .maxAge(REFRESH_TOKEN_EXPIRED_TIME)
+                .path("/")
+                .secure(true)
+                .sameSite("None")
+                .build();
+        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+            /* 기존 쿠키 방식
+            Cookie refreshCookie = new Cookie("refresh", jwtToken.getRefreshToken());
+            refreshCookie.setHttpOnly(true);
+            refreshCookie.setMaxAge((int) (REFRESH_TOKEN_EXPIRED_TIME / 1000));
+            refreshCookie.setPath("/");
+            response.addCookie(refreshCookie);
+            */
+        return ResponseUtil.ok(); //ResponseEntity.status(200).build();
     }
 
     @Operation(summary = "유저 회원가입")
@@ -109,13 +102,6 @@ public ResponseEntity<BasicResponse<Void>> signIn(@RequestBody MemberLoginReques
         authService.signUp(req);
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 CREATED
-    }
-
-    // 권한 테스트용 , 로그인 한 유저의 권한(auth)가 'ADMIN' 이거나 'TEAM_LEADER' 만 해당 메서드 접속 가능
-    @GetMapping("/just")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String just() {
-        return "just Success";
     }
 
     @PostMapping("/logout")
