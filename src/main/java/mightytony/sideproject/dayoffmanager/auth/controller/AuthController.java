@@ -97,20 +97,20 @@ public class AuthController {
 
     @Operation(summary = "유저 회원가입")
     @PostMapping("/join")
-    public ResponseEntity<Void> signUp(@RequestBody @Valid MemberCreateRequestDto req) {
+    public ResponseEntity<BasicResponse<Void>> signUp(@RequestBody @Valid MemberCreateRequestDto req) {
         // 1. member 회원 가입 (이미 가입했는지 체크 로직)
         authService.signUp(req);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 CREATED
+        return ResponseUtil.ok();
     }
 
     @PostMapping("/logout")
     //@PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN','MASTER','TEAM_LEADER','USER')")
-    public ResponseEntity<Void> logOut(HttpServletRequest request) {
+    public ResponseEntity<BasicResponse<Void>> logOut(HttpServletRequest request) {
         // 1. jwt 토큰 추출
         authService.logOut(request);
 
-        return ResponseEntity.ok().build();
+        return ResponseUtil.ok();
     }
 
     @PostMapping("/master")

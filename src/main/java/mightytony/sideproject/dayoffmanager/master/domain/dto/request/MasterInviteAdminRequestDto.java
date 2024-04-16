@@ -28,7 +28,7 @@ public class MasterInviteAdminRequestDto {
     private String name;
 
     @Schema(description = "이메일", example = "admin@gmail.com")
-    @NotNull
+    @NotNull @Email
     private String email;
 
     @Schema(description = "전화번호", example = "01098745112")

@@ -19,12 +19,20 @@ public class QueryCompanyRepositoryImpl implements QueryCompanyRepository {
     private final QCompany qCompany = QCompany.company;
 
     @Override
-    public void deleteCompany(String brandName) {
-         queryFactory.update(qCompany)
+    public void updateCompanyDeleteDate(String brandName) {
+        queryFactory.update(qCompany)
                 .set(qCompany.deleteDate, LocalDate.now())
                 .where(qCompany.brandName.eq(brandName))
                 .execute();
     }
+
+//    @Override
+//    public void deleteCompany(String brandName) {
+//         queryFactory.update(qCompany)
+//                .set(qCompany.deleteDate, LocalDate.now())
+//                .where(qCompany.brandName.eq(brandName))
+//                .execute();
+//    }
 
     //private BooleanBuilder searchWhere()
 }

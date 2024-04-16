@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/companies")
+@RequestMapping("/api/v1/companies")
 @Tag(name = "회사(업체)", description = "회사 관련 api / 로그인 필요")
 public class CompanyController {
 
@@ -86,7 +86,7 @@ public class CompanyController {
      */
     @Operation(summary = "특정 기업 수정")
     @PutMapping("/brandName")
-    @PreAuthorize("hasRole('MASTER')")
+    @PreAuthorize("hasAnyRole('MASTER','ADMIN')")
     public ResponseEntity<BasicResponse<Void>> updateCompany(@RequestBody @Valid CompanyUpdateRequestDto req) {
         companyService.updateCompany(req);
         //return ResponseEntity.ok().build();

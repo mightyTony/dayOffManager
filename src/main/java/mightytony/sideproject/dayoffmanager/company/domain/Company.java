@@ -1,12 +1,10 @@
 package mightytony.sideproject.dayoffmanager.company.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -21,6 +19,7 @@ import java.time.LocalDate;
 @Getter
 @SQLDelete(sql = "UPDATE Company SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
+@DynamicUpdate
 @Builder
 public class Company  {
 //extends BaseTimeEntity
@@ -46,9 +45,11 @@ public class Company  {
 
     @Column(name = "deleted")
     @Builder.Default
+    @Setter
     private Boolean deleted = Boolean.FALSE;
 
     @Column(name = "delete_date")
+    @Setter
     private LocalDate deleteDate;
 
 //    @Builder
@@ -67,7 +68,11 @@ public class Company  {
 //        this.deleteYn = "Y";
 //        this.deleteDate = LocalDate.now();
 //    }
-
+    public void delete(String brandName) {
+        this.brandName = brandName;
+        this.deleted = Boolean.TRUE;
+        this.deleteDate = LocalDate.now();
+    }
     public void update(CompanyUpdateRequestDto req) {
         this.brandName = req.getBrandName();
     }

@@ -17,7 +17,7 @@ public enum ResponseCode {
 
     //Company
     BUSINESSNUMBER_IS_ALREADY_EXIST(400,"이미 등록되어 있는 사업자등록번호 입니다."),
-    NOT_FOUND_COMPANY(400, "해당 사업자등록번호로 된 업체가 존재하지 않습니다."),
+    NOT_FOUND_COMPANY(400, "해당 업체가 존재하지 않습니다."),
     NOT_APPROVED(403,"해당 업체에 승인 되지 않은 유저 입니다."),
 
     // Token
@@ -35,7 +35,7 @@ public enum ResponseCode {
 
 
     // Member (유저)
-    NOT_FOUND_USER(401, "해당 유저를 찾을 수 없습니다."),
+    NOT_FOUND_USER(400, "해당 유저를 찾을 수 없습니다."),
     User_Already_Existed(400, "해당 아이디는 이미 등록되어있습니다."),
     EMAIL_EXISTED(400,"이미 등록된 이메일 입니다."),
     PHONE_NUMBER_EXISTED(400,"이미 등록 된 전화번호 입니다."),

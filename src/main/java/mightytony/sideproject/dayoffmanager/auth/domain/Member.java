@@ -77,7 +77,7 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "resignation_date")
     @Builder.Default
-    private LocalDate resignionDate = null;
+    private LocalDate resignationDate = null;
 
     @Column(name = "dayoff_count", nullable = false)
     @Builder.Default

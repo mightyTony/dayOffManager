@@ -1,21 +1,31 @@
 package mightytony.sideproject.dayoffmanager.admin.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import mightytony.sideproject.dayoffmanager.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
 import mightytony.sideproject.dayoffmanager.admin.service.AdminService;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/admin")
-@PreAuthorize("hasAuthority('ADMIN')") // ADMIN 권한이 있어야 해당 메서드 접근 가능
+// FIXME > 개발 끝나면 바꿔야함
+//@PreAuthorize("hasAuthority('ADMIN')") // ADMIN 권한이 있어야 해당 메서드 접근 가능
+@Tag(name = "어드민(업체)", description = "어드민 관련 api / 로그인 필요")
 public class AdminController {
 
     private final AdminService adminService;
@@ -31,9 +41,38 @@ public class AdminController {
     }
 
     /**
-     * 멤버 정보 조회(기업 내 모든 유저 조회)
+     * 등록 요청한 유저 조회 하기
      */
-//    @GetMapping()
-//    public ResponseEntity<AdminResponseDto> getMember()
+    @Operation(summary = "등록 신청 한 멤버 페이징 조회(Id)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @GetMapping("/members")
+    public ResponseEntity<BasicResponse<Page<MemberResponseDto>>> checkNewMember(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        Page<MemberResponseDto> members = adminService.checkJoinMemberAndChangeStatus(request, page, size);
+
+        //body, code, msg
+        return ResponseUtil.ok(members, HttpStatus.OK.value(), "성공");
+    }
+
+    /**
+     * 멤버 정보 조회 ( 유저 아이디 )
+     */
+    @Operation(summary = "멤버 조회(Id)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @GetMapping("/")
+    public ResponseEntity<BasicResponse<MemberResponseDto>> getEmployee(@RequestParam String userId) {
+        MemberResponseDto dto = adminService.getEmployeeByUserId(userId);
+
+        return ResponseUtil.ok(dto);
+    }
+
+
 
 }

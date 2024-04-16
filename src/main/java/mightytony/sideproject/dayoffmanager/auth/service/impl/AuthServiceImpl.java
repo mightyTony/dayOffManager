@@ -75,12 +75,12 @@ public class AuthServiceImpl implements AuthService {
         // Redis 에 refresh token 저장
         redisUtil.saveRefreshToken(jwtToken.getRefreshToken(), authentication.getName());
 
-        log.info("CONNECT : {} 님이 로그인 하였습니다.", authentication.getName());
+        log.info("LOG_IN : {} 님이 로그인 하였습니다.", authentication.getName());
 
         return jwtToken;
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     @Override
     public void signUp(MemberCreateRequestDto req) {
 
@@ -94,12 +94,12 @@ public class AuthServiceImpl implements AuthService {
         if(memberRepository.existsMemberByEmail(req.getEmail())) {
             throw new CustomException(ResponseCode.EMAIL_EXISTED);
         }
-        if(companyRepository.existsByBrandName(req.getBrandName())){
-            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
-        }
 
         // 2. 가입 (가입 할 땐 회사 등록을 안 함)
         Company company = companyRepository.findByBrandName(req.getBrandName());
+        if(company == null) {
+            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+        }
 
         Member member = Member.builder()
                 .userId(req.getUserId())
@@ -108,10 +108,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(req.getEmail())
                 .phoneNumber(req.getPhoneNumber())
                 .roles(Collections.singletonList(MemberRole.USER))
-                //.deleted(Boolean.FALSE)
-                //.profileImage(req.getProfileImage())
                 .company(company)
-                //.status(MemberStatus.PENDING)
                 .build();
 
         memberRepository.save(member);
@@ -162,7 +159,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 로그아웃 로그
-        log.info("LOGOUT: {}님이 로그아웃 하였습니다.", username);
+        log.info("LOG_OUT: {}님이 로그아웃 하였습니다.", username);
     }
 
     @Override
@@ -193,7 +190,7 @@ public class AuthServiceImpl implements AuthService {
 
         memberRepository.save(member);
 
-        log.info("JOIN: {}({}) 님이 회원(마스터) 등록 하였습니다.", member.getUserId(), member.getName());
+        log.info("JOIN_ADMIN : {}({}) 님이 회원(마스터) 등록 하였습니다.", member.getUserId(), member.getName());
     }
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
@@ -212,7 +209,7 @@ public class AuthServiceImpl implements AuthService {
         String bearerToken = request.getHeader("Authorization");
 
         // 2. Authorization 헤더 value 가 Bearer로 시작 한다면 그 뒤 값 반환.
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;

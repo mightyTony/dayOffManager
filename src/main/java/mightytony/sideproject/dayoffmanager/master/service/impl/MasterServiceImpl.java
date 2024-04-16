@@ -17,9 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.Collections;
-import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -55,6 +53,7 @@ public class MasterServiceImpl implements MasterService {
                 .phoneNumber(dto.getPhoneNumber())
                 .roles(Collections.singletonList(MemberRole.ADMIN))
                 .company(targetCompany)
+                .status(MemberStatus.APPROVED)
                 .build();
 
         //admin.updateToAdmin();
@@ -62,6 +61,8 @@ public class MasterServiceImpl implements MasterService {
         // 4. 등록
         masterRepository.save(admin);
 
+        // 5. 로그
+        log.info("JOIN: {}({}) 님이 어드민 등록 하였습니다.", admin.getUserId(), admin.getName());
         return "등록 완료";
     }
 
