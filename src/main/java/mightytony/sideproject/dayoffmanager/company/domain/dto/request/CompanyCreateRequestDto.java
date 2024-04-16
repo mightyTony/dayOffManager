@@ -19,7 +19,7 @@ public class CompanyCreateRequestDto {
     @Schema(description = "사업자등록번호", example = "6518100883")
     private String businessNumber;
 
-    @Pattern(regexp = "^[0-9]{8}$", message = "개업일자는 YYYYMMDD 포맷이어야 합니다.")
+    @Pattern(regexp = "^(200[0-9]|20[1-9][0-9])(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$", message = "개업일자는 YYYYMMDD 포맷이어야 합니다.")
     @NotNull
     @JsonProperty("start_dt")
     @Schema(description = "개업일자", example = "20180202")

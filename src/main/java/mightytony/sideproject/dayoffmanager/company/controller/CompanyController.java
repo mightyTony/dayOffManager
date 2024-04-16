@@ -24,8 +24,8 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/companies")
-@Tag(name = "회사(업체)", description = "회사 관련 api 입니다")
+@RequestMapping("/api/v1/companies")
+@Tag(name = "회사(업체)", description = "회사 관련 api / 로그인 필요")
 public class CompanyController {
 
     // 의존성 주입
@@ -72,11 +72,12 @@ public class CompanyController {
     }*/
 
     @Operation(summary = "상호명으로 기업 저회")
-    @GetMapping("/{brandName}")
+    @GetMapping("/brandName")
     public ResponseEntity<BasicResponse<CompanyResponseDto>> getCompanyByBrandName(@RequestParam String brandName) {
 
         CompanyResponseDto response = companyService.findByBrandName(brandName);
-
+        System.out.println("CompanyController.getCompanyByBrandName = " + brandName);
+        System.out.println("response = " + response);
         return ResponseUtil.ok(response);
     }
 
@@ -84,8 +85,8 @@ public class CompanyController {
      * 업체 수정 api
      */
     @Operation(summary = "특정 기업 수정")
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('MASTER')")
+    @PutMapping("/brandName")
+    @PreAuthorize("hasAnyRole('MASTER','ADMIN')")
     public ResponseEntity<BasicResponse<Void>> updateCompany(@RequestBody @Valid CompanyUpdateRequestDto req) {
         companyService.updateCompany(req);
         //return ResponseEntity.ok().build();
@@ -96,8 +97,8 @@ public class CompanyController {
       업체 삭제 api
      */
     @Operation(summary = "기업 삭제")
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('MASTER')")
+    @DeleteMapping("/brandName")
+    @PreAuthorize("hasAnyRole('MASTER','ADMIN')")
     public ResponseEntity<BasicResponse<Void>> deleteCompany(@RequestParam String brandName) {
         companyService.deleteCompany(brandName);
 

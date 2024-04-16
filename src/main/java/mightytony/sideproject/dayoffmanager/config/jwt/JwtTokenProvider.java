@@ -144,15 +144,7 @@ public class JwtTokenProvider {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-            if(redisUtil == null) {
-                throw new CustomException(ResponseCode.RedisUtilNullException);
-            }
-            // 만약 해당 토큰이 블랙리스트에(redis) 있다면 에러를 내자
-            Authentication authentication = getAuthentication(token);
-            String userId = authentication.getName();
-            if(redisUtil.isTokenInBlackList(token,userId)) {
-                throw new CustomException(ResponseCode.AlreadyLogout);
-            }
+
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             throw new CustomException(ResponseCode.TokenSecurityExceptionOrMalformdJwtException);

@@ -13,4 +13,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, QueryCo
     Company findByBrandName(String brandName);
 
     Company deleteByBrandName(String brandName);
+
+    boolean existsByBrandName(String brandName);
 }

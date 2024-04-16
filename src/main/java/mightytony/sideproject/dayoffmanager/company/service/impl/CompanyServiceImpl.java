@@ -14,6 +14,7 @@ import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,6 +99,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void deleteCompany(String brandName) {
         // 1. 해당 업체 있는지 확인
         Company company = companyRepository.findByBrandName(brandName);
@@ -107,8 +109,10 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         // 2. 삭제 (soft delete)
-        companyRepository.deleteByBrandName(brandName);
-
+//        company.setDeleted(true);
+//        company.setDeleteDate(LocalDate.now());
+        company.delete(brandName);
+        companyRepository.save(company);
         // Log
         log.info("기업 삭제 : {}", company.getBrandName());
     }
