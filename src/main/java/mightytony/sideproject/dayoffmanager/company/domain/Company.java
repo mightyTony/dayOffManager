@@ -2,6 +2,7 @@ package mightytony.sideproject.dayoffmanager.company.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
@@ -21,8 +22,8 @@ import java.time.LocalDate;
 @Where(clause = "deleted = false")
 @DynamicUpdate
 @Builder
-public class Company  {
-//extends BaseTimeEntity
+public class Company extends BaseTimeEntity {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) // @Id : pk 설정, @GeneratedValue : 생성전략설정
     @Comment("고유 번호") // 컬럼 코멘트
     private Long id;

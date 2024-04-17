@@ -1,8 +1,9 @@
-package mightytony.sideproject.dayoffmanager.company.domain;
+package mightytony.sideproject.dayoffmanager.dayoff.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import org.hibernate.annotations.Comment;
 
 @Getter
@@ -10,17 +11,16 @@ import org.hibernate.annotations.Comment;
 @AllArgsConstructor
 @Builder
 @Entity
-public class DayOff {
+public class DayOff extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("휴가 고유 번호")
     private Long id;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @Comment("유저 ID")
-    private Member employee;
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
