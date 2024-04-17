@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOff;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -32,6 +33,9 @@ public class Member extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DayOff> dayOffs = new ArrayList<>();
 
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -83,6 +87,11 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private double dayOffCount = 0.0;
 
+    //근속에 따른 추가 월 마다 추가 휴가
+    @Column(name = "plus_dayoff", nullable = false)
+    @Builder.Default
+    private int plusDayOff = 0;
+
     // 회사 등록 승인
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -90,9 +99,17 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private MemberStatus status = MemberStatus.PENDING;
 
-    // 유저 -> 어드민 업데이트
+    // 사원 -> 어드민(회사 관리자) 업데이트
     public void updateToAdmin() {
-        this.status = MemberStatus.APPROVED;
         this.roles = Collections.singletonList(MemberRole.ADMIN);
+    }
+
+    // 사원 -> 팀장
+    public void updateToTeamLeader() {
+        this.roles = Collections.singletonList(MemberRole.TEAM_LEADER);
+    }
+
+    public void settingDayOff(double dayOffCount) {
+        this.dayOffCount = dayOffCount;
     }
 }
