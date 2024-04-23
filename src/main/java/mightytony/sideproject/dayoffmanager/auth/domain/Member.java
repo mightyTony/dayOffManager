@@ -25,7 +25,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 @Builder
 public class Member extends BaseTimeEntity {
@@ -78,6 +78,10 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "employee_number", unique = true)
     private String employeeNumber;
+
+    @Column(name = "hire_date")
+    @Builder.Default
+    private LocalDate hireDate = LocalDate.now();
 
     @Column(name = "resignation_date")
     @Builder.Default

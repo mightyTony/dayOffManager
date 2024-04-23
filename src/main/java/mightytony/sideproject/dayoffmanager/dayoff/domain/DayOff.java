@@ -5,11 +5,15 @@ import lombok.*;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE day_off SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 @Entity
 public class DayOff extends BaseTimeEntity {
 
@@ -35,5 +39,13 @@ public class DayOff extends BaseTimeEntity {
     @Column(nullable = false)
     @Comment("심사 상태")
     private DayOffStatus status;
+
+    @Column(name = "deleted")
+    @Builder.Default
+    private Boolean deleted = Boolean.FALSE;
+
+    public void delete() {
+        this.deleted = Boolean.TRUE;
+    }
 
 }

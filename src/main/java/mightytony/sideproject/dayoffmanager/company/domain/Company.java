@@ -29,7 +29,7 @@ public class Company extends BaseTimeEntity {
     private Long id;
 
     @Comment("사업자등록번호")
-    @Column(name = "bussiness_number",nullable = false, unique = true, length = 10) // length : 컬럽 타입 길이 설정
+    @Column(name = "business_number",nullable = false, unique = true, length = 10) // length : 컬럽 타입 길이 설정
     private String businessNumber;
 
     @Comment("개업일자 (YYYYMMDD 포맷)")

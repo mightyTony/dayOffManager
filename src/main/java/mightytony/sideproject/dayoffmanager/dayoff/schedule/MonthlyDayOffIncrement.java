@@ -56,18 +56,30 @@ public class MonthlyDayOffIncrement {
 //        return (int) startDate.until(nowDate).toTotalMonths() / 12;
 //    }
 
-
     private int calculateYearsWorked(Member member) {
-        LocalDate startDate = member.getCreatedDate();
+        LocalDate startDate = member.getHireDate();
         LocalDate nowDate = LocalDate.now();
 
         return (int) startDate.until(nowDate).toTotalMonths() / 12;
+    }
+
+    private int calculateMonthsWorked(Member member) {
+        LocalDate startDate = member.getHireDate();
+        LocalDate nowDate = LocalDate.now();
+
+        return (int) startDate.until(nowDate).toTotalMonths();
     }
 
     // 휴가 계산 로직
     private double calculateDayOffs(Member member) {
         int yearsWorked = calculateYearsWorked(member);
         double dayOffs = 15.0; // 기본 휴가
+
+        if(yearsWorked < 1) {
+            dayOffs = 12.0;
+            int monthsWorked = calculateMonthsWorked(member);
+            dayOffs -= monthsWorked;// 12 - 입사 월
+        }
 
         // 3년 이상 근속한 경우
         if (yearsWorked >= 3) {
@@ -96,8 +108,8 @@ public class MonthlyDayOffIncrement {
                         .setParameter("status", MemberStatus.APPROVED)
                         .executeUpdate();
             }
-            log.info("이름 : {} , 휴가 개수 = {} ",member.getName(), member.getDayOffCount());
-            log.info("휴가 스케쥴링 member = {}", member.getName());
+            //log.info("이름 : {} , 휴가 개수 = {} ",member.getName(), member.getDayOffCount());
+            //log.info("휴가 스케쥴링 member = {}", member.getName());
         }
     }
 

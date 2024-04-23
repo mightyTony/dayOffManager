@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.Collections;
 
 @Slf4j
@@ -101,6 +102,8 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
         }
 
+        // 3. 개월 체크 후 휴가 부여
+
         Member member = Member.builder()
                 .userId(req.getUserId())
                 .password(passwordEncoder.encode(req.getPassword()))
@@ -109,6 +112,8 @@ public class AuthServiceImpl implements AuthService {
                 .phoneNumber(req.getPhoneNumber())
                 .roles(Collections.singletonList(MemberRole.USER))
                 .company(company)
+                .hireDate(req.getHireDate())
+                .dayOffCount(calculateMonthsWorked(req))
                 .build();
 
         memberRepository.save(member);
@@ -213,6 +218,14 @@ public class AuthServiceImpl implements AuthService {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    private int calculateMonthsWorked(MemberCreateRequestDto req) {
+        //if(req.getHireDate().equals(LocalDate.now())){
+            int startDate = LocalDate.now().getMonthValue();
+            int check = 12;
+
+            return (check - startDate - 1);
     }
 
 }

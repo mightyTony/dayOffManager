@@ -33,7 +33,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Transactional(readOnly = false)
     @Override
-    public Company save(CompanyCreateRequestDto req) {
+    public void save(CompanyCreateRequestDto req) {
         // 1. 중복 인지 체크
         boolean isDuplicate = isDuplicate(req.getBusinessNumber());
 
@@ -51,7 +51,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         log.info("기업 등록 : COMPANY : {}", NewCompany.getBrandName());
         // 3. Save And Return
-        return companyRepository.save(NewCompany);
+        companyRepository.save(NewCompany);
     }
 
     /**
