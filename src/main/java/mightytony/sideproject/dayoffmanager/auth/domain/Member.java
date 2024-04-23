@@ -112,4 +112,9 @@ public class Member extends BaseTimeEntity {
     public void settingDayOff(double dayOffCount) {
         this.dayOffCount = dayOffCount;
     }
+
+    public void welcome(String employeeNumber) {
+        this.status = MemberStatus.APPROVED;
+        this.employeeNumber = employeeNumber;
+    }
 }

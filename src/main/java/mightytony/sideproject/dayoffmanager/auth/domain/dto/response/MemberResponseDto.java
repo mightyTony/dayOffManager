@@ -10,7 +10,8 @@ import java.util.List;
 
 @Data
 public class MemberResponseDto {
-    private Long id;
+    //private Long id;
+    private String userId;
     private Long companyId;
     private String companyName;
     private String name;

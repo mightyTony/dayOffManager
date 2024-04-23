@@ -27,6 +27,7 @@ public class DayOff extends BaseTimeEntity {
     @Comment("휴가 유형")
     private DayOffType type;
 
+    // 반차면 4 = 0.5개 , 연차면 8 = 1.0개 휴가 감소, // 반반차 2 = 0.25
     @Comment("휴가 시간(1~8)")
     private Integer duration;
 

@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -77,20 +78,24 @@ public class MonthlyDayOffIncrement {
     }
 
     // 참고 https://velog.io/@gruzzimo/JPA-Modifying%EC%9D%98-flushAutomatically-%EC%98%B5%EC%85%98%EC%9D%80-%EC%96%B8%EC%A0%9C-%EC%93%B0%EC%A7%80
-    //@Scheduled(cron = "0 0 3 1 1 *") // 매년 1월 1일 0시 0분에 실행
-    @Scheduled(fixedRate = 30000) // 매 10초 마다 실행
+    @Scheduled(cron = "0 0 3 1 1 *") // 매년 1월 1일 오전 3시 0분에 스케쥴링
+    //@Scheduled(fixedRate = 30000) // 매 10초 마다 실행 테스트용
     @Transactional
     @Modifying(clearAutomatically = true)
     public void updateDayOffCount() {
         List<Member> allMember = memberRepository.findAll();
 
         for (Member member : allMember) {
-            double dayOffs = calculateDayOffs(member);
+            // Member 가 회사에 등록이 되어 있는 경우 에만
+            if(member.getStatus() == MemberStatus.APPROVED && member.getCompany() != null) {
+                double dayOffs = calculateDayOffs(member);
 
-            entityManager.createQuery("UPDATE Member m SET m.dayOffCount = :dayOffs WHERE m.id = :id")
-                    .setParameter("dayOffs", dayOffs)
-                    .setParameter("id", member.getId())
-                    .executeUpdate();
+                entityManager.createQuery("UPDATE Member m SET m.dayOffCount = :dayOffs WHERE m.id = :id AND m.status = :status")
+                        .setParameter("dayOffs", dayOffs)
+                        .setParameter("id", member.getId())
+                        .setParameter("status", MemberStatus.APPROVED)
+                        .executeUpdate();
+            }
             log.info("이름 : {} , 휴가 개수 = {} ",member.getName(), member.getDayOffCount());
             log.info("휴가 스케쥴링 member = {}", member.getName());
         }

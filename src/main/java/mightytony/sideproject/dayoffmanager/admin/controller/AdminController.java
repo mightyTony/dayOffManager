@@ -31,23 +31,13 @@ public class AdminController {
     private final AdminService adminService;
 
     /**
-     * 소속된 기업에 유저 등록 하기
-     */
-    public ResponseEntity<BasicResponse<Void>> inviteNewMember(@RequestBody AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
-
-        adminService.inviteNewEmployee(dto, request);
-
-        return ResponseUtil.ok();
-    }
-
-    /**
      * 등록 요청한 유저 조회 하기
      */
     @Operation(summary = "등록 신청 한 멤버 페이징 조회(Id)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
     })
-    @GetMapping("/members")
+    @GetMapping("/members/pending")
     public ResponseEntity<BasicResponse<Page<MemberResponseDto>>> checkNewMember(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -56,6 +46,22 @@ public class AdminController {
         Page<MemberResponseDto> members = adminService.checkJoinMemberAndChangeStatus(request, page, size);
 
         //body, code, msg
+        return ResponseUtil.ok(members, HttpStatus.OK.value(), "성공");
+    }
+
+    @Operation(summary = "등록 된 멤버 페이징 조회(Id)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @GetMapping("/members")
+    public ResponseEntity<BasicResponse<Page<MemberResponseDto>>> getEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        Page<MemberResponseDto> members = adminService.getMembers(request, page, size);
+
+
         return ResponseUtil.ok(members, HttpStatus.OK.value(), "성공");
     }
 
@@ -74,5 +80,15 @@ public class AdminController {
     }
 
 
+    /**
+     * 해당 멤버 사원으로 등록 하기 (유저 아아디), 사번 부여
+     */
+    @Operation(summary = "멤버 회사 등록 승인")
+    @PutMapping("/register/{userId}")
+    public ResponseEntity<BasicResponse<Void>> registerEmployee(@RequestBody AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
+        adminService.registerEmployee(dto, request);
+
+        return ResponseUtil.ok();
+    }
 
 }
