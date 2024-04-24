@@ -76,7 +76,7 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.EMPLOYEE));
 
-    @Column(name = "employee_number", unique = true)
+    @Column(name = "employee_number")
     private String employeeNumber;
 
     @Column(name = "hire_date")

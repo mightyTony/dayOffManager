@@ -10,10 +10,7 @@ import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.request.DayOffAppl
 import mightytony.sideproject.dayoffmanager.dayoff.service.DayOffService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +36,15 @@ public class DayOffController {
     /**
      * 휴가 신청 삭제(대기 상태일때 만)
      */
+    @DeleteMapping("/{companyId}/{userId}/dayoffs/{dayoffId}")
+    public ResponseEntity<BasicResponse<Void>> deleteApplyDayOff(
+            @PathVariable("companyId") Long companyId,
+            @PathVariable("username") String username,
+            @PathVariable("dayoffId") Long dayoffId
+    ) {
+
+        return ResponseUtil.ok();
+    }
 
     /**
      * 휴가 신청 수정(대기 상태일때 만)

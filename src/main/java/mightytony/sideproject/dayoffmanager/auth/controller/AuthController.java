@@ -92,6 +92,10 @@ public class AuthController {
             refreshCookie.setPath("/");
             response.addCookie(refreshCookie);
             */
+
+        // 로그인 한 유저 정보 주기
+
+
         return ResponseUtil.ok(); //ResponseEntity.status(200).build();
     }
 
