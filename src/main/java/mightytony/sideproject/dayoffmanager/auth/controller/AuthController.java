@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberLoginRequestDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
@@ -22,6 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
+
+import java.util.Map;
+import java.util.Objects;
+
 import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
 @Slf4j
@@ -71,10 +76,15 @@ public class AuthController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<BasicResponse<Void>> signIn(@RequestBody MemberLoginRequestDto req, HttpServletResponse response) {
+    public ResponseEntity<BasicResponse<MemberLoginResponseDto>> signIn(@RequestBody MemberLoginRequestDto req, HttpServletResponse response) {
         String userId = req.getUserId();
         String password = req.getPassword();
-        JwtToken jwtToken = authService.signIn(userId, password);
+
+        //JwtToken jwtToken = authService.signIn(userId, password);
+        Map<String, Object> loginResponse = authService.signIn(userId, password);
+        JwtToken jwtToken = (JwtToken) loginResponse.get("token");
+        MemberLoginResponseDto member_info = (MemberLoginResponseDto) loginResponse.get("member_info");
+
 
         response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())
@@ -94,9 +104,7 @@ public class AuthController {
             */
 
         // 로그인 한 유저 정보 주기
-
-
-        return ResponseUtil.ok(); //ResponseEntity.status(200).build();
+        return ResponseUtil.ok(member_info); //ResponseEntity.status(200).build();
     }
 
     @Operation(summary = "유저 회원가입")

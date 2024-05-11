@@ -90,7 +90,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // TODO : 프론트 개발 후, 프론트 사이트: 프론트 포트 설정
-        config.addAllowedOrigin("{hostURL:frontEndPort}");
+        //config.addAllowedOrigin("{hostURL:frontEndPort}");
+        config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
