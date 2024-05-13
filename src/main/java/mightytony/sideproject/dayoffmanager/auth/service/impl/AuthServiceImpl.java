@@ -9,6 +9,8 @@ import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
+import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
@@ -26,7 +28,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,13 +45,14 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final RedisUtil redisUtil;
+    private final MemberMapper memberMapper;
 
     /**
      * authenticate() 메서드를 통해 Member 검증 진행
      */
     @Transactional(readOnly = true)
     @Override
-    public JwtToken signIn(String userId, String password) {
+    public Map<String, Object> signIn(String userId, String password) {
         // ID 체크
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
@@ -77,7 +83,17 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("LOG_IN : {} 님이 로그인 하였습니다.", authentication.getName());
 
-        return jwtToken;
+        //회원 정보를 DTO로 변환
+        MemberLoginResponseDto loginResponseDto = memberMapper.toLoginDTO(member);
+
+        //토큰, 회원 정보 함께 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", jwtToken);
+        response.put("member_info", loginResponseDto);
+
+        return response;
+
+        //return jwtToken;
     }
 
     @Transactional(readOnly = false)
@@ -101,6 +117,8 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
         }
 
+        // 3. 개월 체크 후 휴가 부여
+
         Member member = Member.builder()
                 .userId(req.getUserId())
                 .password(passwordEncoder.encode(req.getPassword()))
@@ -109,6 +127,8 @@ public class AuthServiceImpl implements AuthService {
                 .phoneNumber(req.getPhoneNumber())
                 .roles(Collections.singletonList(MemberRole.USER))
                 .company(company)
+                .hireDate(req.getHireDate())
+                .dayOffCount(calculateMonthsWorked(req))
                 .build();
 
         memberRepository.save(member);
@@ -213,6 +233,14 @@ public class AuthServiceImpl implements AuthService {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    private int calculateMonthsWorked(MemberCreateRequestDto req) {
+        //if(req.getHireDate().equals(LocalDate.now())){
+            int startDate = LocalDate.now().getMonthValue();
+            int check = 12;
+
+            return (check - startDate - 1);
     }
 
 }

@@ -36,10 +36,14 @@ public enum ResponseCode {
 
     // Member (유저)
     NOT_FOUND_USER(400, "해당 유저를 찾을 수 없습니다."),
+    DUPLICATED_NUMBER(400, "이미 등록된 사번 입니다."),
     User_Already_Existed(400, "해당 아이디는 이미 등록되어있습니다."),
     EMAIL_EXISTED(400,"이미 등록된 이메일 입니다."),
     PHONE_NUMBER_EXISTED(400,"이미 등록 된 전화번호 입니다."),
-    PASSWORD_INVALID(400, "비밀번호 틀렸어요");
+    PASSWORD_INVALID(400, "비밀번호 틀렸어요"),
+
+    // DayOff (휴가)
+    NOT_ENOUGH_DAYOFF(400, "휴가가 없어요");
 
     private int statusCode;
     private String message;

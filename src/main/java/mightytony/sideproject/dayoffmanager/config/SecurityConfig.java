@@ -55,6 +55,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors((cors) -> cors.configurationSource(corsConfiguration()))
                 // REST API 이므로 base auth, csrf 보안을 사용하지 않음.
                 .httpBasic((basic) -> basic.disable())
                 .csrf((csrf) -> csrf.disable())
@@ -90,10 +91,13 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // TODO : 프론트 개발 후, 프론트 사이트: 프론트 포트 설정
-        config.addAllowedOrigin("{hostURL:frontEndPort}");
+        //config.addAllowedOrigin("{hostURL:frontEndPort}");
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000"); // vue project 3000 port
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.setAllowCredentials(true);
+        // TODO : 이건 글 써야한다..
+        config.addExposedHeader("Authorization");
 
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
         src.registerCorsConfiguration("/**", config);

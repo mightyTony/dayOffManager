@@ -25,7 +25,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 @Builder
 public class Member extends BaseTimeEntity {
@@ -76,8 +76,12 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.EMPLOYEE));
 
-    @Column(name = "employee_number", unique = true)
+    @Column(name = "employee_number")
     private String employeeNumber;
+
+    @Column(name = "hire_date")
+    @Builder.Default
+    private LocalDate hireDate = LocalDate.now();
 
     @Column(name = "resignation_date")
     @Builder.Default
@@ -111,5 +115,10 @@ public class Member extends BaseTimeEntity {
 
     public void settingDayOff(double dayOffCount) {
         this.dayOffCount = dayOffCount;
+    }
+
+    public void welcome(String employeeNumber) {
+        this.status = MemberStatus.APPROVED;
+        this.employeeNumber = employeeNumber;
     }
 }

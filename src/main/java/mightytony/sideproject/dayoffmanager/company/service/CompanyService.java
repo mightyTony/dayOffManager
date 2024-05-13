@@ -10,7 +10,7 @@ import java.util.List;
 public interface CompanyService {
     boolean isDuplicate(String businessNumber);
 
-    Company save(CompanyCreateRequestDto req);
+    void save(CompanyCreateRequestDto req);
 
     List<Company> findAll();
 

@@ -7,6 +7,7 @@ public enum DayOffStatus {
 
     PENDING(1,"심사 대기 중"),
     APPROVED(2, "승인"),
+    TL_APPROVED(3,"팀장 승인"),
     REJECTED(3, "반려");
 
     private final int code;

@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // 밑의 변수를 JSON으로 받을 때 SnakeCase로 받음
 public class MemberCreateRequestDto {
@@ -38,5 +40,8 @@ public class MemberCreateRequestDto {
     @JsonProperty("b_nm")
     @Schema(description = "상호 명", example = "주식회사 티윈")
     private String brandName;
+
+    @Schema(description = "입사 날짜", example = "2024-04-23")
+    private LocalDate hireDate;
 
 }
