@@ -79,8 +79,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String bearerToken = request.getHeader("Authorization");
 
         // 2. Authorization 헤더 value 가 Bearer로 시작 한다면 그 뒤 값 반환.
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7).trim();
         }
         return null;
     }

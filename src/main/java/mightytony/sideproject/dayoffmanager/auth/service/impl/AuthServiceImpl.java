@@ -2,6 +2,7 @@ package mightytony.sideproject.dayoffmanager.auth.service.impl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
@@ -138,7 +139,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void logOut(HttpServletRequest request) {
+    public void logOut(HttpServletRequest request, HttpServletResponse response) {
+
         // 1. 헤더에서 accessToken, refreshToken 가져오기 ( Authorization, Refresh 헤더에 저장)
         String accessToken = getAccessTokenFromRequest(request);
 
@@ -147,19 +149,19 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(ResponseCode.InvalidAccessToken);
         }
 
-        // 3. Access Token 만료 확인
-        if(jwtTokenProvider.isTokenExpired(accessToken)){
-            throw new CustomException(ResponseCode.TokenExpiredJwtException);
-        }
+//        // 3. Access Token 만료 확인
+//        if(jwtTokenProvider.isTokenExpired(accessToken)){
+//            throw new CustomException(ResponseCode.TokenExpiredJwtException);
+//        }
 
-        // 4. 유저 정보 추출
+        // 3. 유저 정보 추출
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
         String username = authentication.getName();
 
-        // 5. 리프레시 토큰 추출
+        // 4. 리프레시 토큰 추출
         String refreshToken = getRefreshTokenFromCookie(request);
-
-        // 6. RefreshToken redis 블랙리스트 추가
+        log.info("refreshToken: {}", refreshToken);
+        // 5. RefreshToken redis 블랙리스트 추가
         if(refreshToken != null) {
             // 6-1 RefreshToken 이 이미 블랙리스트에 있는 가?
             if(redisUtil.isTokenInBlackList(refreshToken, username)){
@@ -167,18 +169,27 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 로그
-            //log.info("=======================refreshToken = {}", refreshToken);
+            log.info("블랙리스트 refreshToken = {}", refreshToken);
             //log.info("========================username = {}", username);
             //
-            redisUtil.setRefreshTokenAddToBlackList(refreshToken, "BL:" + username);
+            redisUtil.setRefreshTokenAddToBlackList(refreshToken, "RT BL:" + username);
         }
 
-        // 7. AccessToken redis 블랙리스트 추가
+        // 6. AccessToken redis 블랙리스트 추가
         if (accessToken != null) {
-            redisUtil.setAccessTokenAddToBlackList(accessToken, "BL:" + username);
+            log.info("블랙리스트 accessToken = {}", accessToken);
+            redisUtil.setAccessTokenAddToBlackList(accessToken, "AT eBL:" + username);
         }
 
-        // 로그아웃 로그
+        // HttpOnly 라 클라이언트에서 Js로 쿠키를 삭제할 수 가 없음
+        // 7. 쿠키 삭제
+        Cookie refreshCookie = new Cookie("refresh", null);
+        refreshCookie.setPath("/");
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(0);
+        response.addCookie(refreshCookie);
+
+        // 8. 로그아웃 로그
         log.info("LOG_OUT: {}님이 로그아웃 하였습니다.", username);
     }
 
@@ -215,6 +226,7 @@ public class AuthServiceImpl implements AuthService {
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
+
         if(cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("refresh"))
@@ -230,7 +242,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 2. Authorization 헤더 value 가 Bearer로 시작 한다면 그 뒤 값 반환.
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+            return bearerToken.substring(7).trim();
         }
         return null;
     }

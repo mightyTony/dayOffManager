@@ -91,8 +91,11 @@ public class AuthController {
                 .httpOnly(true)
                 .maxAge(REFRESH_TOKEN_EXPIRED_TIME)
                 .path("/")
-                .secure(true)
-                .sameSite("None")
+                //FIXME 나중에 HTTPS 할 시 secure(true)로 변경
+                .secure(false)
+                //FIXME
+                //.sameSite("None")
+                .sameSite("Lax")
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
             /* 기존 쿠키 방식
@@ -118,9 +121,9 @@ public class AuthController {
 
     @PostMapping("/logout")
     //@PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN','MASTER','TEAM_LEADER','USER')")
-    public ResponseEntity<BasicResponse<Void>> logOut(HttpServletRequest request) {
+    public ResponseEntity<BasicResponse<Void>> logOut(HttpServletRequest request, HttpServletResponse response) {
         // 1. jwt 토큰 추출
-        authService.logOut(request);
+        authService.logOut(request, response);
 
         return ResponseUtil.ok();
     }

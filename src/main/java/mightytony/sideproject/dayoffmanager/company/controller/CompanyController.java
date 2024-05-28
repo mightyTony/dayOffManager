@@ -32,7 +32,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     /**
-     * 회원 가입
+     * 기업 등록
      */
     @Operation(summary = "기업 등록")
     @ApiResponses({
@@ -58,18 +58,6 @@ public class CompanyController {
 
         return ResponseUtil.ok(allCompany);
     }
-
-
-/*    @Operation(summary = "Id로 기업 조회")
-    @GetMapping("/{id}")
-    public ResponseEntity<BasicResponse<CompanyResponseDto>> getCompanyById(@PathVariable Long id) {
-
-        CompanyResponseDto companyResponseDto = companyService.findById(id);
-
-        //return ResponseEntity.ok(companyResponseDto);
-
-        return ResponseUtil.ok(companyResponseDto);
-    }*/
 
     @Operation(summary = "상호명으로 기업 저회")
     @GetMapping("/brandName")

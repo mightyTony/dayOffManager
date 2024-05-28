@@ -140,6 +140,7 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(String token) {
         try {
+            token = token.trim();
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
@@ -147,12 +148,16 @@ public class JwtTokenProvider {
 
             return true;
         } catch (SecurityException | MalformedJwtException e) {
+            log.error("유효하지 않은 시그니쳐, 토큰 형식 : {}", e.getMessage());
             throw new CustomException(ResponseCode.TokenSecurityExceptionOrMalformdJwtException);
         } catch (ExpiredJwtException e) {
+            log.error("만료된 토큰 : {}", e.getMessage());
             throw new CustomException(ResponseCode.TokenExpiredJwtException);
         } catch (UnsupportedJwtException e) {
+            log.error("지원하지않는 토큰 : {}", e.getMessage());
             throw new CustomException(ResponseCode.TokenUnsupportedJwtException);
         } catch (IllegalArgumentException e) {
+            log.error("토큰 형식이 맞지 않음 : {}", e.getMessage());
             throw new CustomException(ResponseCode.TokenIllegalArgumentException);
         }
     }
