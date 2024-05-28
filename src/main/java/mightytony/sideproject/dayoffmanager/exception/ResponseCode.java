@@ -17,7 +17,7 @@ public enum ResponseCode {
 
     //Company
     BUSINESSNUMBER_IS_ALREADY_EXIST(400,"이미 등록되어 있는 사업자등록번호 입니다."),
-    NOT_FOUND_COMPANY(400, "해당 업체가 존재하지 않습니다."),
+    NOT_FOUND_COMPANY(400, "등록된 업체가 아닙니다."),
     NOT_APPROVED(403,"해당 업체에 승인 되지 않은 유저 입니다."),
 
     // Token
