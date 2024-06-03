@@ -140,7 +140,7 @@ public class JwtTokenProvider {
      */
     public boolean validateToken(String token) {
         try {
-            token = token.trim();
+            //token = token.trim();
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()

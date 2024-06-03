@@ -74,7 +74,8 @@ public class SecurityConfig {
                         // Master
                         //.requestMatchers("/api/v1/master/**").hasRole(MemberRole.MASTER.name())
                         // 그 이외의 요청 API는 인증이 필요하다.
-                        .anyRequest().permitAll()//.authenticated()
+                        .requestMatchers("/","/api/v1/auth/**","/swagger-ui/**").permitAll()
+                        .anyRequest().authenticated() //.anyRequest.().permitAll()//.authenticated()
                 )
                 .exceptionHandling((except) -> except
                         .accessDeniedHandler(jwtAccessDeniedHandler)

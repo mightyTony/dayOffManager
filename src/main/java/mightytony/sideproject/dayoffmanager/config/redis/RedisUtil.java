@@ -51,8 +51,8 @@ public class RedisUtil {
         //redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
         redisTemplate.setKeySerializer(new Jackson2JsonRedisSerializer<>(token.getClass()));
 
-        log.info("=============Username length : {}", username.length());
-        log.info("=============Key length : {}",token.length());
+//        log.info("=============Username length : {}", username.length());
+//        log.info("=============Key length : {}",token.length());
         redisTemplate.opsForValue().set(token, username, Duration.ofDays(14));
     }
 
