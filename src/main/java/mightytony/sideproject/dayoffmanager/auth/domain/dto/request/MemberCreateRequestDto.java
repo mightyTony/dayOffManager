@@ -36,10 +36,15 @@ public class MemberCreateRequestDto {
     @Pattern(regexp = "^010[0-9]{8}$", message = "010으로 시작해서 총 11자 이어야 합니다.")
     private String phoneNumber;
 
-    @NotBlank(message = "상호가 비어있습니다.")
-    @JsonProperty("b_nm")
-    @Schema(description = "상호 명", example = "주식회사 티윈")
-    private String brandName;
+//    @NotBlank(message = "상호가 비어있습니다.")
+//    @JsonProperty("b_nm")
+//    @Schema(description = "상호 명", example = "주식회사 티윈")
+//    private String brandName;
+    @NotNull
+    @Size(min = 10, max = 10, message = "사업자등록번호는 10자리여야 합니다.")
+    @JsonProperty("b_no")
+    @Schema(description = "사업자등록번호", example = "6081469076")
+    private String businessNumber;
 
     @Schema(description = "입사 날짜", example = "2024-04-23")
     private LocalDate hireDate;

@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         // Redis 에 refresh token 저장
         redisUtil.saveRefreshToken(jwtToken.getRefreshToken(), authentication.getName());
 
-        log.info("LOG_IN : {} 님이 로그인 하였습니다.", authentication.getName());
+        log.info("LOG:: LOG_IN : {} 님이 로그인 하였습니다.", authentication.getName());
 
         //회원 정보를 DTO로 변환
         MemberLoginResponseDto loginResponseDto = memberMapper.toLoginDTO(member);
@@ -113,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 2. 가입 (가입 할 땐 회사 등록을 안 함)
-        Company company = companyRepository.findByBrandName(req.getBrandName());
+        Company company = companyRepository.findByBusinessNumber(req.getBusinessNumber()); //.findByBrandName(req.getBrandName());
         if(company == null) {
             throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
         }
@@ -134,7 +134,7 @@ public class AuthServiceImpl implements AuthService {
 
         memberRepository.save(member);
 
-        log.info("JOIN: {}({}) 님이 회원 등록 하였습니다.", member.getUserId(), member.getName());
+        log.info("LOG:: JOIN : {}({}) 님이 회원 가입 하였습니다.", member.getUserId(), member.getName());
     }
 
     @Override
@@ -190,7 +190,7 @@ public class AuthServiceImpl implements AuthService {
         response.addCookie(refreshCookie);
 
         // 8. 로그아웃 로그
-        log.info("LOG_OUT: {}님이 로그아웃 하였습니다.", username);
+        log.info("LOG:: LOG_OUT : {}님이 로그아웃 하였습니다.", username);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class AuthServiceImpl implements AuthService {
 
         memberRepository.save(member);
 
-        log.info("JOIN_ADMIN : {}({}) 님이 회원(마스터) 등록 하였습니다.", member.getUserId(), member.getName());
+        log.info("LOG:: JOIN_MASTER : {}({}) 님이 회원(마스터) 등록 하였습니다.", member.getUserId(), member.getName());
     }
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {

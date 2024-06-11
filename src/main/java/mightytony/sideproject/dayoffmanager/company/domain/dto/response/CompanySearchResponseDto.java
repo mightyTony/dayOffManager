@@ -27,6 +27,9 @@ public class CompanySearchResponseDto {
         @JsonProperty("valid")
         private String valid;
 
+        @JsonProperty("valid_msg")
+        private String validMsg;
+
         @JsonProperty("request_param")
         private RequestParam requestParam;
 
