@@ -11,14 +11,18 @@ import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanySearchRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanySearchResponseDto;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @Slf4j
@@ -92,5 +96,16 @@ public class CompanyController {
 
         //return ResponseEntity.ok().build();
         return ResponseUtil.ok();
+    }
+
+    /**
+     * 기업 사업자등록번호 조회
+     */
+    @Operation(summary = "공공데이터 api 사업자 조회")
+    @PostMapping("/search-companies")
+    public ResponseEntity<BasicResponse<CompanySearchResponseDto>> searchCompanies(@RequestBody CompanySearchRequestDto req) throws URISyntaxException {
+        CompanySearchResponseDto dto = companyService.searchCompany(req);
+
+        return ResponseUtil.ok(dto);
     }
 }

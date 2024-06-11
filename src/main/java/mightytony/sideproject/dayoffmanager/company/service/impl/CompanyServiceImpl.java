@@ -1,21 +1,32 @@
 package mightytony.sideproject.dayoffmanager.company.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanySearchRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
+import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanySearchResponseDto;
 import mightytony.sideproject.dayoffmanager.company.mapper.CompanyMapper;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +36,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${API.URL}")
+    private String BASE_URL;
+    @Value("${API.SERVICE_KEY}")
+    private String SERVICE_KEY;
 
     @Override
     public boolean isDuplicate(String businessNumber) {
@@ -125,18 +143,41 @@ public class CompanyServiceImpl implements CompanyService {
         return dto;
     }
 
-//    @Override
-//    public CompanyResponseDto findByCondition(CompanyRequestDto req) {
-//        // 1. 기업 조회
-//        Company company = companyRepository.findByConditions(req);
-//
-//        log.info("SM company = {}", company);
-//        if (company.getBusinessNumber() == null){
-//            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
-//        }
-//        log.info("SM dto = {}", companyMapper.toDTO(company));
-//        return companyMapper.toDTO(company);
-//    }
+    @Override
+    public CompanySearchResponseDto searchCompany(CompanySearchRequestDto req) throws URISyntaxException {
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
+        Map<String, Object> body = new HashMap<>();
+        body.put("businesses", Arrays.asList(req));
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body,headers);
+
+        String url = BASE_URL + "?serviceKey=" + SERVICE_KEY;
+        URI uri = new URI(url);
+
+        //log.info("#######URL : {}", url);
+        //log.info("#######Body : {}", body);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(uri, entity, String.class);
+
+            // log.info("######## Response getBody : {}", response.getBody());
+            if(response.getStatusCode().is2xxSuccessful()) {
+                CompanySearchResponseDto responsedto = objectMapper.readValue(response.getBody(), CompanySearchResponseDto.class);
+
+                return responsedto;
+            } else {
+                log.error("API 호출 실패, 상태 코드 : {}, 응답 본문 : {}", response.getStatusCode(), response.getBody());
+                throw new CustomException(ResponseCode.ERROR_PROCESSING_REQUEST);
+            }
+        } catch (HttpClientErrorException ex) {
+            log.error("API 호출 중 에러 발생 : {}", ex.getResponseBodyAsString());
+            throw new CustomException(ResponseCode.ERROR_PROCESSING_REQUEST);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

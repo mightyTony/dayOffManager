@@ -6,11 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @Schema(description = "업체 사업자등록번호 api 검증 dto")
-public class CompanyValidationRequestDto {
+public class CompanySearchRequestDto {
     @NotNull
     @Size(min = 10, max = 10, message = "사업자등록번호는 10자리여야 합니다.")
     @JsonProperty("b_no")

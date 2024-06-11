@@ -15,6 +15,9 @@ public enum ResponseCode {
     // 공통
     SUCCESS(200, "success"),
 
+    // 공공데이터 open api
+    ERROR_PROCESSING_REQUEST(400, "요청 과정 에러"),
+
     //Company
     BUSINESSNUMBER_IS_ALREADY_EXIST(400,"이미 등록되어 있는 사업자등록번호 입니다."),
     NOT_FOUND_COMPANY(400, "등록된 업체가 아닙니다."),
