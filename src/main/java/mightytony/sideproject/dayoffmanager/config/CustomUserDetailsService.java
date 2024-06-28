@@ -1,9 +1,12 @@
 package mightytony.sideproject.dayoffmanager.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final AuthRepository memberRepository;
@@ -22,6 +26,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     // 전달 받은 아이디를 DB에서 조회해서 있는지 체크 한다.
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        //FIXME
+        log.info("######### loadUserByUsername : userId : {} ", userId);
 
         return memberRepository.findByUserId(userId)
                 .map(this::createUserDetails)
@@ -46,5 +52,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 //                .credentialsExpired(!member.isCredentialsNonExpired())
 //                .disabled(!member.isEnabled())
                 .build();
+    }
+
+    public Authentication getUserAuthentication(String userId) {
+        UserDetails userDetails = loadUserByUsername(userId);
+        //FIXME
+        log.info("######### getUserAuthentication : userDetails = {}", userDetails);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 }

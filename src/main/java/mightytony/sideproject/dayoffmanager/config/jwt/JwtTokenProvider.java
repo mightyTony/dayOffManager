@@ -4,10 +4,14 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
+import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
+import mightytony.sideproject.dayoffmanager.config.CustomUserDetailsService;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,11 +37,18 @@ public class JwtTokenProvider {
     @Value("${jwt.issuer}")
     private String issuer;
 
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private AuthRepository memberRepository;
+
     //yml 의 secret 값 가져와서 key 에 저장
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisUtil redisUtil) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisUtil redisUtil, CustomUserDetailsService customUserDetailsService) {
         this.redisUtil = redisUtil;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        //FIXME
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     /**
@@ -73,6 +84,11 @@ public class JwtTokenProvider {
 
         //Refresh Token 생성
         String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim("auth", authorities)
+                .setIssuer(issuer)
+                .setIssuedAt(nowdate)
+                .addClaims(addUserInformation(authentication))
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRED_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -175,6 +191,8 @@ public class JwtTokenProvider {
         }
     }
 
+
+
     public boolean isTokenExpired(String accessToken) {
         try {
             Claims claims = Jwts.parserBuilder()
@@ -203,4 +221,66 @@ public class JwtTokenProvider {
             throw new CustomException(ResponseCode.TokenExpiredJwtException);
         }
     }
+
+    //FIXME
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            Claims claims = parseClaims(refreshToken);
+            // Redis or Database에서 refreshToken 검증
+            String storedRefreshToken = (String) redisUtil.getRefreshToken(claims.getSubject());
+            return refreshToken.equals(storedRefreshToken) && !claims.getExpiration().before(new Date());
+        } catch (Exception e) {
+            log.error("리프레시 토큰 검증 실패: {}", e.getMessage());
+            return false;
+        }
+    }
+
+
+    public JwtToken refreshAccessToken(String refreshToken) {
+        Claims claims = parseClaims(refreshToken);
+        if(claims.getExpiration().before(new Date())) {
+            throw new CustomException(ResponseCode.REFRESH_TOKEN_IS_EXPIRED);
+        }
+
+        String userId = claims.getSubject();
+        log.info("########### CLIAM userID : {}", userId);
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
+
+        if(member.getStatus() != MemberStatus.APPROVED){
+            throw new CustomException(ResponseCode.NOT_FOUND_USER);
+        }
+
+        Authentication authentication = customUserDetailsService.getUserAuthentication(userId);
+
+        String accessToken = generateAccessToken(authentication);
+
+        return JwtToken.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken) // 기존 리프레시 토큰 유지
+                .build();
+    }
+
+    private String generateAccessToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresTime = new Date(now + ACCESS_TOKEN_EXPIRED_TIME);
+        Date nowdate = new Date();
+
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim("auth", authorities)
+                .setIssuer(issuer)
+                .setIssuedAt(nowdate)
+                // TODO
+                .addClaims(addUserInformation(authentication))
+                .setExpiration(accessTokenExpiresTime)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
 }

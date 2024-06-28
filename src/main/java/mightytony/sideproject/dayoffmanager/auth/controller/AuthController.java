@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,15 +18,14 @@ import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
-import org.springframework.http.HttpStatus;
+import mightytony.sideproject.dayoffmanager.exception.CustomException;
+import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
@@ -92,10 +92,10 @@ public class AuthController {
                 .maxAge(REFRESH_TOKEN_EXPIRED_TIME)
                 .path("/")
                 //FIXME 나중에 HTTPS 할 시 secure(true)로 변경
-                .secure(false)
+                .secure(true)
                 //FIXME
-                //.sameSite("None")
-                .sameSite("Lax")
+                .sameSite("None")
+                //.sameSite("Lax")
                 .build();
         response.setHeader("Set-Cookie", refreshTokenCookie.toString());
             /* 기존 쿠키 방식
@@ -133,5 +133,17 @@ public class AuthController {
         authService.registerMaster(req);
 
         return ResponseUtil.ok();
+    }
+
+
+    @Operation(summary = "토큰 갱신", description = "액세스 토큰 갱신")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "SUCCESS"
+            )
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<BasicResponse<String>> refreshToken(HttpServletRequest req) {
+        String newAccessToken = authService.refreshAccessToken(req);
+        return ResponseUtil.ok(newAccessToken);
     }
 }

@@ -9,3 +9,4 @@ public class CustomException extends RuntimeException{
 
     private final ResponseCode responseCode;
 }
+

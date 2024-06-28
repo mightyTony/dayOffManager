@@ -224,6 +224,16 @@ public class AuthServiceImpl implements AuthService {
         log.info("LOG:: JOIN_MASTER : {}({}) 님이 회원(마스터) 등록 하였습니다.", member.getUserId(), member.getName());
     }
 
+    @Override
+    public String refreshAccessToken(HttpServletRequest req) {
+        // 1. 요청에서 쿠키 안의 리프레시 토큰 추출
+        String refreshToken = getRefreshTokenFromCookie(req);
+        // 2. 리프레시 토큰 검증 후 새 액세스 토큰 반환
+        JwtToken newJwtToken = jwtTokenProvider.refreshAccessToken(refreshToken);
+        log.info("######### new ACCESS : {}, {}", newJwtToken.toString(), newJwtToken.getAccessToken());
+        return newJwtToken.getAccessToken();
+    }
+
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
@@ -232,6 +242,8 @@ public class AuthServiceImpl implements AuthService {
                 if (cookie.getName().equals("refresh"))
                     return cookie.getValue();
             }
+        } else {
+            throw new CustomException(ResponseCode.RefreshTokenValidException);
         }
         return null;
     }

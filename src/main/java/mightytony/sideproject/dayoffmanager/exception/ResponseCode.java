@@ -35,6 +35,8 @@ public enum ResponseCode {
     TokenMissingAuthorities(400, "권한 정보가 없는 토큰 입니다."),
     AlreadyLogout(403, "로그아웃 하여 토큰이 만료 되었습니다."),
     RedisUtilNullException(500, "레디스 서버 문제 입니다."),
+    REFRESH_TOKEN_IS_EXPIRED(400 , "리프레시 토큰이 만료 되었습니다"),
+    TOKEN_REFRESH_ERROR(400,"토큰 재발급 중 에러 발생"),
 
 
     // Member (유저)

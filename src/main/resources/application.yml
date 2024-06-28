@@ -44,7 +44,7 @@ jwt:
 logging:
   level:
     org.springframework.web.client:
-      RestTemplate : DEBUG
+      RestTemplate : warn
     root: info
   #    org:
 #      hibernate:
