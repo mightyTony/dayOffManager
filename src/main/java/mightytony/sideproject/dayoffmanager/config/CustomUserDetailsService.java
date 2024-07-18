@@ -26,8 +26,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     // 전달 받은 아이디를 DB에서 조회해서 있는지 체크 한다.
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        //FIXME
-        log.info("######### loadUserByUsername : userId : {} ", userId);
 
         return memberRepository.findByUserId(userId)
                 .map(this::createUserDetails)
@@ -56,8 +54,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public Authentication getUserAuthentication(String userId) {
         UserDetails userDetails = loadUserByUsername(userId);
-        //FIXME
-        log.info("######### getUserAuthentication : userDetails = {}", userDetails);
+
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 }

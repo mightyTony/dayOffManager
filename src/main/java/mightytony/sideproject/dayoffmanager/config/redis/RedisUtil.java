@@ -27,8 +27,6 @@ public class RedisUtil {
 
 
     public Object getRefreshToken(String key) {
-        //FIXME 로그 지워야함
-        log.info("########## REFRESHTOKEN : {}", redisTemplate.opsForValue().get(key));
         return redisTemplate.opsForValue().get(key);
     }
 

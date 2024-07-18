@@ -39,36 +39,6 @@ public class AuthController {
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @Operation(summary = "로그인", description = "회원 로그인, 토큰 부여")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "201", description = "CREATED"
-//            //content = @Content(schema = @Schema(implementation = MemberCreateRequestDto.class)))
-//            )
-//    })
-//    @PostMapping("/login")
-//    public ResponseEntity<Void> signIn(@RequestBody MemberLoginRequestDto req, HttpServletResponse response) {
-//        String userId = req.getUserId();
-//        String password = req.getPassword();
-//        JwtToken jwtToken = authService.signIn(userId, password);
-//
-//        response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
-//        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())
-//                .httpOnly(true)
-//                .maxAge(REFRESH_TOKEN_EXPIRED_TIME)
-//                .path("/")
-//                .secure(true)
-//                .sameSite("None")
-//                .build();
-//        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
-//        /* 기존 쿠키 방식
-//        Cookie refreshCookie = new Cookie("refresh", jwtToken.getRefreshToken());
-//        refreshCookie.setHttpOnly(true);
-//        refreshCookie.setMaxAge((int) (REFRESH_TOKEN_EXPIRED_TIME / 1000));
-//        refreshCookie.setPath("/");
-//        response.addCookie(refreshCookie);
-//        */
-//        return ResponseEntity.status(200).build();
-//    }
     @Operation(summary = "로그인", description = "회원 로그인, 토큰 부여")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "CREATED"

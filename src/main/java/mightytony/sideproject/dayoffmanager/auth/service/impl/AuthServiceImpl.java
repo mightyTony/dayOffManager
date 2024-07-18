@@ -143,6 +143,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 1. 헤더에서 accessToken, refreshToken 가져오기 ( Authorization, Refresh 헤더에 저장)
         String accessToken = getAccessTokenFromRequest(request);
+        //log.info("Logout AcceessToken: {}", accessToken);
 
         // 2. Access Token 검증
         if(!jwtTokenProvider.validateToken(accessToken)) {
@@ -160,7 +161,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 4. 리프레시 토큰 추출
         String refreshToken = getRefreshTokenFromCookie(request);
-        log.info("refreshToken: {}", refreshToken);
+        //log.info("LogOut refreshToken: {}", refreshToken);
         // 5. RefreshToken redis 블랙리스트 추가
         if(refreshToken != null) {
             // 6-1 RefreshToken 이 이미 블랙리스트에 있는 가?
@@ -178,7 +179,7 @@ public class AuthServiceImpl implements AuthService {
         // 6. AccessToken redis 블랙리스트 추가
         if (accessToken != null) {
             log.info("블랙리스트 accessToken = {}", accessToken);
-            redisUtil.setAccessTokenAddToBlackList(accessToken, "AT eBL:" + username);
+            redisUtil.setAccessTokenAddToBlackList(accessToken, "AT BL:" + username);
         }
 
         // HttpOnly 라 클라이언트에서 Js로 쿠키를 삭제할 수 가 없음
@@ -230,7 +231,7 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = getRefreshTokenFromCookie(req);
         // 2. 리프레시 토큰 검증 후 새 액세스 토큰 반환
         JwtToken newJwtToken = jwtTokenProvider.refreshAccessToken(refreshToken);
-        log.info("######### new ACCESS : {}, {}", newJwtToken.toString(), newJwtToken.getAccessToken());
+
         return newJwtToken.getAccessToken();
     }
 
@@ -251,12 +252,13 @@ public class AuthServiceImpl implements AuthService {
     public String getAccessTokenFromRequest(HttpServletRequest request) {
         // 1. 헤더 중 Authorization 헤더를 가져 옴
         String bearerToken = request.getHeader("Authorization");
+        //log.info("Logout BearerToken : {}", bearerToken);
 
         // 2. Authorization 헤더 value 가 Bearer로 시작 한다면 그 뒤 값 반환.
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7).trim();
         }
-        return null;
+        return bearerToken;
     }
 
     private int calculateMonthsWorked(MemberCreateRequestDto req) {

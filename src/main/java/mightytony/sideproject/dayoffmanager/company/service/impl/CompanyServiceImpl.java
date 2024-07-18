@@ -158,14 +158,9 @@ public class CompanyServiceImpl implements CompanyService {
         String url = BASE_URL + "?serviceKey=" + SERVICE_KEY;
         URI uri = new URI(url);
 
-        //log.info("#######URL : {}", url);
-        //log.info("#######Body : {}", body);
-        log.info("######### LOG : {}", req.toString());
-
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(uri, entity, String.class);
 
-             log.info("######## Response getBody : {}", response.getBody());
             if(response.getStatusCode().is2xxSuccessful()) {
                 CompanySearchResponseDto responsedto = objectMapper.readValue(response.getBody(), CompanySearchResponseDto.class);
 

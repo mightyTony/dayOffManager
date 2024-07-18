@@ -25,6 +25,12 @@ spring:
           max-idle: 8
           max-active: 8
 
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600  # 초 단위 TTL
+      cache-null-values: false
+
 
 jwt:
   secret: 4800704315a5e0e160425575ae7fa00502eff8acbbe962a369d4cd60a39efaa0

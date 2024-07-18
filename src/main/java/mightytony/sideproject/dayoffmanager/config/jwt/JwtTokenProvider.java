@@ -173,7 +173,7 @@ public class JwtTokenProvider {
             log.error("지원하지않는 토큰 : {}", e.getMessage());
             throw new CustomException(ResponseCode.TokenUnsupportedJwtException);
         } catch (IllegalArgumentException e) {
-            log.error("토큰 형식이 맞지 않음 : {}", e.getMessage());
+            log.error("토큰 형식이 맞지 않거나 리프레시 토큰 만료 : {}", e.getMessage());
             throw new CustomException(ResponseCode.TokenIllegalArgumentException);
         }
     }
@@ -235,7 +235,6 @@ public class JwtTokenProvider {
         }
     }
 
-
     public JwtToken refreshAccessToken(String refreshToken) {
         Claims claims = parseClaims(refreshToken);
         if(claims.getExpiration().before(new Date())) {
@@ -243,7 +242,7 @@ public class JwtTokenProvider {
         }
 
         String userId = claims.getSubject();
-        log.info("########### CLIAM userID : {}", userId);
+
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
 
