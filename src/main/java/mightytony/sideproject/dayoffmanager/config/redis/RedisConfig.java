@@ -35,12 +35,12 @@ public class RedisConfig {
      * 3. setKeySerializer(), setValueSerializer() : Redis 데이터를 직렬화 하는 방식을 설정 할 수 있음. REdis CLI 를 사용해 Redis 데이터 직접 조회 시, REdis 데이터를 문자열로 반환해야하기 때문에 설정
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         //redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
 
         return redisTemplate;
     }
@@ -49,7 +49,8 @@ public class RedisConfig {
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofHours(1)) // TTL 1 시간
+                //.entryTtl(Duration.ofHours(1)) // TTL 1 시간
+                .entryTtl(Duration.ofMillis(1000))
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 

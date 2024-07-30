@@ -5,6 +5,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
+import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.config.CustomUserDetailsService;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
@@ -13,6 +15,7 @@ import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,6 +44,7 @@ public class JwtTokenProvider {
 
     @Autowired
     private AuthRepository memberRepository;
+    private MemberMapper memberMapper;
 
     //yml 의 secret 값 가져와서 key 에 저장
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, RedisUtil redisUtil, CustomUserDetailsService customUserDetailsService) {
@@ -223,19 +227,28 @@ public class JwtTokenProvider {
     }
 
     //FIXME
-    public boolean validateRefreshToken(String refreshToken) {
-        try {
-            Claims claims = parseClaims(refreshToken);
-            // Redis or Database에서 refreshToken 검증
-            String storedRefreshToken = (String) redisUtil.getRefreshToken(claims.getSubject());
-            return refreshToken.equals(storedRefreshToken) && !claims.getExpiration().before(new Date());
-        } catch (Exception e) {
-            log.error("리프레시 토큰 검증 실패: {}", e.getMessage());
-            return false;
-        }
-    }
+    //구조적으로 안됨.
+//    public boolean validateRefreshToken(String refreshToken) {
+//        try {
+//            Claims claims = parseClaims(refreshToken);
+//            log.info("claims.getSubject() : {}", claims.getSubject());
+//            // Redis or Database에서 refreshToken 검증
+//            String storedRefreshToken = (String) redisUtil.getRefreshToken(claims.getSubject());
+//            log.info("storedRefreshToken: {} ", storedRefreshToken);
+//            log.info("equals : {}, claims Expiration : {}", refreshToken.equals(storedRefreshToken), claims.getExpiration().before(new Date()));
+//            return refreshToken.equals(storedRefreshToken) && !claims.getExpiration().before(new Date());
+//        } catch (Exception e) {
+//            log.error("리프레시 토큰 검증 실패: 입력 값 = {}, 에러 = {}", refreshToken, e.toString());
+//            return false;
+//        }
+//    }
 
     public JwtToken refreshAccessToken(String refreshToken) {
+
+//        if(!validateRefreshToken(refreshToken)){
+//            throw new CustomException(ResponseCode.RefreshTokenValidException);
+//        }
+
         Claims claims = parseClaims(refreshToken);
         if(claims.getExpiration().before(new Date())) {
             throw new CustomException(ResponseCode.REFRESH_TOKEN_IS_EXPIRED);
@@ -243,10 +256,16 @@ public class JwtTokenProvider {
 
         String userId = claims.getSubject();
 
-        Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
+//        Member member = memberRepository.findByUserId(userId)
+//                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
+//
+//        if(member.getStatus() != MemberStatus.APPROVED){
+//            throw new CustomException(ResponseCode.NOT_FOUND_USER);
+//        }
 
-        if(member.getStatus() != MemberStatus.APPROVED){
+        MemberLoginResponseDto cachedUserInformation = getCachedUserInformation(userId);
+
+        if(cachedUserInformation.getStatus() != MemberStatus.APPROVED){
             throw new CustomException(ResponseCode.NOT_FOUND_USER);
         }
 
@@ -259,6 +278,37 @@ public class JwtTokenProvider {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken) // 기존 리프레시 토큰 유지
                 .build();
+    }
+
+    private MemberLoginResponseDto getCachedUserInformation(String userId) {
+        // 캐시에서 유저 조회
+        MemberLoginResponseDto cachedUserInformation = redisUtil.getUserFromCache(userId);
+
+        log.info("캐시히트 유저정보 : {}", cachedUserInformation);
+
+        if(cachedUserInformation == null) {
+            log.info("캐시에서 사용자 정보를 찾을 수 없음, DB 조회 : {}", userId);
+            Member member = memberRepository.findByUserId(userId)
+                    .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
+
+            if(member.getStatus() != MemberStatus.APPROVED){
+                throw new CustomException(ResponseCode.NOT_FOUND_USER);
+            }
+
+            // DB에서 조회한 유저 정보를 DTO로 변환 후 캐시에 저장
+            cachedUserInformation = memberMapper.toLoginDTO(member);
+
+            // 로그인 해 놓고 1시간(TTL) 지났을 시
+            if(cachedUserInformation == null) {
+                throw new CustomException(ResponseCode.AlreadyLogout);
+            }
+            else {
+                redisUtil.saveUser(userId,cachedUserInformation);
+            }
+        } else {
+            log.info("캐시 히트 : {}", userId);
+        }
+        return cachedUserInformation;
     }
 
     private String generateAccessToken(Authentication authentication) {

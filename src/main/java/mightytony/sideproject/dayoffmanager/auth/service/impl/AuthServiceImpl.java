@@ -87,6 +87,9 @@ public class AuthServiceImpl implements AuthService {
         //회원 정보를 DTO로 변환
         MemberLoginResponseDto loginResponseDto = memberMapper.toLoginDTO(member);
 
+        // 유저 정보를 Redis에 캐시로 저장
+        redisUtil.saveUser(authentication.getName(), loginResponseDto);
+
         //토큰, 회원 정보 함께 반환
         Map<String, Object> response = new HashMap<>();
         response.put("token", jwtToken);
@@ -135,6 +138,13 @@ public class AuthServiceImpl implements AuthService {
         memberRepository.save(member);
 
         log.info("LOG:: JOIN : {}({}) 님이 회원 가입 하였습니다.", member.getUserId(), member.getName());
+    }
+    private int calculateMonthsWorked(MemberCreateRequestDto req) {
+        //if(req.getHireDate().equals(LocalDate.now())){
+        int startDate = LocalDate.now().getMonthValue();
+        int check = 12;
+
+        return (check - startDate - 1);
     }
 
     @Override
@@ -261,12 +271,6 @@ public class AuthServiceImpl implements AuthService {
         return bearerToken;
     }
 
-    private int calculateMonthsWorked(MemberCreateRequestDto req) {
-        //if(req.getHireDate().equals(LocalDate.now())){
-            int startDate = LocalDate.now().getMonthValue();
-            int check = 12;
 
-            return (check - startDate - 1);
-    }
 
 }
