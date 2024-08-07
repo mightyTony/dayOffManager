@@ -3,23 +3,22 @@ package mightytony.sideproject.dayoffmanager.user.admin.service.impl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
-import mightytony.sideproject.dayoffmanager.company.service.impl.CompanyServiceImpl;
-import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
-import mightytony.sideproject.dayoffmanager.user.admin.repository.AdminRepository;
-import mightytony.sideproject.dayoffmanager.user.admin.service.AdminService;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
+import mightytony.sideproject.dayoffmanager.company.service.impl.CompanyServiceImpl;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
-import org.springframework.cache.annotation.Cacheable;
+import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
+import mightytony.sideproject.dayoffmanager.user.admin.repository.AdminRepository;
+import mightytony.sideproject.dayoffmanager.user.admin.service.AdminService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +38,8 @@ public class AdminServiceImpl implements AdminService {
     private final MemberMapper memberMapper;
     private final CompanyRepository companyRepository;
     private final AdminRepository adminRepository;
-    private final CompanyServiceImpl companyService;
+    //private final CompanyServiceImpl companyService;
+
     /**
      * 멤버 정보 조회 ( 유저 아이디 )
      */

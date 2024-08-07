@@ -16,12 +16,10 @@ import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUp
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanySearchResponseDto;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 

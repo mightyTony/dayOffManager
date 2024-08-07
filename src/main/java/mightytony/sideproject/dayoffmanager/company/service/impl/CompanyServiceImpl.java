@@ -1,8 +1,6 @@
 package mightytony.sideproject.dayoffmanager.company.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +16,10 @@ import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -75,21 +75,21 @@ public class CompanyServiceImpl implements CompanyService {
 
     /**
      * @apiNote : 모든 업체 조회
-     * @return
+     * //@return
      */
     @Transactional(readOnly = true)
     @Override
     public List<Company> findAll() {
         List<Company> allCompany = companyRepository.findAll();
-        log.info("allCompany.toString() = {}", allCompany.stream().collect(Collectors.toList()).toString());
+        log.info("allCompany.toString() = {}", allCompany.stream().toList().toString());
 
         return allCompany;
     }
 
     /**
      * @apiNote : 해당 아이디 업체 조회
-     * @param id
-     * @return
+     * //@param id
+     * //@return
      */
     @Transactional(readOnly = true)
     @Override
@@ -102,8 +102,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     /**
      * 업체 상호명 수정
-     * @param req
-     */
+     * //@param req
+     * */
     @Transactional(readOnly = false)
     @Override
     public void updateCompany(CompanyUpdateRequestDto req) {
@@ -140,8 +140,7 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyResponseDto findByBrandName(String brandName) {
 
         Company foundCompany = companyRepository.findByBrandName(brandName);
-        CompanyResponseDto dto = companyMapper.toDTO(foundCompany);
-        return dto;
+        return companyMapper.toDTO(foundCompany);
     }
 
     @Override
@@ -152,7 +151,7 @@ public class CompanyServiceImpl implements CompanyService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
         Map<String, Object> body = new HashMap<>();
-        body.put("businesses", Arrays.asList(req));
+        body.put("businesses", Collections.singletonList(req));
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body,headers);
 
