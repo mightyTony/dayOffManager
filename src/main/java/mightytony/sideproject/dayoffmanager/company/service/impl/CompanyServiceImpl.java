@@ -18,6 +18,7 @@ import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -176,4 +177,11 @@ public class CompanyServiceImpl implements CompanyService {
             throw new RuntimeException(e);
         }
     }
+
+//    @Cacheable(value = "companyCache", key = "#companyId")
+//    public Company getCompanyById(Long companyId) {
+//        log.info("DB에서 회사 정보 조회 : {}", companyId);
+//        return companyRepository.findById(companyId)
+//                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
+//    }
 }

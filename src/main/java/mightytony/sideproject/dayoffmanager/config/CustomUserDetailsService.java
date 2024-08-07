@@ -25,14 +25,27 @@ import java.util.List;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final AuthRepository memberRepository;
+    //private final ApplicationContext context;
 
     // 전달 받은 아이디를 DB에서 조회해서 있는지 체크 한다.
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        log.info("토큰 재발급 신청한 유저 DB에서 조회 : {} ", userId );
+        log.info("토큰 재발급 신청한 유저 DB 에서 조회 : {} ", userId );
+
         return memberRepository.findByUserId(userId)
                 .map(this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException("해당 하는 회원을 찾을 수 없습니다."));
     }
+
+
+//    @Cacheable(value = "userCache", key = "#userId")
+//    public UserDetails loadUserByUsernameWithCache(String userId) throws UsernameNotFoundException {
+//        log.info("토큰 재발급 신청한 유저 DB 에서 조회 : {} ", userId );
+//        return memberRepository.findByUserId(userId)
+//                .map(this::createUserDetails)
+//                .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
+//    }
+
+
 
     // 해당하는 User 의 데이터가 존재한다면 UserDetails 객체로 만들어서 return
     private UserDetails createUserDetails(Member member) {

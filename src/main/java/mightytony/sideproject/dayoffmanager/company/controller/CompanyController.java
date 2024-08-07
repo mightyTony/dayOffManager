@@ -55,7 +55,7 @@ public class CompanyController {
      *
      */
     @Operation(summary = "모든 등록 된 기업 조회")
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<BasicResponse<List<Company>>> getAllCompany() {
 
         List<Company> allCompany = companyService.findAll();

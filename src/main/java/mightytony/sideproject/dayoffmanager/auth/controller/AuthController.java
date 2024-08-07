@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberLoginRequestDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
@@ -115,5 +116,18 @@ public class AuthController {
     public ResponseEntity<BasicResponse<String>> refreshToken(HttpServletRequest req) {
         String newAccessToken = authService.refreshAccessToken(req);
         return ResponseUtil.ok(newAccessToken);
+    }
+
+    @Operation(summary = "유저 정보 수정", description = "유저 정보 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "SUCCESS")
+    })
+    @PatchMapping("/info/{userId}")
+    public ResponseEntity<BasicResponse<Void>> updateMemberInformation(HttpServletRequest req,
+                                                                       @PathVariable Long userId,
+                                                                       @RequestBody MemberUpdateRequestDto updateRequestDto) {
+
+
+        return ResponseUtil.ok();
     }
 }

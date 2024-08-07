@@ -280,13 +280,21 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    private MemberLoginResponseDto getCachedUserInformation(String userId) {
+    //@Cacheable(value = "userInformation", key = "#userId")
+    public MemberLoginResponseDto getCachedUserInformation(String userId) {
+        log.info("## getCachedUserInformation");
+
         // 캐시에서 유저 조회
         MemberLoginResponseDto cachedUserInformation = redisUtil.getUserFromCache(userId);
 
-        log.info("캐시히트 유저정보 : {}", cachedUserInformation);
+        if(cachedUserInformation != null) {
+            log.info("캐시 히트: 유저 정보 = {}", cachedUserInformation);
+            return cachedUserInformation;
+        }
 
-        if(cachedUserInformation == null) {
+        //log.info("캐시히트 유저정보 : {}", cachedUserInformation);
+
+        else {
             log.info("캐시에서 사용자 정보를 찾을 수 없음, DB 조회 : {}", userId);
             Member member = memberRepository.findByUserId(userId)
                     .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
@@ -305,10 +313,9 @@ public class JwtTokenProvider {
             else {
                 redisUtil.saveUser(userId,cachedUserInformation);
             }
-        } else {
-            log.info("캐시 히트 : {}", userId);
+            return cachedUserInformation;
         }
-        return cachedUserInformation;
+
     }
 
     private String generateAccessToken(Authentication authentication) {

@@ -49,6 +49,9 @@ jwt:
 #    - /api/.*
 logging:
   level:
+    org.springframework:
+      cache: DEBUG
+      data.redis: DEBUG
     org.springframework.web.client:
       RestTemplate : warn
     root: info
