@@ -7,12 +7,13 @@ import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberUpdateResponseDto;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-08-06T01:55:40+0900",
+    date = "2024-08-12T18:17:41+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.9 (Amazon.com Inc.)"
 )
 @Component
@@ -94,6 +95,32 @@ public class MemberMapperImpl implements MemberMapper {
         memberLoginResponseDto.setStatus( member.getStatus() );
 
         return memberLoginResponseDto;
+    }
+
+    @Override
+    public MemberUpdateResponseDto toUpdateDTO(MemberLoginResponseDto loginResponseDto) {
+        if ( loginResponseDto == null ) {
+            return null;
+        }
+
+        MemberUpdateResponseDto memberUpdateResponseDto = new MemberUpdateResponseDto();
+
+        memberUpdateResponseDto.setUserId( loginResponseDto.getUserId() );
+        memberUpdateResponseDto.setCompanyId( loginResponseDto.getCompanyId() );
+        memberUpdateResponseDto.setCompanyName( loginResponseDto.getCompanyName() );
+        memberUpdateResponseDto.setName( loginResponseDto.getName() );
+        memberUpdateResponseDto.setEmail( loginResponseDto.getEmail() );
+        memberUpdateResponseDto.setPhoneNumber( loginResponseDto.getPhoneNumber() );
+        memberUpdateResponseDto.setProfileImage( loginResponseDto.getProfileImage() );
+        List<MemberRole> list = loginResponseDto.getRoles();
+        if ( list != null ) {
+            memberUpdateResponseDto.setRoles( new ArrayList<MemberRole>( list ) );
+        }
+        memberUpdateResponseDto.setEmployeeNumber( loginResponseDto.getEmployeeNumber() );
+        memberUpdateResponseDto.setDayOffCount( loginResponseDto.getDayOffCount() );
+        memberUpdateResponseDto.setStatus( loginResponseDto.getStatus() );
+
+        return memberUpdateResponseDto;
     }
 
     private Long memberCompanyId(Member member) {

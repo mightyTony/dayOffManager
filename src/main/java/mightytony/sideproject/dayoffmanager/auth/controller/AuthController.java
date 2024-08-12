@@ -14,6 +14,7 @@ import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreate
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberLoginRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberUpdateResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
@@ -120,11 +121,11 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "SUCCESS")
     })
     @PatchMapping("/info/{userId}")
-    public ResponseEntity<BasicResponse<Void>> updateMemberInformation(HttpServletRequest req,
-                                                                       @PathVariable Long userId,
-                                                                       @RequestBody MemberUpdateRequestDto updateRequestDto) {
+    public ResponseEntity<BasicResponse<MemberUpdateResponseDto>> updateMemberInformation(HttpServletRequest req,
+                                                                                          @PathVariable String userId,
+                                                                                          @RequestBody MemberUpdateRequestDto updateRequestDto) {
+        MemberUpdateResponseDto dto = authService.updateUserInfo(req, userId, updateRequestDto);
 
-
-        return ResponseUtil.ok();
+        return ResponseUtil.ok(dto);
     }
 }

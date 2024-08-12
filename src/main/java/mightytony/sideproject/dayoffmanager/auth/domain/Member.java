@@ -3,16 +3,13 @@ package mightytony.sideproject.dayoffmanager.auth.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOff;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,5 +117,13 @@ public class Member extends BaseTimeEntity {
     public void welcome(String employeeNumber) {
         this.status = MemberStatus.APPROVED;
         this.employeeNumber = employeeNumber;
+    }
+
+    public void updateInformation(MemberUpdateRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.password = requestDto.getPassword();
+        this.email = requestDto.getEmail();
+        this.phoneNumber = requestDto.getPhoneNumber();
+        this.profileImage = requestDto.getProfileImage();
     }
 }

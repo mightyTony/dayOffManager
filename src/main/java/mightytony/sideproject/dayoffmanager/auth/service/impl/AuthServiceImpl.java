@@ -10,7 +10,9 @@ import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberUpdateResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
@@ -237,12 +239,37 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String refreshAccessToken(HttpServletRequest req) {
-        // 1. 요청에서 쿠키 안의 리프레시 토큰 추출
+        // 1. 요청 에서 쿠키 안의 리프레시 토큰 추출
         String refreshToken = getRefreshTokenFromCookie(req);
         // 2. 리프레시 토큰 검증 후 새 액세스 토큰 반환
         JwtToken newJwtToken = jwtTokenProvider.refreshAccessToken(refreshToken);
 
         return newJwtToken.getAccessToken();
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public MemberUpdateResponseDto updateUserInfo(HttpServletRequest req, String userId, MemberUpdateRequestDto updateRequestDto) {
+        // 1. 멤버 체크
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_USER));
+        if(member == null) {
+            throw new CustomException(ResponseCode.NOT_FOUND_USER);
+        }
+
+        // 2. 기존 유저 정보 캐시 삭제
+        redisUtil.deleteUserFromCache(userId);
+
+        // 3. 멤버 정보 업데이트
+        member.updateInformation(updateRequestDto);
+        memberRepository.save(member);
+
+        // 4. 새 유저 정보 캐시 저장
+        MemberLoginResponseDto loginResponseDto = memberMapper.toLoginDTO(member);
+        redisUtil.saveUser(userId, loginResponseDto);
+
+        // 5. 반환
+        return memberMapper.toUpdateDTO(loginResponseDto);
     }
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
