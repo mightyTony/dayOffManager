@@ -10,6 +10,7 @@ import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOff;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE id = ?")
+//@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE Member SET deleted = true WHERE member_id= ?")
 @Where(clause = "deleted = false")
 @Builder
 public class Member extends BaseTimeEntity {
