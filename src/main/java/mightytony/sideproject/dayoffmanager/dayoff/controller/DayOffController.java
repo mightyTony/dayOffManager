@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.request.DayOffApplyRequestDto;
+import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.response.DayOffApplyResponseDto;
 import mightytony.sideproject.dayoffmanager.dayoff.service.DayOffService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +49,40 @@ public class DayOffController {
     }
 
     /**
-     * 휴가 신청 수정(대기 상태일때 만)
+     * 사원 - 휴가 신청 수정(대기 상태일때 만)
      */
 
-    /**
-     * 관리자의 휴가 신청 조회
-     */
+
 
     /**
      * 본인 휴가 현황 상세 조회 페이지 테이블(년도, 월 1~12, 월 별 사용 휴가 개수, 총 남은 휴가 개수)
+     */
+
+    /**
+     * 관리자 - 모든 휴가 신청 조회
+     */
+    @GetMapping("/{companyId}/list")
+    public ResponseEntity<BasicResponse<Page<DayOffApplyResponseDto>>> getAllDayOff(
+            @PathVariable("companyId") Long companyId,
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Page<DayOffApplyResponseDto> dayoffs = dayOffService.getAllDayOff(companyId, request, page, size);
+
+        return ResponseUtil.ok(dayoffs);
+    }
+
+    /**
+     * 관리자 - 휴가 신청 승인 / 반려
+     */
+
+    /**
+     * 팀장 - 자기 팀 모든 사원(팀원) 휴가 신청 조회
+     */
+
+    /**
+     * 팀장 - 사원(팀원) 휴가 신청 승인 / 반려
      */
 }

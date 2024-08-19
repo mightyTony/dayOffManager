@@ -29,7 +29,9 @@ public class QDayOff extends EntityPathBase<DayOff> {
 
     public final BooleanPath deleted = createBoolean("deleted");
 
-    public final NumberPath<Integer> duration = createNumber("duration", Integer.class);
+    public final NumberPath<Double> duration = createNumber("duration", Double.class);
+
+    public final DatePath<java.time.LocalDate> endDate = createDate("endDate", java.time.LocalDate.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -37,6 +39,8 @@ public class QDayOff extends EntityPathBase<DayOff> {
 
     //inherited
     public final DatePath<java.time.LocalDate> modifiedDate = _super.modifiedDate;
+
+    public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
 
     public final EnumPath<DayOffStatus> status = createEnum("status", DayOffStatus.class);
 

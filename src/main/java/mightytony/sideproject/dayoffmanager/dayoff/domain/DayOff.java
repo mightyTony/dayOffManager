@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
+import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,9 +34,9 @@ public class DayOff extends BaseTimeEntity {
     @Comment("휴가 유형")
     private DayOffType type;
 
-    // 반차면 4 = 0.5개 , 연차면 8 = 1.0개 휴가 감소, // 반반차 2 = 0.25
-    @Comment("휴가 시간(1~8)")
-    private Integer duration;
+    // 1, 0.5, 0.25
+    @Comment("휴가 시간(하루, 반차, 반반차)")
+    private double duration;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -43,6 +46,12 @@ public class DayOff extends BaseTimeEntity {
     @Column(name = "deleted")
     @Builder.Default
     private Boolean deleted = Boolean.FALSE;
+
+    @Comment("휴가 시작일")
+    private LocalDate startDate;
+
+    @Comment("휴가 종료일")
+    private LocalDate endDate;
 
     public void delete() {
         this.deleted = Boolean.TRUE;

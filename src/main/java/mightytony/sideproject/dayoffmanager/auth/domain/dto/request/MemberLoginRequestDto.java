@@ -10,7 +10,7 @@ import lombok.*;
 public class MemberLoginRequestDto {
 
     @JsonProperty("user_id")
-    @Schema(description = "유저 아이디", example = "master")
+    @Schema(description = "유저 아이디", example = "admin")
     private String userId;
     @Schema(description = "유저 비밀번호", example = "password123")
     private String password;

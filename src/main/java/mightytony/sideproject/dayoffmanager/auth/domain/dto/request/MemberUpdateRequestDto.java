@@ -10,10 +10,10 @@ import lombok.Data;
 @Data
 public class MemberUpdateRequestDto {
 
-    @Schema(description = "비밀번호", example = "password123")
-    @Size(min = 4, max = 30, message = "비밀번호는 4글자 이상 30글자 이하이어야 합니다.")
-    @NotNull
-    private String password;
+//    @Schema(description = "비밀번호", example = "password123")
+//    @Size(min = 4, max = 30, message = "비밀번호는 4글자 이상 30글자 이하이어야 합니다.")
+//    @NotNull
+//    private String password;
 
     @Schema(description = "이름", example = "테스트")
     @NotNull

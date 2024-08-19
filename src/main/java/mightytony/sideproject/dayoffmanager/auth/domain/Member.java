@@ -123,9 +123,12 @@ public class Member extends BaseTimeEntity {
 
     public void updateInformation(MemberUpdateRequestDto requestDto) {
         this.name = requestDto.getName();
-        this.password = requestDto.getPassword();
         this.email = requestDto.getEmail();
         this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImage = requestDto.getProfileImage();
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 }

@@ -48,7 +48,8 @@ public enum ResponseCode {
     PASSWORD_INVALID(400, "비밀번호 틀렸어요"),
 
     // DayOff (휴가)
-    NOT_ENOUGH_DAYOFF(400, "휴가가 없어요");
+    NOT_ENOUGH_DAYOFF(400, "휴가가 없어요"),
+    INVALID_DAYOFF_REQUEST(400, "휴가 신청 일 수와 기간이 맞지 않습니다.");
 
     private int statusCode;
     private String message;
