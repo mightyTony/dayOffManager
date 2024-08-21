@@ -38,22 +38,36 @@ public class DayOffController {
     /**
      * 휴가 신청 삭제(대기 상태일때 만)
      */
-    @DeleteMapping("/{companyId}/{userId}/dayoffs/{dayoffId}")
-    public ResponseEntity<BasicResponse<Void>> deleteApplyDayOff(
-            @PathVariable("companyId") Long companyId,
-            @PathVariable("userId") String userId,
-            @PathVariable("dayoffId") Long dayoffId
-    ) {
-
-        //dayOffService.deleteDayoff(HttpServletRequest request)
-        return ResponseUtil.ok();
-    }
+//    @DeleteMapping("/{companyId}/{userId}/dayoffs/{dayoffId}")
+//    public ResponseEntity<BasicResponse<Void>> deleteApplyDayOff(
+//            @PathVariable("companyId") Long companyId,
+//            @PathVariable("userId") String userId,
+//            @PathVariable("dayoffId") Long dayoffId
+//    ) {
+//
+//        //dayOffService.deleteDayoff(HttpServletRequest request)
+//        return ResponseUtil.ok();
+//    }
 
     /**
      * 사원 - 휴가 신청 수정(대기 상태일때 만)
      */
 
+    /**
+     * 본인 휴가 신청 목록 조회
+     */
+    @GetMapping("/{companyId}/{userId}")
+    public ResponseEntity<BasicResponse<Page<DayOffApplyResponseDto>>> getMyDayOffs(
+            @PathVariable("companyId") Long companyId,
+            @PathVariable("userId") String userId,
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
+        Page<DayOffApplyResponseDto> dayoffs = dayOffService.getMyDayOffs(companyId, userId, request, page, size);
+
+        return ResponseUtil.ok(dayoffs);
+    }
 
     /**
      * 본인 휴가 현황 상세 조회 페이지 테이블(년도, 월 1~12, 월 별 사용 휴가 개수, 총 남은 휴가 개수)

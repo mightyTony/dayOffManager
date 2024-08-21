@@ -152,4 +152,25 @@ public class DayOffServiceImpl implements DayOffService {
 
         return dayOffs.map(dayOffMapper::toDTO);
     }
+
+    @Override
+    public Page<DayOffApplyResponseDto> getMyDayOffs(Long companyId, String userId, HttpServletRequest request, int page, int size) {
+
+        Company myCompany = adminService.checkYourCompany(request);
+        Long myCompanyId = companyId;
+
+        if(!myCompany.getId().equals(companyId)){
+            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+        }
+
+        // Sort
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+
+        // Paging
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<DayOff> dayOffs = dayOffRepository.findByMember_Company_IdAndMemberUserId(companyId, userId, pageable);
+
+        return dayOffs.map(dayOffMapper::toDTO);
+    }
 }

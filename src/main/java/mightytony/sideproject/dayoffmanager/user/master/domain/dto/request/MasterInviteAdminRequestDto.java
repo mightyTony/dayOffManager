@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 /**
  * 관리자 등록 요청을 위한 DTO
  */
@@ -15,7 +17,7 @@ public class MasterInviteAdminRequestDto {
     @Schema(description = "유저 아이디", example = "admin")
     @Size(min = 4, message = "유저 아이디는 4글자 이상이어야 합니다.")
     @NotNull
-    @Pattern(regexp = "^[a-zA-z]+$", message = "유저 아이디는 영어로만 이루어져야 합니다.")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]+$", message = "유저 아이디는 영어와 숫자를 혼합하거나 영어로만 이루어져야 합니다.")
     private String userId;
 
     @Schema(description = "비밀번호", example = "password123")
@@ -40,4 +42,7 @@ public class MasterInviteAdminRequestDto {
     @JsonProperty("b_nm")
     @Schema(description = "상호 명", example = "주식회사 티윈")
     private String brandName;
+
+    @Schema(description = "입사 날짜", example = "2024-04-23")
+    private LocalDate hireDate;
 }

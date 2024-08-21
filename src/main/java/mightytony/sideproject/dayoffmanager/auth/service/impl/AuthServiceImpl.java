@@ -136,17 +136,17 @@ public class AuthServiceImpl implements AuthService {
                 .roles(Collections.singletonList(MemberRole.USER))
                 .company(company)
                 .hireDate(req.getHireDate())
-                .dayOffCount(calculateMonthsWorked(req))
+                .dayOffCount(calculateMonthsWorked())
                 .build();
 
         memberRepository.save(member);
 
         log.info("LOG:: JOIN : {}({}) 님이 회원 가입 하였습니다.", member.getUserId(), member.getName());
     }
-    private int calculateMonthsWorked(MemberCreateRequestDto req) {
+    public double calculateMonthsWorked() {
         //if(req.getHireDate().equals(LocalDate.now())){
-        int startDate = LocalDate.now().getMonthValue();
-        int check = 12;
+        double startDate = LocalDate.now().getMonthValue();
+        double check = 12;
 
         return (check - startDate - 1);
     }

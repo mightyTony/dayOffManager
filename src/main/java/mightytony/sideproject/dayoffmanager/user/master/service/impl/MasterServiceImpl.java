@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
+import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 
 
@@ -29,6 +32,7 @@ public class MasterServiceImpl implements MasterService {
     private final CompanyRepository companyRepository;
     private final AuthRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthServiceImpl authService;
 
     @Override
     @Transactional(readOnly = false)
@@ -54,6 +58,8 @@ public class MasterServiceImpl implements MasterService {
                 .roles(Collections.singletonList(MemberRole.ADMIN))
                 .company(targetCompany)
                 .status(MemberStatus.APPROVED)
+                .dayOffCount(authService.calculateMonthsWorked())
+                .hireDate(dto.getHireDate())
                 .build();
 
         //admin.updateToAdmin();
@@ -65,6 +71,7 @@ public class MasterServiceImpl implements MasterService {
         log.info("JOIN: {}({}) 님이 어드민 등록 하였습니다.", admin.getUserId(), admin.getName());
         return "등록 완료";
     }
+
 
 //    @Transactional(readOnly = false)
 //    @Override

@@ -10,4 +10,6 @@ public interface DayOffService {
     void requestDayOff(DayOffApplyRequestDto requestDto, HttpServletRequest request);
 
     Page<DayOffApplyResponseDto> getAllDayOff(Long companyId, HttpServletRequest request, int page, int size);
+
+    Page<DayOffApplyResponseDto> getMyDayOffs(Long companyId, String userId, HttpServletRequest request, int page, int size);
 }
