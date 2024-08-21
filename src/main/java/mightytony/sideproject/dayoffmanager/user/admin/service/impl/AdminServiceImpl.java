@@ -11,7 +11,9 @@ import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
+import mightytony.sideproject.dayoffmanager.company.repository.DepartmentRepository;
 import mightytony.sideproject.dayoffmanager.company.service.impl.CompanyServiceImpl;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
@@ -27,6 +29,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +42,7 @@ public class AdminServiceImpl implements AdminService {
     private final MemberMapper memberMapper;
     private final CompanyRepository companyRepository;
     private final AdminRepository adminRepository;
+    private final DepartmentRepository departmentRepository;
     //private final CompanyServiceImpl companyService;
 
     /**
@@ -128,8 +133,14 @@ public class AdminServiceImpl implements AdminService {
         if(isEmployeeNumberDuplicate(dto.getEmployeeNumber(), myCompany.getId())) {
             throw new CustomException(ResponseCode.DUPLICATED_NUMBER);
         }
-        // 3-2.
-        newMember.welcome(dto.getEmployeeNumber());
+        // 3-2. 팀 명 체크
+        Department department = departmentRepository.findDepartmentByCompany_IdAndName(myCompany.getId(), dto.getDepartmentName());
+
+        if(!departmentRepository.existsDepartmentByCompany_IdAndName(myCompany.getId(), department.getName())){
+            throw new CustomException(ResponseCode.NOT_FOUND_DEPARTMENT);
+        }
+
+        newMember.welcome(dto.getEmployeeNumber(), department);
     }
 
     /**
@@ -152,9 +163,54 @@ public class AdminServiceImpl implements AdminService {
         return members.map(memberMapper::toDTO);
     }
 
+    @Override
+    public void registerDepartment(String departmentName, HttpServletRequest request) {
+        // 1. 어드민 회사 조회
+        Company myCompany = checkYourCompany(request);
+
+        // 2. 어드민 회사에 요청과 중복 되는 부서 있는 지 체크
+        if(departmentRepository.existsDepartmentByCompany_IdAndName(myCompany.getId(), departmentName)){
+            throw new CustomException(ResponseCode.ALREADY_EXIST_DEPARTMENT);
+        }
+
+        // save
+        Department department = Department
+                .builder()
+                .company(myCompany)
+                .name(departmentName)
+                .build();
+
+        departmentRepository.save(department);
+    }
+    /**
+     *     @Override
+     *     @Transactional(readOnly = false)
+     *     public void registerEmployee(AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
+     *         // 1. 어드민 회사 조회
+     *         Company myCompany = checkYourCompany(request);
+     *
+     *         // 2. 어드민 회사에 해당 userId를 가졌고 심사대기중(PENDING)인 사람 조회
+     *         Member newMember = adminRepository.findMemberByUserIdAndCompanyId(dto.getUserId(), myCompany.getId());
+     *
+     *         // 3. 유저 승인 해주기
+     *
+     *         // 3-1. 사번 중복 체크
+     *         if(isEmployeeNumberDuplicate(dto.getEmployeeNumber(), myCompany.getId())) {
+     *             throw new CustomException(ResponseCode.DUPLICATED_NUMBER);
+     *         }
+     *         // 3-2. 팀 명 체크
+     *         Department department = departmentRepository.findDepartmentByCompany_IdAndName(myCompany.getId(), dto.getDepartmentName());
+     *
+     *         if(!departmentRepository.existsDepartmentByName(department.getName())){
+     *             throw new CustomException(ResponseCode.NOT_FOUND_DEPARTMENT);
+     *         }
+     *     }
+     */
+
     private boolean isEmployeeNumberDuplicate(String employeeNumber, Long companyId) {
         return adminRepository.existsByEmployeeNumberAndCompanyId(employeeNumber, companyId);
     }
+
 
     private String adminNameFromToken(HttpServletRequest request) {
         // 1. 해당 요청한 유저 조회

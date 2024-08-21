@@ -22,6 +22,8 @@ public enum ResponseCode {
     BUSINESSNUMBER_IS_ALREADY_EXIST(400,"이미 등록되어 있는 사업자등록번호 입니다."),
     NOT_FOUND_COMPANY(400, "등록된 업체가 아닙니다."),
     NOT_APPROVED(403,"해당 업체에 승인 되지 않은 유저 입니다."),
+    NOT_FOUND_DEPARTMENT(400, "존재하지 않는 부서 입니다."),
+    ALREADY_EXIST_DEPARTMENT(400, "이미 등록된 부서 입니다."),
 
     // Token
     NOT_EXIST_TOKEN(400,"존재 하지 않는 토큰"),

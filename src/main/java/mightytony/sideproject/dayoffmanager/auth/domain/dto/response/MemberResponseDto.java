@@ -14,6 +14,8 @@ public class MemberResponseDto {
     private String userId;
     private Long companyId;
     private String companyName;
+    private Long departmentId;
+    private String departmentName;
     private String name;
     private String email;
     private String phoneNumber;
@@ -23,30 +25,7 @@ public class MemberResponseDto {
     private LocalDate resignationDate;
     private double dayOffCount;
     private MemberStatus status;
+
 }
 
-
-/*    private String userId;
-    private String name;
-    private String email;
-    private String phoneNumber;
-    private String profileImage;
-    private String employeeNumber;
-    private boolean deleted;
-    private LocalDate deleteDate;
-    private List<MemberRole> roles;
-    private LocalDate resignationDate;
-    private MemberStatus status;
-    //private double dayOffCount;*/
-
-//    private Long id;
-//    private String name;
-//    private String email;
-//    private String phoneNumber;
-//    private String profileImage;
-//    private String employeeNumber;
-//    private double dayOffCount;
-//    private MemberStatus status;
-//    private MemberRole role;
-//    private Long companyId;
 

@@ -6,6 +6,7 @@ import lombok.*;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOff;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
@@ -35,6 +36,11 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DayOff> dayOffs = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    @Comment("부서")
+    private Department department;
 
     @Id @GeneratedValue
     @Column(name = "member_id")
@@ -116,9 +122,10 @@ public class Member extends BaseTimeEntity {
         this.dayOffCount = dayOffCount;
     }
 
-    public void welcome(String employeeNumber) {
+    public void welcome(String employeeNumber, Department department) {
         this.status = MemberStatus.APPROVED;
         this.employeeNumber = employeeNumber;
+        this.department = department;
     }
 
     public void updateInformation(MemberUpdateRequestDto requestDto) {

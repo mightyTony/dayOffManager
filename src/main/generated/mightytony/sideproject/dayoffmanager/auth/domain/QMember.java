@@ -37,6 +37,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final DatePath<java.time.LocalDate> deleteDate = createDate("deleteDate", java.time.LocalDate.class);
 
+    public final mightytony.sideproject.dayoffmanager.company.domain.QDepartment department;
+
     public final StringPath email = createString("email");
 
     public final StringPath employeeNumber = createString("employeeNumber");
@@ -85,6 +87,7 @@ public class QMember extends EntityPathBase<Member> {
     public QMember(Class<? extends Member> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.company = inits.isInitialized("company") ? new mightytony.sideproject.dayoffmanager.company.domain.QCompany(forProperty("company")) : null;
+        this.department = inits.isInitialized("department") ? new mightytony.sideproject.dayoffmanager.company.domain.QDepartment(forProperty("department"), inits.get("department")) : null;
     }
 
 }

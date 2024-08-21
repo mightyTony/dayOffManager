@@ -12,12 +12,16 @@ public interface MemberMapper {
 
     @Mapping(target = "companyId", source = "company.id")
     @Mapping(target = "companyName", source = "company.brandName")
+    @Mapping(target = "departmentId", source = "department.id")
+    @Mapping(target = "departmentName", source = "department.name")
     MemberResponseDto toDTO(Member member);
 
     Member toEntity(MemberResponseDto dto);
 
     @Mapping(target = "companyId", source = "company.id")
     @Mapping(target = "companyName", source = "company.brandName")
+    @Mapping(target = "departmentId", source = "department.id")
+    @Mapping(target = "departmentName", source = "department.name")
     MemberLoginResponseDto toLoginDTO(Member member);
 
 //    @Mapping(target = "companyId", source = "company.id")

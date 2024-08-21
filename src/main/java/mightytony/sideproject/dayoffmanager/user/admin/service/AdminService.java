@@ -1,10 +1,13 @@
 package mightytony.sideproject.dayoffmanager.user.admin.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface AdminService {
 
@@ -19,4 +22,6 @@ public interface AdminService {
     void registerEmployee(AdminInviteNewMemberRequestDto dto, HttpServletRequest request);
 
     Page<MemberResponseDto> getMembers(HttpServletRequest request, int page, int size);
+
+    void registerDepartment(String departmentName, HttpServletRequest request);
 }

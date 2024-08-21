@@ -148,7 +148,7 @@ public class DayOffServiceImpl implements DayOffService {
         // Paging
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<DayOff> dayOffs = dayOffRepository.findByMember_Company_IdAndStatus(companyId, DayOffStatus.PENDING, pageable);
+        Page<DayOff> dayOffs = dayOffRepository.findByMember_Company_IdAndStatus(companyId, DayOffStatus.TL_APPROVED, pageable);
 
         return dayOffs.map(dayOffMapper::toDTO);
     }

@@ -54,6 +54,7 @@ public class AuthController {
         JwtToken jwtToken = (JwtToken) loginResponse.get("token");
         MemberLoginResponseDto member_info = (MemberLoginResponseDto) loginResponse.get("member_info");
 
+        log.info("MemberInfo : {} ", member_info);
 
         response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())

@@ -7,4 +7,5 @@ public class AdminInviteNewMemberRequestDto {
 
     private String userId;
     private String employeeNumber;
+    private String departmentName;
 }

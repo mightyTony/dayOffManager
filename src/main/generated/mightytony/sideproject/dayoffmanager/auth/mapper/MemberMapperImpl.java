@@ -9,11 +9,12 @@ import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLogin
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberUpdateResponseDto;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-08-13T23:21:11+0900",
+    date = "2024-08-20T16:41:01+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.9 (Amazon.com Inc.)"
 )
 @Component
@@ -29,6 +30,8 @@ public class MemberMapperImpl implements MemberMapper {
 
         memberResponseDto.setCompanyId( memberCompanyId( member ) );
         memberResponseDto.setCompanyName( memberCompanyBrandName( member ) );
+        memberResponseDto.setDepartmentId( memberDepartmentId( member ) );
+        memberResponseDto.setDepartmentName( memberDepartmentName( member ) );
         memberResponseDto.setUserId( member.getUserId() );
         memberResponseDto.setName( member.getName() );
         memberResponseDto.setEmail( member.getEmail() );
@@ -81,6 +84,8 @@ public class MemberMapperImpl implements MemberMapper {
 
         memberLoginResponseDto.setCompanyId( memberCompanyId( member ) );
         memberLoginResponseDto.setCompanyName( memberCompanyBrandName( member ) );
+        memberLoginResponseDto.setDepartmentId( memberDepartmentId( member ) );
+        memberLoginResponseDto.setDepartmentName( memberDepartmentName( member ) );
         memberLoginResponseDto.setUserId( member.getUserId() );
         memberLoginResponseDto.setName( member.getName() );
         memberLoginResponseDto.setEmail( member.getEmail() );
@@ -151,5 +156,35 @@ public class MemberMapperImpl implements MemberMapper {
             return null;
         }
         return brandName;
+    }
+
+    private Long memberDepartmentId(Member member) {
+        if ( member == null ) {
+            return null;
+        }
+        Department department = member.getDepartment();
+        if ( department == null ) {
+            return null;
+        }
+        Long id = department.getId();
+        if ( id == null ) {
+            return null;
+        }
+        return id;
+    }
+
+    private String memberDepartmentName(Member member) {
+        if ( member == null ) {
+            return null;
+        }
+        Department department = member.getDepartment();
+        if ( department == null ) {
+            return null;
+        }
+        String name = department.getName();
+        if ( name == null ) {
+            return null;
+        }
+        return name;
     }
 }

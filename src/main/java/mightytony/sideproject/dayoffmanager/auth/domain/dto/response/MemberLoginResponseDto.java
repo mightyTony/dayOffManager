@@ -11,6 +11,8 @@ public class MemberLoginResponseDto {
     private String userId;
     private Long companyId;
     private String companyName;
+    private Long departmentId;
+    private String departmentName;
     private String name;
     private String email;
     private String phoneNumber;

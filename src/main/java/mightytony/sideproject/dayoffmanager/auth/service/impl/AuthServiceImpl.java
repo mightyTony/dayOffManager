@@ -92,6 +92,8 @@ public class AuthServiceImpl implements AuthService {
         // 유저 정보를 Redis에 캐시로 저장
         redisUtil.saveUser(authentication.getName(), loginResponseDto);
 
+        log.info("signIN : {}" , loginResponseDto);
+
         //토큰, 회원 정보 함께 반환
         Map<String, Object> response = new HashMap<>();
         response.put("token", jwtToken);

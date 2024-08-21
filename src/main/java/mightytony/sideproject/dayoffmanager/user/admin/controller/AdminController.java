@@ -77,10 +77,10 @@ public class AdminController {
 
 
     /**
-     * 해당 멤버 사원으로 등록 하기 (유저 아아디), 사번 부여
+     * 해당 멤버 사원 으로 등록 하기 (유저 아아디), 사번 부여
      */
     @Operation(summary = "멤버 회사 등록 승인")
-    @PutMapping("/register/{userId}")
+    @PutMapping("/register")
     public ResponseEntity<BasicResponse<Void>> registerEmployee(@RequestBody AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
         adminService.registerEmployee(dto, request);
 
@@ -94,6 +94,17 @@ public class AdminController {
     /**
      * 해당 정보 삭제 (soft 삭제)
      */
+
+    /**
+     * 부서 등록
+     */
+    @Operation(summary = "부서 등록")
+    @PostMapping("/register/department")
+    public ResponseEntity<BasicResponse<Void>> registerDepartment(@RequestParam String departmentName, HttpServletRequest request) {
+        adminService.registerDepartment(departmentName, request);
+
+        return ResponseUtil.ok();
+    }
 
     /**
      * 모든 휴가 신청 조회

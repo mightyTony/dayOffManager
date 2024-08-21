@@ -41,10 +41,11 @@ public class DayOffController {
     @DeleteMapping("/{companyId}/{userId}/dayoffs/{dayoffId}")
     public ResponseEntity<BasicResponse<Void>> deleteApplyDayOff(
             @PathVariable("companyId") Long companyId,
-            @PathVariable("username") String username,
+            @PathVariable("userId") String userId,
             @PathVariable("dayoffId") Long dayoffId
     ) {
 
+        //dayOffService.deleteDayoff(HttpServletRequest request)
         return ResponseUtil.ok();
     }
 
