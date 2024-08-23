@@ -75,10 +75,15 @@ public class DayOffServiceImpl implements DayOffService {
             throw new CustomException(ResponseCode.NOT_ENOUGH_DAYOFF);
         }
 
-        // 날짜 유효성 검증
+        // 4. 이미 휴가 신청 했는지 확인
+        if (dayOffRepository.existsByMemberAndStartDateLessThanEqualAndEndDateGreaterThanEqual(user, requestDto.getStartDate(), requestDto.getEndDate())){
+            throw new CustomException(ResponseCode.ALREADY_APPLY_DAYOFF);
+        }
+
+        // 5. 날짜 유효성 검증
         validateDayOffRequest(requestDto.getStartDate(), requestDto.getEndDate(), requestDto.getDuration(), requestDto.getDayOffType());
 
-        // 4. 휴가 신청
+        // 6. 휴가 신청
         DayOff dayOff = DayOff.builder()
                 .member(user)
                 .type(requestDto.getDayOffType())

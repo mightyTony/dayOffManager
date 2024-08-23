@@ -51,7 +51,8 @@ public enum ResponseCode {
 
     // DayOff (휴가)
     NOT_ENOUGH_DAYOFF(400, "휴가가 없어요"),
-    INVALID_DAYOFF_REQUEST(400, "휴가 신청 일 수와 기간이 맞지 않습니다.");
+    INVALID_DAYOFF_REQUEST(400, "휴가 신청 일 수와 기간이 맞지 않습니다."),
+    ALREADY_APPLY_DAYOFF(400, "이미 해당 기간에 신청 한 휴가가 존재 합니다.");
 
     private int statusCode;
     private String message;
