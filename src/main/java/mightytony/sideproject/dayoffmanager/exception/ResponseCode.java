@@ -20,9 +20,9 @@ public enum ResponseCode {
 
     //Company
     BUSINESSNUMBER_IS_ALREADY_EXIST(400,"이미 등록되어 있는 사업자등록번호 입니다."),
-    NOT_FOUND_COMPANY(400, "등록된 업체가 아닙니다."),
+    NOT_FOUND_COMPANY(404, "등록된 업체가 아닙니다."),
     NOT_APPROVED(403,"해당 업체에 승인 되지 않은 유저 입니다."),
-    NOT_FOUND_DEPARTMENT(400, "존재하지 않는 부서 입니다."),
+    NOT_FOUND_DEPARTMENT(404, "존재하지 않는 부서 입니다."),
     ALREADY_EXIST_DEPARTMENT(400, "이미 등록된 부서 입니다."),
 
     // Token
@@ -42,7 +42,7 @@ public enum ResponseCode {
 
 
     // Member (유저)
-    NOT_FOUND_USER(400, "해당 유저를 찾을 수 없습니다."),
+    NOT_FOUND_USER(404, "해당 유저를 찾을 수 없습니다."),
     DUPLICATED_NUMBER(400, "이미 등록된 사번 입니다."),
     User_Already_Existed(400, "해당 아이디는 이미 등록되어있습니다."),
     EMAIL_EXISTED(400,"이미 등록된 이메일 입니다."),
@@ -50,9 +50,11 @@ public enum ResponseCode {
     PASSWORD_INVALID(400, "비밀번호 틀렸어요"),
 
     // DayOff (휴가)
-    NOT_ENOUGH_DAYOFF(400, "휴가가 없어요"),
+    NOT_ENOUGH_DAYOFF(404, "남은 휴가가 없어요"),
     INVALID_DAYOFF_REQUEST(400, "휴가 신청 일 수와 기간이 맞지 않습니다."),
-    ALREADY_APPLY_DAYOFF(400, "이미 해당 기간에 신청 한 휴가가 존재 합니다.");
+    ALREADY_APPLY_DAYOFF(400, "이미 해당 기간에 신청 한 휴가가 존재 합니다."),
+    NOT_FOUND_DAYOFF(404, "해당 휴가는 존재 하지 않습니다."),
+    NO_PERMISSION(403,"변경 권한이 없습니다.");
 
     private int statusCode;
     private String message;

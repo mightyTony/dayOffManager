@@ -3,6 +3,9 @@ package mightytony.sideproject.dayoffmanager.dayoff.domain.dto.response;
 import lombok.Data;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOffStatus;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOffType;
+import org.hibernate.annotations.Comment;
+
+import java.time.LocalDate;
 
 @Data
 public class DayOffApplyResponseDto {
@@ -12,6 +15,8 @@ public class DayOffApplyResponseDto {
     private DayOffType type;
     private double duration;
     private DayOffStatus status;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
 
 /**

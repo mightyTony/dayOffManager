@@ -1,5 +1,8 @@
 package mightytony.sideproject.dayoffmanager.dayoff.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,10 @@ public class DayOffController {
     /**
      * 휴가 신청
      */
+    @Operation(summary = "휴가 등록")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "created")
+    })
     @PostMapping("/register")
     public ResponseEntity<BasicResponse<Void>> dayOffRegister(@RequestBody DayOffApplyRequestDto requestDto, HttpServletRequest request) {
 
@@ -38,16 +45,20 @@ public class DayOffController {
     /**
      * 휴가 신청 삭제(대기 상태일때 만)
      */
-//    @DeleteMapping("/{companyId}/{userId}/dayoffs/{dayoffId}")
-//    public ResponseEntity<BasicResponse<Void>> deleteApplyDayOff(
-//            @PathVariable("companyId") Long companyId,
-//            @PathVariable("userId") String userId,
-//            @PathVariable("dayoffId") Long dayoffId
-//    ) {
-//
-//        //dayOffService.deleteDayoff(HttpServletRequest request)
-//        return ResponseUtil.ok();
-//    }
+    @Operation(summary = "휴가 삭제")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @DeleteMapping("/{companyId}/{userId}/dayoffs/{dayoffId}")
+    public ResponseEntity<BasicResponse<Void>> deleteApplyDayOff(
+            @PathVariable("companyId") Long companyId,
+            @PathVariable("userId") String userId,
+            @PathVariable("dayoffId") Long dayoffId
+    ) {
+
+
+        return ResponseUtil.ok();
+    }
 
     /**
      * 사원 - 휴가 신청 수정(대기 상태일때 만)

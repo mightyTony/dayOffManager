@@ -12,5 +12,8 @@ public interface DayOffMapper {
     @Mapping(source = "member.userId", target = "userId")
     @Mapping(source = "member.company.id", target = "companyId")
     @Mapping(source = "member.company.brandName", target = "companyName")
+    //
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "endDate", target = "endDate")
     DayOffApplyResponseDto toDTO(DayOff dayOff);
 }

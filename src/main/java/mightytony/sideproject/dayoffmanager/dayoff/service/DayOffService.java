@@ -12,4 +12,6 @@ public interface DayOffService {
     Page<DayOffApplyResponseDto> getAllDayOff(Long companyId, HttpServletRequest request, int page, int size);
 
     Page<DayOffApplyResponseDto> getMyDayOffs(Long companyId, String userId, HttpServletRequest request, int page, int size);
+
+    void deleteDayOff(Long companyId, String userId, Long dayoffId);
 }

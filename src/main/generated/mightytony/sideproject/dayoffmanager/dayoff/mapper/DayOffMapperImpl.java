@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-08-20T16:23:03+0900",
+    date = "2024-08-23T19:05:40+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.9 (Amazon.com Inc.)"
 )
 @Component
@@ -26,6 +26,8 @@ public class DayOffMapperImpl implements DayOffMapper {
         dayOffApplyResponseDto.setUserId( dayOffMemberUserId( dayOff ) );
         dayOffApplyResponseDto.setCompanyId( dayOffMemberCompanyId( dayOff ) );
         dayOffApplyResponseDto.setCompanyName( dayOffMemberCompanyBrandName( dayOff ) );
+        dayOffApplyResponseDto.setStartDate( dayOff.getStartDate() );
+        dayOffApplyResponseDto.setEndDate( dayOff.getEndDate() );
         dayOffApplyResponseDto.setType( dayOff.getType() );
         dayOffApplyResponseDto.setDuration( dayOff.getDuration() );
         dayOffApplyResponseDto.setStatus( dayOff.getStatus() );

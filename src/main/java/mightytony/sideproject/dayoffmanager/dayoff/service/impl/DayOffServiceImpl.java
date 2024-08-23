@@ -2,6 +2,7 @@ package mightytony.sideproject.dayoffmanager.dayoff.service.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
@@ -37,6 +38,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DayOffServiceImpl implements DayOffService {
 
     private final AuthRepository memberRepository;
@@ -138,6 +140,7 @@ public class DayOffServiceImpl implements DayOffService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<DayOffApplyResponseDto> getAllDayOff(Long companyId, HttpServletRequest request, int page, int size) {
 
         Company myCompany = adminService.checkYourCompany(request);
@@ -149,6 +152,7 @@ public class DayOffServiceImpl implements DayOffService {
 
         // Sort
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        //Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
 
         // Paging
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -159,6 +163,7 @@ public class DayOffServiceImpl implements DayOffService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<DayOffApplyResponseDto> getMyDayOffs(Long companyId, String userId, HttpServletRequest request, int page, int size) {
 
         Company myCompany = adminService.checkYourCompany(request);
@@ -169,7 +174,8 @@ public class DayOffServiceImpl implements DayOffService {
         }
 
         // Sort
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        //Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
 
         // Paging
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -177,5 +183,21 @@ public class DayOffServiceImpl implements DayOffService {
         Page<DayOff> dayOffs = dayOffRepository.findByMember_Company_IdAndMemberUserId(companyId, userId, pageable);
 
         return dayOffs.map(dayOffMapper::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void deleteDayOff(Long companyId, String userId, Long dayoffId) {
+        // 1. 휴가 유무 체크
+        DayOff dayOff = dayOffRepository.findById(dayoffId)
+                .orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_DAYOFF));
+
+        // 2. 본인 체크
+        if(!dayOff.getMember().getUserId().equals(userId)) {
+            throw new CustomException(ResponseCode.NO_PERMISSION);
+        }
+
+        // 3. soft delete
+        dayOff.delete();
     }
 }
