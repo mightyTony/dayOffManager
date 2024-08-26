@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.request.DayOffApplyRequestDto;
+import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.request.DayOffUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.response.DayOffApplyResponseDto;
 import mightytony.sideproject.dayoffmanager.dayoff.service.DayOffService;
 import org.springframework.data.domain.Page;
@@ -63,6 +64,32 @@ public class DayOffController {
 
     /**
      * 사원 - 휴가 신청 수정(대기 상태일때 만)
+     */
+    @Operation(summary = "휴가 신청 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @PatchMapping("/{companyId}/{userId}/dayoffs/{dayoffId}")
+    public ResponseEntity<BasicResponse<Void>> updateDayOffInformation(
+                HttpServletRequest request,
+                Long companyId,
+                String userId,
+                Long dayoffId,
+                DayOffUpdateRequestDto dto) {
+
+        dayOffService.updateDayOffInfo(request, companyId, userId, dayoffId, dto);
+
+        return ResponseUtil.ok();
+    }
+
+
+    /*
+    updateMemberInformation(HttpServletRequest req,
+                                                                                          @PathVariable String userId,
+                                                                                          @RequestBody MemberUpdateRequestDto updateRequestDto) {
+        MemberUpdateResponseDto dto = authService.updateUserInfo(req, userId, updateRequestDto);
+
+        return ResponseUtil.ok(dto);
      */
 
     /**

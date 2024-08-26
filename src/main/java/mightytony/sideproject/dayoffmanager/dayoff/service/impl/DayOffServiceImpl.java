@@ -17,6 +17,7 @@ import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOff;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOffStatus;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOffType;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.request.DayOffApplyRequestDto;
+import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.request.DayOffUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.response.DayOffApplyResponseDto;
 import mightytony.sideproject.dayoffmanager.dayoff.mapper.DayOffMapper;
 import mightytony.sideproject.dayoffmanager.dayoff.repository.DayOffRepository;
@@ -180,7 +181,8 @@ public class DayOffServiceImpl implements DayOffService {
         // Paging
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<DayOff> dayOffs = dayOffRepository.findByMember_Company_IdAndMemberUserId(companyId, userId, pageable);
+        Page<DayOff> dayOffs = dayOffRepository.findMyAllDayOffHistory(companyId, userId, pageable);
+        //dayOffRepository.findByMember_Company_IdAndMemberUserId(companyId, userId, pageable);
 
         return dayOffs.map(dayOffMapper::toDTO);
     }
@@ -200,4 +202,38 @@ public class DayOffServiceImpl implements DayOffService {
         // 3. soft delete
         dayOff.delete();
     }
+
+    @Override
+    public void updateDayOffInfo(HttpServletRequest request, Long companyId, String userId, Long dayOffId, DayOffUpdateRequestDto dto) {
+        // 1. 멤버 체크
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_USER));
+
+        // 2. 휴가 체크
+        DayOff dayOff = dayOffRepository.findById(dayOffId)
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_DAYOFF));
+
+        // 3. 유저 휴가 개수 체크 (0.5개 이상이여야함)
+        if(member.getDayOffCount() < 0.5) {
+            throw new CustomException(ResponseCode.NOT_ENOUGH_DAYOFF);
+        }
+
+        // 4. 휴가 승인 안된것 만 가능
+        if(dayOff.getStatus() != DayOffStatus.PENDING) {
+            throw new CustomException(ResponseCode.DAYOFF_ALREADY_APPROVED);
+        }
+
+        // 4. 이미 해당 기간 휴가 신청 했는지 확인
+        if (dayOffRepository.existsByMemberAndStartDateLessThanEqualAndEndDateGreaterThanEqual(member, dto.getStartDate(), dto.getEndDate())){
+            throw new CustomException(ResponseCode.ALREADY_APPLY_DAYOFF);
+        }
+
+        // 5. 휴가 검증
+        validateDayOffRequest(dto.getStartDate(), dto.getEndDate(), dto.getDuration(), dto.getType());
+
+        // 6. 업데이트
+        dayOff.update(dto);
+        dayOffRepository.save(dayOff);
+    }
+
 }

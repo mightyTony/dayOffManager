@@ -54,7 +54,8 @@ public enum ResponseCode {
     INVALID_DAYOFF_REQUEST(400, "휴가 신청 일 수와 기간이 맞지 않습니다."),
     ALREADY_APPLY_DAYOFF(400, "이미 해당 기간에 신청 한 휴가가 존재 합니다."),
     NOT_FOUND_DAYOFF(404, "해당 휴가는 존재 하지 않습니다."),
-    NO_PERMISSION(403,"변경 권한이 없습니다.");
+    NO_PERMISSION(403,"변경 권한이 없습니다."),
+    DAYOFF_ALREADY_APPROVED(400, "승인 된 휴가는 수정이 불가합니다.");
 
     private int statusCode;
     private String message;

@@ -5,6 +5,7 @@ import lombok.*;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.dayoff.domain.dto.request.DayOffUpdateRequestDto;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -55,6 +56,13 @@ public class DayOff extends BaseTimeEntity {
 
     public void delete() {
         this.deleted = Boolean.TRUE;
+    }
+
+    public void update(DayOffUpdateRequestDto dto) {
+        this.type = dto.getType();
+        this.duration = dto.getDuration();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
     }
 
 }

@@ -89,6 +89,7 @@ public class AuthController {
         return ResponseUtil.ok();
     }
 
+    @Operation(summary = "로그아웃")
     @PostMapping("/logout")
     //@PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN','MASTER','TEAM_LEADER','USER')")
     public ResponseEntity<BasicResponse<Void>> logOut(HttpServletRequest request, HttpServletResponse response) {
@@ -98,6 +99,7 @@ public class AuthController {
         return ResponseUtil.ok();
     }
 
+    @Operation(summary = "마스터 계정 생성")
     @PostMapping("/master")
     public ResponseEntity<BasicResponse<Void>> masterRegister(@RequestBody @Valid MemberCreateMasterRequestDto req) {
         authService.registerMaster(req);
