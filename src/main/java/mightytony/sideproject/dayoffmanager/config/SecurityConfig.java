@@ -22,6 +22,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -102,8 +104,10 @@ public class SecurityConfig {
 
         // TODO : 프론트 개발 후, 프론트 사이트: 프론트 포트 설정
         //config.addAllowedOrigin("{hostURL:frontEndPort}");
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        // FIXME 배포 시 아래 삭제
+        //config.addAllowedOrigin("https://localhost:3000"); // vue project 3000 port
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000"); // vue project 3000 port
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         // TODO : 이건 글 써야한다..

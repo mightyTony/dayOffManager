@@ -56,6 +56,7 @@ public class DayOffController {
             @PathVariable("dayoffId") Long dayoffId
     ) {
 
+        dayOffService.deleteDayOff(companyId, userId, dayoffId);
 
         return ResponseUtil.ok();
     }
