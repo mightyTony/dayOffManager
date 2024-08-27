@@ -10,15 +10,18 @@ import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberRespo
 import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
+import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
 import mightytony.sideproject.dayoffmanager.company.repository.DepartmentRepository;
 import mightytony.sideproject.dayoffmanager.company.service.impl.CompanyServiceImpl;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
+import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
+import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminMemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.user.admin.repository.AdminRepository;
 import mightytony.sideproject.dayoffmanager.user.admin.service.AdminService;
 import org.springframework.data.domain.Page;
@@ -43,6 +46,7 @@ public class AdminServiceImpl implements AdminService {
     private final CompanyRepository companyRepository;
     private final AdminRepository adminRepository;
     private final DepartmentRepository departmentRepository;
+    private final RedisUtil redisUtil;
     //private final CompanyServiceImpl companyService;
 
     /**
@@ -182,30 +186,24 @@ public class AdminServiceImpl implements AdminService {
 
         departmentRepository.save(department);
     }
-    /**
-     *     @Override
-     *     @Transactional(readOnly = false)
-     *     public void registerEmployee(AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
-     *         // 1. 어드민 회사 조회
-     *         Company myCompany = checkYourCompany(request);
-     *
-     *         // 2. 어드민 회사에 해당 userId를 가졌고 심사대기중(PENDING)인 사람 조회
-     *         Member newMember = adminRepository.findMemberByUserIdAndCompanyId(dto.getUserId(), myCompany.getId());
-     *
-     *         // 3. 유저 승인 해주기
-     *
-     *         // 3-1. 사번 중복 체크
-     *         if(isEmployeeNumberDuplicate(dto.getEmployeeNumber(), myCompany.getId())) {
-     *             throw new CustomException(ResponseCode.DUPLICATED_NUMBER);
-     *         }
-     *         // 3-2. 팀 명 체크
-     *         Department department = departmentRepository.findDepartmentByCompany_IdAndName(myCompany.getId(), dto.getDepartmentName());
-     *
-     *         if(!departmentRepository.existsDepartmentByName(department.getName())){
-     *             throw new CustomException(ResponseCode.NOT_FOUND_DEPARTMENT);
-     *         }
-     *     }
-     */
+
+    @Override
+    @Transactional(readOnly = false)
+    public void updateMemberInfo(HttpServletRequest request, Long companyId, String userId, AdminMemberUpdateRequestDto requestDto) {
+
+        Member member = memberRepository.findByUserIdAndCompanyId(userId, companyId)
+                .orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_USER));
+
+        Department department = departmentRepository.findDepartmentByCompany_IdAndName(companyId, requestDto.getDepartmentName());
+        //requestDto.getDepartmentName()
+
+        member.updateFromAdmin(requestDto, department);
+        memberRepository.save(member);
+
+        redisUtil.deleteUserFromCache(userId);
+        MemberLoginResponseDto loginDTO = memberMapper.toLoginDTO(member);
+        redisUtil.saveUser(userId, loginDTO);
+    }
 
     private boolean isEmployeeNumberDuplicate(String employeeNumber, Long companyId) {
         return adminRepository.existsByEmployeeNumberAndCompanyId(employeeNumber, companyId);

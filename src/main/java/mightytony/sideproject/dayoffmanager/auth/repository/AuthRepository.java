@@ -25,6 +25,8 @@ public interface AuthRepository extends JpaRepository<Member, Long>, QueryAuthRe
     boolean existsMemberByEmail(String email);
     boolean existsMemberByPhoneNumber(String phoneNumber);
 
+    Optional<Member> findByUserIdAndCompanyId(String userId, Long companyId);
+
     Page<Member> findByCompanyIdAndStatus(Long companyId, MemberStatus status, Pageable pageable);
 
 }

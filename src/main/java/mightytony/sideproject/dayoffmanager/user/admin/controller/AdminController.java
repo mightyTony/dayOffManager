@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
+import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminMemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.user.admin.service.AdminService;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
@@ -90,6 +91,21 @@ public class AdminController {
     /**
      * 해당 멤버 정보 수정
      */
+    @Operation(summary = "해당 멤버 정보 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @PatchMapping("/{companyId}/{userId}")
+    public ResponseEntity<BasicResponse<Void>> adminUpdateMemberInfo(HttpServletRequest request,
+                                                                     @PathVariable Long companyId,
+                                                                     @PathVariable String userId,
+                                                                     @RequestBody AdminMemberUpdateRequestDto requestDto) {
+
+        adminService.updateMemberInfo(request, companyId, userId, requestDto);
+
+        return ResponseUtil.ok();
+    }
+
 
     /**
      * 해당 정보 삭제 (soft 삭제)
