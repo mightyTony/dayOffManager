@@ -89,7 +89,6 @@ public class RedisUtil {
 //        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
 //    }
 
-    //TODO
     // 유저 정보 캐시 저장
     public void saveUser(String userId, MemberLoginResponseDto userInformation) {
         redisTemplate.setKeySerializer(new Jackson2JsonRedisSerializer<>(String.class));

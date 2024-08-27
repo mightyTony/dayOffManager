@@ -108,7 +108,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        // TODO : 이건 글 써야한다..
+        // 헤더 허용
         config.addExposedHeader("Authorization");
 
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
