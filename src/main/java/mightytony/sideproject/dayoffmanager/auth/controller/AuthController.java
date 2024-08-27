@@ -19,7 +19,6 @@ import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
-import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

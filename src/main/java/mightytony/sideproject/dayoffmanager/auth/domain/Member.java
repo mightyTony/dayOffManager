@@ -109,19 +109,19 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private MemberStatus status = MemberStatus.PENDING;
 
-    // 사원 -> 어드민(회사 관리자) 업데이트
-    public void updateToAdmin() {
-        this.roles = Collections.singletonList(MemberRole.ADMIN);
-    }
-
-    // 사원 -> 팀장
-    public void updateToTeamLeader() {
-        this.roles = Collections.singletonList(MemberRole.TEAM_LEADER);
-    }
-
-    public void settingDayOff(double dayOffCount) {
-        this.dayOffCount = dayOffCount;
-    }
+//    // 사원 -> 어드민(회사 관리자) 업데이트
+//    public void updateToAdmin() {
+//        this.roles = Collections.singletonList(MemberRole.ADMIN);
+//    }
+//
+//    // 사원 -> 팀장
+//    public void updateToTeamLeader() {
+//        this.roles = Collections.singletonList(MemberRole.TEAM_LEADER);
+//    }
+//
+//    public void settingDayOff(double dayOffCount) {
+//        this.dayOffCount = dayOffCount;
+//    }
 
     public void welcome(String employeeNumber, Department department) {
         this.status = MemberStatus.APPROVED;

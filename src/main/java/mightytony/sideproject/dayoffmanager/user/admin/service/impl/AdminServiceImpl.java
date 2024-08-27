@@ -10,12 +10,10 @@ import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberRespo
 import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
-import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.company.repository.CompanyRepository;
 import mightytony.sideproject.dayoffmanager.company.repository.DepartmentRepository;
-import mightytony.sideproject.dayoffmanager.company.service.impl.CompanyServiceImpl;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
@@ -31,8 +29,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -168,6 +164,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void registerDepartment(String departmentName, HttpServletRequest request) {
         // 1. 어드민 회사 조회
         Company myCompany = checkYourCompany(request);

@@ -2,9 +2,7 @@ package mightytony.sideproject.dayoffmanager.auth.repository;
 
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
-import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.repository.query.QueryAuthRepository;
-import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

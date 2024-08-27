@@ -3,7 +3,6 @@ package mightytony.sideproject.dayoffmanager.auth.domain.dto.response;
 import lombok.Data;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
-import mightytony.sideproject.dayoffmanager.company.domain.Company;
 
 import java.time.LocalDate;
 import java.util.List;

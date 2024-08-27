@@ -6,13 +6,11 @@ import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationEntryPoi
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
-import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +30,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final RedisUtil redisUtil;
+    //private final RedisUtil redisUtil;
 
     // 비밀번호 암호화 방식이 여러 개 있지만 그 중에서 BCrypt 채택
     @Bean
