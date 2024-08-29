@@ -300,6 +300,11 @@ public class AuthServiceImpl implements AuthService {
         return bearerToken;
     }
 
+    public String isThatYou(HttpServletRequest request) {
+        String accessToken = getAccessTokenFromRequest(request);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+        return authentication.getName();
+    }
 
 
 }

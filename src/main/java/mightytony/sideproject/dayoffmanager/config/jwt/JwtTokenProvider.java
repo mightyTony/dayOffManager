@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
@@ -12,10 +13,8 @@ import mightytony.sideproject.dayoffmanager.config.CustomUserDetailsService;
 import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
-import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,6 +43,7 @@ public class JwtTokenProvider {
 
     @Autowired
     private AuthRepository memberRepository;
+    @Autowired
     private MemberMapper memberMapper;
 
     //yml 의 secret 값 가져와서 key 에 저장
@@ -168,16 +168,16 @@ public class JwtTokenProvider {
 
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            log.error("유효하지 않은 시그니쳐, 토큰 형식 : {}", e.getMessage());
+            log.warn("유효하지 않은 시그니쳐, 토큰 형식 : [{}] : {} ", token, e.getMessage());
             throw new CustomException(ResponseCode.TokenSecurityExceptionOrMalformdJwtException);
         } catch (ExpiredJwtException e) {
-            log.error("만료된 토큰 : {}", e.getMessage());
+            log.warn("만료된 토큰 : [{}] : {}", token, e.getMessage());
             throw new CustomException(ResponseCode.TokenExpiredJwtException);
         } catch (UnsupportedJwtException e) {
-            log.error("지원하지않는 토큰 : {}", e.getMessage());
+            log.warn("지원하지않는 토큰 : [{}] : {}", token, e.getMessage());
             throw new CustomException(ResponseCode.TokenUnsupportedJwtException);
         } catch (IllegalArgumentException e) {
-            log.error("토큰 형식이 맞지 않거나 리프레시 토큰 만료 : {}", e.getMessage());
+            log.warn("토큰 형식이 맞지 않거나 리프레시 토큰 만료 : [{}] : {}", token, e.getMessage());
             throw new CustomException(ResponseCode.TokenIllegalArgumentException);
         }
     }
@@ -291,9 +291,6 @@ public class JwtTokenProvider {
             log.info("캐시 히트: 유저 정보 = {}", cachedUserInformation);
             return cachedUserInformation;
         }
-
-        //log.info("캐시히트 유저정보 : {}", cachedUserInformation);
-
         else {
             log.info("캐시에서 사용자 정보를 찾을 수 없음, DB 조회 : {}", userId);
             Member member = memberRepository.findByUserId(userId)
@@ -304,8 +301,9 @@ public class JwtTokenProvider {
             }
 
             // DB에서 조회한 유저 정보를 DTO로 변환 후 캐시에 저장
-            cachedUserInformation = memberMapper.toLoginDTO(member);
 
+            cachedUserInformation = memberMapper.toLoginDTO(member);
+            log.info("cached Info : {}, {}", cachedUserInformation, memberMapper.toLoginDTO(member));
             // 로그인 해 놓고 1시간(TTL) 지났을 시
             if(cachedUserInformation == null) {
                 throw new CustomException(ResponseCode.AlreadyLogout);

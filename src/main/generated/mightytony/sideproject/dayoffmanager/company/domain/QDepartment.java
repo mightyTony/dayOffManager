@@ -28,8 +28,6 @@ public class QDepartment extends EntityPathBase<Department> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath leaderName = createString("leaderName");
-
     public final ListPath<mightytony.sideproject.dayoffmanager.auth.domain.Member, mightytony.sideproject.dayoffmanager.auth.domain.QMember> members = this.<mightytony.sideproject.dayoffmanager.auth.domain.Member, mightytony.sideproject.dayoffmanager.auth.domain.QMember>createList("members", mightytony.sideproject.dayoffmanager.auth.domain.Member.class, mightytony.sideproject.dayoffmanager.auth.domain.QMember.class, PathInits.DIRECT2);
 
     public final StringPath name = createString("name");

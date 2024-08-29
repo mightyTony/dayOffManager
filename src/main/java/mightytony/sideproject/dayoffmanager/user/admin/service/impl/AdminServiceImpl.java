@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
@@ -29,6 +30,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -84,7 +87,7 @@ public class AdminServiceImpl implements AdminService {
             throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
         }
 
-        // 3. 회사 정보 조회\
+        // 3. 회사 정보 조회
         Company company = companyRepository.findById(userInformation.getCompanyId())
                 .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
         //Company company = companyService.getCompanyById(userInformation.getCompanyId());
@@ -122,21 +125,28 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(readOnly = false)
     public void registerEmployee(AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
         // 1. 어드민 회사 조회
-        Company myCompany = checkYourCompany(request);
+        String adminId = authService.isThatYou(request);
+        MemberLoginResponseDto admin = jwtTokenProvider.getCachedUserInformation(adminId);
 
-        // 2. 어드민 회사에 해당 userId를 가졌고 심사대기중(PENDING)인 사람 조회
-        Member newMember = adminRepository.findMemberByUserIdAndCompanyId(dto.getUserId(), myCompany.getId());
-
+        if(!admin.getRoles().contains(MemberRole.ADMIN)){
+            throw new CustomException(ResponseCode.PERMISSION_DENIED);
+        }
+        //Company myCompany = checkYourCompany(request);
+        // 2. 어드민 회사에 해당 userId를 가진 사람 조회
+        Member newMember = adminRepository.findMemberByUserIdAndCompanyId(dto.getUserId(), admin.getCompanyId());
+        if(newMember == null) {
+            throw new CustomException(ResponseCode.NOT_FOUND_USER);
+        }
         // 3. 유저 승인 해주기
 
         // 3-1. 사번 중복 체크
-        if(isEmployeeNumberDuplicate(dto.getEmployeeNumber(), myCompany.getId())) {
+        if(isEmployeeNumberDuplicate(dto.getEmployeeNumber(), admin.getCompanyId())) {
             throw new CustomException(ResponseCode.DUPLICATED_NUMBER);
         }
         // 3-2. 팀 명 체크
-        Department department = departmentRepository.findDepartmentByCompany_IdAndName(myCompany.getId(), dto.getDepartmentName());
+        Department department = departmentRepository.findDepartmentByCompany_IdAndName(admin.getCompanyId(), dto.getDepartmentName());
 
-        if(!departmentRepository.existsDepartmentByCompany_IdAndName(myCompany.getId(), department.getName())){
+        if(!departmentRepository.existsDepartmentByCompany_IdAndName(admin.getCompanyId(), department.getName())){
             throw new CustomException(ResponseCode.NOT_FOUND_DEPARTMENT);
         }
 
@@ -187,19 +197,53 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional(readOnly = false)
     public void updateMemberInfo(HttpServletRequest request, Long companyId, String userId, AdminMemberUpdateRequestDto requestDto) {
-
+        // 1. 멤버 체크
         Member member = memberRepository.findByUserIdAndCompanyId(userId, companyId)
                 .orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_USER));
+
+        if(!isValidRole(requestDto.getRoles())){
+            throw new CustomException(ResponseCode.INVALID_ROLE);
+        }
 
         Department department = departmentRepository.findDepartmentByCompany_IdAndName(companyId, requestDto.getDepartmentName());
         //requestDto.getDepartmentName()
 
+        // 2. 기존 유커 정보 캐시 삭제
+        redisUtil.deleteUserFromCache(userId);
+
+        // 3. 업데이트
         member.updateFromAdmin(requestDto, department);
+
         memberRepository.save(member);
 
-        redisUtil.deleteUserFromCache(userId);
+        // 4. 유저 정보 캐시 새로 갱신
         MemberLoginResponseDto loginDTO = memberMapper.toLoginDTO(member);
         redisUtil.saveUser(userId, loginDTO);
+    }
+
+    public boolean isValidRole(List<MemberRole> roles) {
+        for(MemberRole role : roles) {
+            if(roles.contains(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void deleteUserFromAdmin(HttpServletRequest request, Long companyId, String userId) {
+        // 1.
+        Member user = memberRepository.findByUserIdAndCompanyId(userId, companyId)
+                .orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_USER));
+
+        // 2. 삭제
+        user.delete();
+        memberRepository.save(user);
+
+        // 3. Logging
+        log.info("유저 탈퇴 : 회사 = {}, 아이디 : {}", user.getCompany().getBrandName(), user.getUserId());
+
     }
 
     private boolean isEmployeeNumberDuplicate(String employeeNumber, Long companyId) {

@@ -2,24 +2,24 @@ package mightytony.sideproject.dayoffmanager.config.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
+import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthService authService;
     //private final RedisUtil redisUtil;
 
     /**
@@ -35,27 +35,64 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
      * 2. "Authorization" 헤더에서 "Bearer" 접두사로 시작하는 토큰을 추출하여 반환
      */
 
+//    @Override
+//    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+//        // 1. Request Header에서 JWT 토큰 추출
+//        String accessToken = resolveToken((HttpServletRequest) request);
+//        String refreshToken = getRefreshTokenFromCookie((HttpServletRequest) request);
+//
+//        // 2. 접근 토큰 유효성 검사
+//        // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
+//        if(accessToken != null) {
+//            // 2-1. 토큰 검증
+//
+//            if(jwtTokenProvider.validateToken(accessToken)){
+//                Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//            } else {
+//                throw new CustomException(ResponseCode.InvalidAccessToken);
+//            }
+//        }
+//        // TODO refreshToken 검증
+//        if(refreshToken != null){
+//            //throw new CustomException(ResponseCode.RefreshTokenValidException);
+//        }
+//
+//        // 4. 다음 필터로 이동
+//        filterChain.doFilter(request,response);
+//    }
+
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 1. Request Header에서 JWT 토큰 추출
         String accessToken = resolveToken((HttpServletRequest) request);
         String refreshToken = getRefreshTokenFromCookie((HttpServletRequest) request);
 
-        // 2. 접근 토큰 유효성 검사
-        // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
-        if(accessToken != null) {
-            // 2-1. 토큰 검증
-
-            if(jwtTokenProvider.validateToken(accessToken)){
+        try {
+            // 2. 접근 토큰 유효성 검사
+            // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext에 저장
+            if(accessToken != null && jwtTokenProvider.validateToken(accessToken)) {
+                // 2-1. 토큰 검증
                 Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
+            }
+            // TODO refreshToken 검증
+            else if(refreshToken != null && jwtTokenProvider.validateToken(refreshToken)){
+                //throw new CustomException(ResponseCode.RefreshTokenValidException);
+                System.out.println("새 토큰 필요 ");
+                String newAccessToken = authService.refreshAccessToken(request);
+                accessToken = newAccessToken;
+                Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                request.setAttribute("Authorization", "Bearer " + newAccessToken);
+                System.out.println("new Acc : " + newAccessToken);
+            }
+            else {
                 throw new CustomException(ResponseCode.InvalidAccessToken);
             }
-        }
-        // TODO refreshToken 검증
-        if(refreshToken != null){
-            //throw new CustomException(ResponseCode.RefreshTokenValidException);
+        } catch (CustomException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            return;
         }
 
         // 4. 다음 필터로 이동

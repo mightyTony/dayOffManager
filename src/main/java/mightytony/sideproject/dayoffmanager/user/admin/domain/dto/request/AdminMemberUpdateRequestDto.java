@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 
+import java.util.List;
+
 @Data
 public class AdminMemberUpdateRequestDto {
 
@@ -30,8 +32,8 @@ public class AdminMemberUpdateRequestDto {
     @Schema(description = "부서")
     private String departmentName;
 
-    @Schema(description = "유저 등급", example = "EMPLOYEE, TEAM_LEADER, ADMIN")
-    private MemberRole role;
+    @Schema(description = "유저 등급", example = "['ADMIN']")
+    private List<MemberRole> roles;
 
     @Schema(description = "휴가 갯수", example = "15.5")
     private Double dayOffCount;

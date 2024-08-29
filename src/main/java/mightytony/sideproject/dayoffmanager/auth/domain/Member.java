@@ -15,7 +15,7 @@ import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -80,7 +80,7 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "roles", nullable = false)
     @Builder.Default
-    private List<MemberRole> roles = new ArrayList<>(Collections.singletonList(MemberRole.EMPLOYEE));
+    private List<MemberRole> roles = new ArrayList<>(Arrays.asList(MemberRole.EMPLOYEE));
 
     @Column(name = "employee_number")
     private String employeeNumber;
@@ -142,11 +142,17 @@ public class Member extends BaseTimeEntity {
         this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImage = requestDto.getProfileImage();
         this.department = department;
-        this.roles = Collections.singletonList(requestDto.getRole());
+        this.roles = new ArrayList<>(requestDto.getRoles());
         this.dayOffCount = requestDto.getDayOffCount();
     }
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void delete() {
+        this.deleted = Boolean.TRUE;
+        this.deleteDate = LocalDate.now();
+        this.resignationDate = LocalDate.now();
     }
 }

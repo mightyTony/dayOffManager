@@ -56,6 +56,7 @@ public class MonthlyDayOffIncrement {
 //        return (int) startDate.until(nowDate).toTotalMonths() / 12;
 //    }
 
+    // 만 근속연수 계산
     private int calculateYearsWorked(Member member) {
         LocalDate startDate = member.getHireDate();
         LocalDate nowDate = LocalDate.now();
@@ -63,6 +64,7 @@ public class MonthlyDayOffIncrement {
         return (int) startDate.until(nowDate).toTotalMonths() / 12;
     }
 
+    // 근속일수 계산
     private int calculateMonthsWorked(Member member) {
         LocalDate startDate = member.getHireDate();
         LocalDate nowDate = LocalDate.now();
@@ -90,6 +92,7 @@ public class MonthlyDayOffIncrement {
     }
 
     // 참고 https://velog.io/@gruzzimo/JPA-Modifying%EC%9D%98-flushAutomatically-%EC%98%B5%EC%85%98%EC%9D%80-%EC%96%B8%EC%A0%9C-%EC%93%B0%EC%A7%80
+    // TODO 이거 나중엔 배치 써야할 듯..
     @Scheduled(cron = "0 0 3 1 1 *") // 매년 1월 1일 오전 3시 0분에 스케쥴링
     //@Scheduled(fixedRate = 30000) // 매 10초 마다 실행 테스트용
     @Transactional

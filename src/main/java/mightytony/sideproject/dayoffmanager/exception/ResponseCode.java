@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public enum ResponseCode {
-    /**
-     *  커스텀 응답 코드, 에러코드를 커스텀으로 만들어 에러의 원인을 쉽게 찾을 수 있다.
-     */
+    //커스텀 응답 코드, 에러코드를 커스텀으로 만들어 에러의 원인을 쉽게 찾을 수 있다.
 
     // 공통
     SUCCESS(200, "success"),
@@ -48,6 +46,8 @@ public enum ResponseCode {
     EMAIL_EXISTED(400,"이미 등록된 이메일 입니다."),
     PHONE_NUMBER_EXISTED(400,"이미 등록 된 전화번호 입니다."),
     PASSWORD_INVALID(400, "비밀번호 틀렸어요"),
+    INVALID_ROLE(400,"유효 하지 않는 직급 입니다."),
+    PERMISSION_DENIED(403,"권한 없음"),
 
     // DayOff (휴가)
     NOT_ENOUGH_DAYOFF(404, "남은 휴가가 없어요"),

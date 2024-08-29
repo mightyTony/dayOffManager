@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
@@ -82,6 +83,13 @@ public class DayOffServiceImpl implements DayOffService {
         // 5. 날짜 유효성 검증
         validateDayOffRequest(requestDto.getStartDate(), requestDto.getEndDate(), requestDto.getDuration(), requestDto.getDayOffType());
 
+        // 어드민 인 경우 대기 상태 제외
+        DayOffStatus initStatus = DayOffStatus.PENDING;
+
+        if(user.getRoles().contains(MemberRole.ADMIN)) {
+            initStatus = DayOffStatus.APPROVED;
+        }
+
         // 6. 휴가 신청
         DayOff dayOff = DayOff.builder()
                 .member(user)
@@ -89,7 +97,7 @@ public class DayOffServiceImpl implements DayOffService {
                 .duration(requestDto.getDuration())
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
-                .status(DayOffStatus.PENDING)
+                .status(initStatus)
                 .build();
 
         // TODO 신청이 허가 되면 user 휴가 카운트 - 해줘야함.
@@ -163,8 +171,15 @@ public class DayOffServiceImpl implements DayOffService {
     @Transactional(readOnly = true)
     public Page<DayOffApplyResponseDto> getMyDayOffs(Long companyId, String userId, HttpServletRequest request, int page, int size) {
 
+        // 권한 체크
         Company myCompany = adminService.checkYourCompany(request);
         Long myCompanyId = companyId;
+
+        String requesterId = authService.isThatYou(request);
+
+        if(!userId.equals(requesterId)){
+            throw new CustomException(ResponseCode.PERMISSION_DENIED);
+        }
 
         if(!myCompany.getId().equals(companyId)){
             throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);

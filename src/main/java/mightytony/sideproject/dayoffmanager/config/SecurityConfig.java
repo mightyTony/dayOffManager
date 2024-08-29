@@ -1,11 +1,11 @@
 package mightytony.sideproject.dayoffmanager.config;
 
 import lombok.RequiredArgsConstructor;
+import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAccessDeniedHandler;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationEntryPoint;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtAuthenticationFilter;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
-import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    //private final JwtTokenProvider jwtTokenProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     //private final RedisUtil redisUtil;
@@ -53,7 +53,9 @@ public class SecurityConfig {
 //    }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,JwtTokenProvider jwtTokenProvider, AuthService authService) throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider, authService);
+
         return http
                 .cors((cors) -> cors.configurationSource(corsConfiguration()))
                 // REST API 이므로 base auth, csrf 보안을 사용하지 않음.
@@ -91,7 +93,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 // 내가 커스텀 한 필터인 Jwt 인증 필터를 UsernamePasswordAuthenticationFilter 의 앞에서 실행 하게 하겠다.
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

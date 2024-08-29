@@ -15,21 +15,17 @@ import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/admin")
-// FIXME > 개발 끝나면 바꿔야함
-//@PreAuthorize("hasAuthority('ADMIN')") // ADMIN 권한이 있어야 해당 메서드 접근 가능
+@PreAuthorize("hasAuthority('ADMIN')") // ADMIN 권한이 있어야 해당 메서드 접근 가능
 @Tag(name = "어드민(업체)", description = "어드민 관련 api / 로그인 필요")
 public class AdminController {
 
     private final AdminService adminService;
-
-    /**
-     * 등록 요청한 유저 조회 하기
-     */
     @Operation(summary = "등록 신청 한 멤버 페이징 조회(Id)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
@@ -62,9 +58,6 @@ public class AdminController {
         return ResponseUtil.ok(members, HttpStatus.OK.value(), "성공");
     }
 
-    /**
-     * 멤버 정보 조회 ( 유저 아이디 )
-     */
     @Operation(summary = "멤버 조회(Id)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
@@ -76,11 +69,7 @@ public class AdminController {
         return ResponseUtil.ok(dto);
     }
 
-
-    /**
-     * 해당 멤버 사원 으로 등록 하기 (유저 아아디), 사번 부여
-     */
-    @Operation(summary = "멤버 회사 등록 승인")
+    @Operation(summary = "멤버 회사 등록 승인, 사번 부여, 부서 배치")
     @PutMapping("/register")
     public ResponseEntity<BasicResponse<Void>> registerEmployee(@RequestBody AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
         adminService.registerEmployee(dto, request);
@@ -88,9 +77,6 @@ public class AdminController {
         return ResponseUtil.ok();
     }
 
-    /**
-     * 해당 멤버 정보 수정
-     */
     @Operation(summary = "해당 멤버 정보 수정")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
@@ -106,14 +92,20 @@ public class AdminController {
         return ResponseUtil.ok();
     }
 
+    @Operation(summary = "해당 멤버 정보 삭제(soft)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @DeleteMapping("/{companyId}/{userId}")
+    public ResponseEntity<BasicResponse<Void>> deleteUserFromAdmin(HttpServletRequest request,
+                                                                   @PathVariable Long companyId,
+                                                                   @PathVariable String userId) {
 
-    /**
-     * 해당 정보 삭제 (soft 삭제)
-     */
+        adminService.deleteUserFromAdmin(request, companyId, userId);
 
-    /**
-     * 부서 등록
-     */
+        return ResponseUtil.ok();
+    }
+
     @Operation(summary = "부서 등록")
     @PostMapping("/register/department")
     public ResponseEntity<BasicResponse<Void>> registerDepartment(@RequestParam String departmentName, HttpServletRequest request) {
@@ -133,6 +125,7 @@ public class AdminController {
     /**
      * 휴가 신청 승인/반려
      */
+
 
     /**
      * 모든 휴가 히스토리 조회

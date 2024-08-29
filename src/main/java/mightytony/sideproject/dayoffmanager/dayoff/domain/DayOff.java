@@ -64,4 +64,8 @@ public class DayOff extends BaseTimeEntity {
         this.endDate = dto.getEndDate();
     }
 
+    public void ApproveOrReject(DayOffStatus status) {
+        this.status = status;
+    }
+
 }

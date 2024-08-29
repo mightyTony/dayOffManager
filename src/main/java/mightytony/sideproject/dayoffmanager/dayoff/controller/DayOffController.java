@@ -28,9 +28,6 @@ public class DayOffController {
 
     private final DayOffService dayOffService;
 
-    /**
-     * 휴가 신청
-     */
     @Operation(summary = "휴가 등록")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "created")
@@ -43,9 +40,6 @@ public class DayOffController {
         return ResponseUtil.ok();
     }
 
-    /**
-     * 휴가 신청 삭제(대기 상태일때 만)
-     */
     @Operation(summary = "휴가 삭제")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
@@ -62,10 +56,7 @@ public class DayOffController {
         return ResponseUtil.ok();
     }
 
-    /**
-     * 사원 - 휴가 신청 수정(대기 상태일때 만)
-     */
-    @Operation(summary = "휴가 신청 수정")
+    @Operation(summary = "휴가 신청 수정(대기 상태 일때 만)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
     })
@@ -82,19 +73,10 @@ public class DayOffController {
         return ResponseUtil.ok();
     }
 
-
-    /*
-    updateMemberInformation(HttpServletRequest req,
-                                                                                          @PathVariable String userId,
-                                                                                          @RequestBody MemberUpdateRequestDto updateRequestDto) {
-        MemberUpdateResponseDto dto = authService.updateUserInfo(req, userId, updateRequestDto);
-
-        return ResponseUtil.ok(dto);
-     */
-
-    /**
-     * 본인 휴가 신청 목록 조회
-     */
+    @Operation(summary = "본인 휴가 신청 히스토리 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
     @GetMapping("/{companyId}/{userId}")
     public ResponseEntity<BasicResponse<Page<DayOffApplyResponseDto>>> getMyDayOffs(
             @PathVariable("companyId") Long companyId,
@@ -112,9 +94,12 @@ public class DayOffController {
      * 본인 휴가 현황 상세 조회 페이지 테이블(년도, 월 1~12, 월 별 사용 휴가 개수, 총 남은 휴가 개수)
      */
 
-    /**
-     * 관리자 - 모든 휴가 신청 조회
-     */
+
+
+    @Operation(summary = "모든 휴가 신청 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
     @GetMapping("/{companyId}/list")
     public ResponseEntity<BasicResponse<Page<DayOffApplyResponseDto>>> getAllDayOff(
             @PathVariable("companyId") Long companyId,
@@ -132,11 +117,5 @@ public class DayOffController {
      * 관리자 - 휴가 신청 승인 / 반려
      */
 
-    /**
-     * 팀장 - 자기 팀 모든 사원(팀원) 휴가 신청 조회
-     */
 
-    /**
-     * 팀장 - 사원(팀원) 휴가 신청 승인 / 반려
-     */
 }

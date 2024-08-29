@@ -27,9 +27,9 @@ public class Department {
     @Column(name = "department_name", nullable = false, unique = true)
     private String name;
 
-    @Comment("부장 / 팀장 ")
-    @Column(name = "leader_name")
-    private String leaderName;
+//    @Comment("부장 / 팀장 ")
+//    @Column(name = "leader_name")
+//    private String leaderName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
