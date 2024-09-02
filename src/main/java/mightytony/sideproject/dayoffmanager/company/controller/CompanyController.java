@@ -4,18 +4,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
+import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanySearchRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanySearchResponseDto;
 import mightytony.sideproject.dayoffmanager.company.service.CompanyService;
+import mightytony.sideproject.dayoffmanager.company.service.DepartmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,7 @@ public class CompanyController {
 
     // 의존성 주입
     private final CompanyService companyService;
+    private final DepartmentService departmentService;
 
     /**
      * 기업 등록
@@ -105,5 +109,17 @@ public class CompanyController {
         CompanySearchResponseDto dto = companyService.searchCompany(req);
 
         return ResponseUtil.ok(dto);
+    }
+
+    /**
+     * 회사 내 모든 부서 출력
+     */
+    @Operation(summary = "회사 내 모든 부서 출력")
+    @GetMapping("/departments")
+    public ResponseEntity<BasicResponse<List<Department>>> getAllDepartments(HttpServletRequest request) {
+
+        List<Department> departments = departmentService.getDepartmentsByCompany(request);
+
+        return ResponseUtil.ok(departments);
     }
 }

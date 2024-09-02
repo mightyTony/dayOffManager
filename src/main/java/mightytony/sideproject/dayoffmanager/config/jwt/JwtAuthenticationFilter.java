@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
 import mightytony.sideproject.dayoffmanager.exception.CustomException;
 import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
@@ -17,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;
@@ -66,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 1. Request Header에서 JWT 토큰 추출
         String accessToken = resolveToken((HttpServletRequest) request);
+        log.info("접근 토큰 : {}", accessToken);
         String refreshToken = getRefreshTokenFromCookie((HttpServletRequest) request);
 
         try {
@@ -77,15 +80,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             // TODO refreshToken 검증
-            else if(refreshToken != null && jwtTokenProvider.validateToken(refreshToken)){
+            else if(accessToken == null && refreshToken != null && jwtTokenProvider.validateToken(refreshToken)){
                 //throw new CustomException(ResponseCode.RefreshTokenValidException);
-                System.out.println("새 토큰 필요 ");
+                log.info("새 토큰 필요");
                 String newAccessToken = authService.refreshAccessToken(request);
                 accessToken = newAccessToken;
                 Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 request.setAttribute("Authorization", "Bearer " + newAccessToken);
-                System.out.println("new Acc : " + newAccessToken);
+                log.info("new Acc : {}", newAccessToken);
             }
             else {
                 throw new CustomException(ResponseCode.InvalidAccessToken);
@@ -114,6 +117,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public String resolveToken(HttpServletRequest request) {
         // 1. 헤더 중 Authorization 헤더를 가져 옴
         String bearerToken = request.getHeader("Authorization");
+
+        //log.info("In request token : {}", bearerToken);
 
         // 2. Authorization 헤더 value 가 Bearer로 시작 한다면 그 뒤 값 반환.
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

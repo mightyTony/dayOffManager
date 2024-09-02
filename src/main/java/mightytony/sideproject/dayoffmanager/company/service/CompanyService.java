@@ -7,7 +7,6 @@ import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUp
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanyResponseDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.response.CompanySearchResponseDto;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 

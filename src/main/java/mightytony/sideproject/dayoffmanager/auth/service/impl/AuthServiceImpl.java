@@ -184,7 +184,7 @@ public class AuthServiceImpl implements AuthService {
             }
 
             // 로그
-            log.info("블랙리스트 refreshToken = {}", refreshToken);
+            //log.info("블랙리스트 refreshToken = {}", refreshToken);
             //log.info("========================username = {}", username);
             //
             redisUtil.setRefreshTokenAddToBlackList(refreshToken, "RT BL:" + username);
@@ -192,7 +192,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 6. AccessToken redis 블랙리스트 추가
         if (accessToken != null) {
-            log.info("블랙리스트 accessToken = {}", accessToken);
+            //log.info("블랙리스트 accessToken = {}", accessToken);
             redisUtil.setAccessTokenAddToBlackList(accessToken, "AT BL:" + username);
         }
 

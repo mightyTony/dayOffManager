@@ -67,7 +67,7 @@ public class RedisUtil {
 
         String value = (String) redisTemplate.opsForValue().get(token);
 
-        log.info("TOKEN: {}, value : {}", token, value);
+        //log.info("TOKEN: {}, value : {}", token, value);
         if (value == null) {
             return false; // 토큰에 해당하는 값이 없으면 블랙리스트에 없다고 판단
         }

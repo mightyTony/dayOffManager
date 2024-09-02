@@ -55,7 +55,7 @@ public class AuthController {
 
         log.info("MemberInfo : {} ", member_info);
 
-        response.addHeader("Authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
+        response.addHeader("authorization", jwtToken.getGrantType() + " " + jwtToken.getAccessToken());
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh",jwtToken.getRefreshToken())
                 .httpOnly(true)
                 .maxAge(REFRESH_TOKEN_EXPIRED_TIME)

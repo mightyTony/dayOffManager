@@ -282,14 +282,11 @@ public class JwtTokenProvider {
 
     //@Cacheable(value = "userInformation", key = "#userId")
     public MemberLoginResponseDto getCachedUserInformation(String userId) {
-        log.info("## getCachedUserInformation");
-
         // 캐시에서 유저 조회
         MemberLoginResponseDto cachedUserInformation = redisUtil.getUserFromCache(userId);
 
         if(cachedUserInformation != null) {
             log.info("캐시 히트: 유저 정보 = {}", cachedUserInformation);
-            return cachedUserInformation;
         }
         else {
             log.info("캐시에서 사용자 정보를 찾을 수 없음, DB 조회 : {}", userId);
@@ -301,18 +298,10 @@ public class JwtTokenProvider {
             }
 
             // DB에서 조회한 유저 정보를 DTO로 변환 후 캐시에 저장
-
             cachedUserInformation = memberMapper.toLoginDTO(member);
-            log.info("cached Info : {}, {}", cachedUserInformation, memberMapper.toLoginDTO(member));
-            // 로그인 해 놓고 1시간(TTL) 지났을 시
-            if(cachedUserInformation == null) {
-                throw new CustomException(ResponseCode.AlreadyLogout);
-            }
-            else {
-                redisUtil.saveUser(userId,cachedUserInformation);
-            }
-            return cachedUserInformation;
+            redisUtil.saveUser(userId,cachedUserInformation);
         }
+        return cachedUserInformation;
 
     }
 
