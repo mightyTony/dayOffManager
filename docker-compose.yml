@@ -1,16 +1,16 @@
 version: '3.8'
 services:
   app:
-    image: mightytony/dayoffmanager:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mightytony/dayoffmanager:${GITHUB_SHA}
     ports:
       - "8080:8080"
     depends_on:
       - redis
-#    environment:
-#      SPRING_REDIS_HOST: redis
-#      SPRING_REDIS_PORT: 6379
 
   redis:
-      image: redis:latest
-      ports:
-        - "6379:6379"
+    image: redis:latest
+    ports:
+      - "6379:6379"
