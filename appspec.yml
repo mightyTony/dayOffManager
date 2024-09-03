@@ -11,8 +11,28 @@ permissions:
     owner: ec2-user
     group: ec2-user
 
-#hooks:
-#  ApplicationStart:
-#    - location: deploy.sh
-#      timeout: 60
-#      runas: ec2-user
+hooks:
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      #timeout: 30
+      runas: ec2-user
+
+  ApplicationStop:
+    - location: scripts/stop_application.sh
+      #timeout: 30
+      runas: ec2-user
+
+  AfterInstall:
+    - location: scripts/after_install.sh
+      #timeout: 300
+      runas: ec2-user
+
+  ApplicationStart:
+    - location: scripts/start_application.sh
+      #timeout: 300
+      runas: ec2-user
+
+  ValidateService:
+    - location: scripts/validate_service.sh
+      #timeout: 300
+      runas: ec2-user

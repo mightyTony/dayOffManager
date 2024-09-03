@@ -1,21 +1,36 @@
-#FROM ubuntu:latest
-#LABEL authors="tony"
-#
-#ENTRYPOINT ["top", "-b"]
+# 1.
+FROM amazoncorretto:17 as builder
 
-#Dockerfile
+#2.
+WORKDIR /workspace/app
 
-# jdk 17 Image Start
-FROM openjdk:17
+#3.
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
 
-# 인자 설정 - JAR_File
-#ARG JAR_FILE=build/libs/*.jar
+#5.
+RUN chmod +x ./gradlew
 
-#jar 파일 복제
-#COPY ${JAR_FILE} app.jar
+#6.
+RUN ./gradlew build --no-daemon || return 0
 
-COPY dayOffManager-0.0.1-SNAPSHOT.jar app.jar
+#7.
+RUN ./gradlew build --no-daemon -x test
 
-# 실행 명령어
+#8
+FROM amazoncorretto:17
+
+#9
+WORKDIR /home/ec2-user/app
+
+#10
+COPY --from=builder /workspace/app/build/libs/*.jar ./app.jar
+
+# 11.
+EXPOSE 8080
+
+# 12.
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
