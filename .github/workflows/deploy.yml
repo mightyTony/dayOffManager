@@ -56,10 +56,15 @@ jobs:
         docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }}:${{ github.sha }} .
         docker push ${{ secrets.DOCKER_REPO }}:${{ github.sha }}
 
-    - name: Upload Docker Compose and config to S3
+    # - name: Upload Docker Compose and config to S3
+    #   run: |
+    #     aws s3 cp docker-compose.yml s3://${{ secrets.S3_BUCKET }}/docker-compose-${{ github.sha }}.yml 
+    #     aws s3 cp ./src/main/resources/application.yml s3://${{ secrets.S3_BUCKET }}/application-${{ github.ref }}.yml 
+    - name: Package and upload deployment to S3
       run: |
-        aws s3 cp docker-compose.yml s3://${{ secrets.S3_BUCKET }}/docker-compose-${{ github.sha }}.yml 
-        aws s3 cp ./src/main/resources/application.yml s3://${{ secrets.S3_BUCKET }}/application-${{ github.ref }}.yml 
+        zip -r deployment-package.zip docker-compose.yml ./src/main/resources/application.yml scripts/
+        aws s3 cp deployment-package.zip s3://${{ secrets.S3_BUCKET }}/deployment-package-${{ github.sha }}.zip
+
 
     - name: Deploy using AWS CodeDeploy
       run: |
