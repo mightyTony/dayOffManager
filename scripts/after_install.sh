@@ -1,3 +1,6 @@
 #!/bin/bash
-# Docker Compose 파일 복사
-cp -R /home/ec2-user/deployment-archive/docker-compose.yml /home/ec2-user/docker-compose.yml
+
+# docker compose 디렉토리로 이동
+cd /home/ec2-user/app
+# 도커 이미지 빌드
+docker-compose build
