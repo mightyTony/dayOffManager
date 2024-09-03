@@ -17,10 +17,10 @@ hooks:
       #timeout: 30
       runas: ec2-user
 
-  ApplicationStop:
-    - location: scripts/stop_application.sh
-      #timeout: 30
-      runas: ec2-user
+#  ApplicationStop:
+#    - location: scripts/stop_application.sh
+#      #timeout: 30
+#      runas: ec2-user
 
   AfterInstall:
     - location: scripts/after_install.sh
