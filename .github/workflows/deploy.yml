@@ -72,4 +72,4 @@ jobs:
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name ${{ secrets.DEPLOYMENT_GROUP_NAME }} \
           --description "Deploy ${GITHUB_SHA} to EC2" \
-          --s3-location bucket=${{ secrets.S3_BUCKET }},key=docker-compose-${{ github.sha }}.yml,bundleType=YAML
+          --s3-location bucket=${{ secrets.S3_BUCKET }},key=deployment-package-${{ github.sha }}.zip,bundleType=zip
