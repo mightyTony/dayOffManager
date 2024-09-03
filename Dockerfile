@@ -14,8 +14,8 @@ COPY src src
 #5.
 RUN chmod +x ./gradlew
 
-#6.
-RUN ./gradlew build --no-daemon || return 0
+##6.
+#RUN ./gradlew build --no-daemon || return 0
 
 #7.
 RUN ./gradlew build --no-daemon -x test
