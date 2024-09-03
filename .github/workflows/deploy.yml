@@ -26,6 +26,14 @@ jobs:
           ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        
+
     - name: Create application configuration
       run: |
         mkdir -p ./src/main/resources
@@ -50,8 +58,8 @@ jobs:
 
     - name: Upload Docker Compose and config to S3
       run: |
-        aws s3 cp docker-compose.yml s3://${{ secrets.S3_BUCKET }}/docker-compose-${{ github.sha }}.yml --debug
-        aws s3 cp ./src/main/resources/application.yml s3://${{ secrets.S3_BUCKET }}/application-${{ github.ref }}.yml --debug
+        aws s3 cp docker-compose.yml s3://${{ secrets.S3_BUCKET }}/docker-compose-${{ github.sha }}.yml 
+        aws s3 cp ./src/main/resources/application.yml s3://${{ secrets.S3_BUCKET }}/application-${{ github.ref }}.yml 
 
     - name: Deploy using AWS CodeDeploy
       run: |
