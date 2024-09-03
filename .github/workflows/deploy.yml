@@ -62,9 +62,10 @@ jobs:
     #     aws s3 cp ./src/main/resources/application.yml s3://${{ secrets.S3_BUCKET }}/application-${{ github.ref }}.yml 
     - name: Package and upload deployment to S3
       run: |
-        zip -r deployment-package.zip 
+        # 모든 필요 파일을 포함하여 ZIP 파일 생성
+        zip -r deployment-package.zip Dockerfile docker-compose.yml appspec.yml ./src/main/resources/application.yml build/libs/*.jar scripts/
+        # 생성된 ZIP 파일을 S3로 업로드
         aws s3 cp deployment-package.zip s3://${{ secrets.S3_BUCKET }}/deployment-package-${{ github.sha }}.zip
-    #docker-compose.yml ./src/main/resources/application.yml scripts/
 
     - name: Deploy using AWS CodeDeploy
       run: |
