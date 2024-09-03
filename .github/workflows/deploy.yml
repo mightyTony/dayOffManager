@@ -45,8 +45,8 @@ jobs:
 
     - name: Docker build and push
       run: |
-        docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }}/spring-app:${{ github.sha }} .
-        docker push ${{ secrets.DOCKER_REPO }}/spring-app:${{ github.sha }}
+        docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }}:${{ github.sha }} .
+        docker push ${{ secrets.DOCKER_REPO }}:${{ github.sha }}
 
     - name: Upload Docker Compose and config to S3
       run: |
