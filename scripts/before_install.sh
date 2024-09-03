@@ -10,7 +10,6 @@ sudo systemctl enable docker
 # 이전 배포 파일 삭제
 if [ -d "/home/ec2-user/app" ]; then
   sudo rm -rf /home/ec2-user/app/*
-  sudo mkdir /home/ec2-user/app
 fi
 
 # Docker Compose 설치
