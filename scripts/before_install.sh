@@ -17,6 +17,9 @@ fi
 docker-compose -f /home/ec2-user/app/docker-compose.yml down -v
 docker system prune -a -f
 
+# 스크립트 파일에 실행 권한 부여
+chmod +x /home/ec2-user/app/scripts/*.sh
+
 ## 실행 중인 모든 도커 컨테이너 정지 및 제거
 #docker-compose down
 #docker rm $(docker ps -a -q)
