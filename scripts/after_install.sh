@@ -1,6 +1,6 @@
 #!/bin/bash
+set -e
 
-# docker compose 디렉토리로 이동
+# Docker Compose를 사용해 이미지 빌드
 cd /home/ec2-user/app
-# 도커 이미지 빌드
 docker-compose build

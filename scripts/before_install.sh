@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 # 필요한 도구 설치
 sudo yum update -y
 sudo yum install -y docker
@@ -10,6 +12,10 @@ if [ ! -f /usr/local/bin/docker-compose ]; then
     sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
 fi
+
+# Docker 컨테이너 정지 및 네트워크, 볼륨 제거
+docker-compose -f /home/ec2-user/app/docker-compose.yml down -v
+docker system prune -a -f
 
 ## 실행 중인 모든 도커 컨테이너 정지 및 제거
 #docker-compose down
