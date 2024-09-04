@@ -44,7 +44,6 @@ public class SecurityConfig {
 //        return web -> web.ignoring()
 ////                .requestMatchers("/api/docs/**")
 //                .requestMatchers(
-//                "/favicon.ico",
 //                "/swagger-ui/**",
 //                "/swagger-resource/**",
 //                "/error",
@@ -64,7 +63,7 @@ public class SecurityConfig {
                 // JWT 를 사용하기 때문에 세션을 사용하지 않음
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/favicon.ico","/swagger-ui/**","/swagger-resource/**","/error","/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**","/swagger-resource/**","/error","/v3/api-docs/**").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 )
                 .authorizeHttpRequests((authorize) -> authorize
