@@ -63,20 +63,23 @@ jobs:
     steps:
       - if: ${{ needs.CI.result == 'failure' }}
         run: echo "CI job이 실패했습니다."
-      # master 배포
       - name: 운영 서버에 배포
         uses: appleboy/ssh-action@master
         id: deploy-prod
         if: contains(github.ref, 'master')
         with:
           host: ${{ secrets.HOST_PROD }}
-          username : ec2-user
+          username: ec2-user
           port: 22
           key: ${{ secrets.PRIVATE_KEY }}
-          envs: GITHUB_SHA
           script: |
-            sudo docker ps
-            sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_REPO }}
+            # 서버로 docker-compose.yml 파일 복사
+            echo "${{ secrets.DOCKER_COMPOSE_YML }}" > docker-compose.yml
+            # 기존 컨테이너 중지 및 제거
+            sudo docker-compose down
+            # 최신 이미지 다운로드 및 빌드
+            sudo docker-compose pull
+            # docker-compose를 사용하여 모든 서비스 실행
+            sudo docker-compose up -d
+            # 사용하지 않는 Docker 이미지 삭제
             sudo docker image prune -f

@@ -1,16 +1,28 @@
 version: '3.8'
+
 services:
-  app:
-    container_name: spring_was
-    restart: on-failure
-    image: mightytony/dayoffmanager:latest
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mightytony/dayoffmanager:latest  # Dockerfile을 빌드하여 사용할 이미지
+    container_name: spring_app
     ports:
       - "8080:8080"
+    environment:
+      SPRING_REDIS_HOST: redis  # Redis 서비스 이름
+      SPRING_REDIS_PORT: 6379   # Redis 포트
     depends_on:
       - redis
 
   redis:
     image: redis:latest
+    container_name: redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
 
+volumes:
+  redis-data:
+    driver: local
