@@ -73,6 +73,7 @@ jobs:
           port: 22
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
+            cd /home/ec2-user/app/
             # 서버로 docker-compose.yml 파일 복사
             echo "${{ secrets.DOCKER_COMPOSE_YML }}" > docker-compose.yml
             # 기존 컨테이너 중지 및 제거
