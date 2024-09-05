@@ -66,6 +66,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+        // 특정 URI에 대해 JWT 토큰 검사 건너뛰기
+        if (requestURI.startsWith("/healthcheck") ||
+                requestURI.startsWith("/swagger-ui") ||
+                requestURI.startsWith("/v3/api-docs") ||
+                requestURI.startsWith("/swagger-resource") ||
+                requestURI.startsWith("/api/v1/auth")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 1. Request Header에서 JWT 토큰 추출
         String accessToken = resolveToken((HttpServletRequest) request);
         log.info("접근 토큰 : {}", accessToken);
