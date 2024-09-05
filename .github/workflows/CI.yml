@@ -1,0 +1,62 @@
+name: CI Github Actions & Docker
+
+on:
+  push:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+
+jobs:
+  CI :
+    runs-on: ubuntu-latest
+    steps:
+    # JDK setting - 깃허브 액션에서 사용할 JDK 설정 (프로젝트 jdk랑 무관)
+      - uses: actions/checkout@v3
+      - name: JDK 17 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # gradle caching 그래들 캐싱(빌드 시간 줄이기)
+      - name: 그래들 캐싱
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+              ${{ runner.os }}-gradle-
+
+      # 환경 별 yml 파일 (후에 확장을 위해)
+      - name: application.yml 만들어서 넣어두기
+        if: contains(github.ref, 'master')
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.YML }}" > ./application.yml
+        shell: bash # 스크립트 쓸려면 적어야함
+
+      - name: 그래들류 실행 권한 부여
+        run: chmod +x gradlew
+
+      - name: 그래들로 빌드 (no test)
+        run: ./gradlew clean build -x test
+
+      - name: 도커허브 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 도커 빌드 & 푸시
+        if: contains(github.ref, 'master')
+        run: |
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }} .
+          docker push ${{ secrets.DOCKER_REPO }}
+        
+    
+
