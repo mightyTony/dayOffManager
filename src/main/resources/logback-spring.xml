@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
     <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n" />
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n" />
@@ -12,8 +14,13 @@
             <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
         </layout>
         <username>ALERT</username>
-<!--        <avatarUrl>https://cdn-icons-png.flaticon.com/512/1383/1383395.png</avatarUrl>-->
         <tts>false</tts>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
     </appender>
 
     <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
@@ -23,23 +30,9 @@
         </filter>
     </appender>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
-<!--    <appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
-<!--        <file>./log/testFile.log</file>-->
-<!--        <encoder>-->
-<!--            <pattern>${FILE_LOG_PATTERN}</pattern>-->
-<!--        </encoder>-->
-<!--    </appender>-->
-
     <!-- 로그 레벨 설정    -->
-    <logger name="mightytony.sideproject.dayoffmanager" level="DEBUG" />
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-<!--        <appender-ref ref="FILE" />-->
         <appender-ref ref="ASYNC_DISCORD" />
     </root>
 
