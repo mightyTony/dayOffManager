@@ -80,8 +80,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 1. Request Header에서 JWT 토큰 추출
         String accessToken = resolveToken((HttpServletRequest) request);
-        log.info("접근 토큰 : {}", accessToken);
+
         String refreshToken = getRefreshTokenFromCookie((HttpServletRequest) request);
+
+        if(accessToken != null) {
+            log.info("접근 토큰 : {}", accessToken);
+        }
 
         try {
             // 2. 접근 토큰 유효성 검사
