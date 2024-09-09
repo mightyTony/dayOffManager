@@ -62,15 +62,16 @@ dependencies {
     // string to json
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
+    //developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     compileOnly 'org.projectlombok:lombok'
 
-    //developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+
     // discord webhook
     implementation 'com.github.napstr:logback-discord-appender:1.0.0'
 
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
