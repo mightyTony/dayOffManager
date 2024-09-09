@@ -4,6 +4,7 @@
     <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n" />
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n" />
 
+    <!--  디스코드 웹훅  -->
     <springProperty name="DISCORD_WEBHOOK_URL" source="logging.discord.webhook-url"/>
     <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
         <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
@@ -33,10 +34,13 @@
 <!--            <pattern>${FILE_LOG_PATTERN}</pattern>-->
 <!--        </encoder>-->
 <!--    </appender>-->
+
+    <!-- 로그 레벨 설정    -->
     <logger name="mightytony.sideproject.dayoffmanager" level="DEBUG" />
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
+<!--        <appender-ref ref="FILE" />-->
+        <appender-ref ref="ASYNC_DISCORD" />
     </root>
 
 </configuration>
