@@ -39,6 +39,7 @@ out/
 ### properties, yml ###
 application-dev.yml
 application.yml
+application-local.yml
 
 ## docker compose ###
 docker-compose.yml
