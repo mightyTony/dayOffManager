@@ -115,10 +115,6 @@ public class AdminController {
     }
 
     /**
-     * 모든 휴가 신청 조회
-     */
-
-    /**
      * 휴가 신청 상세 조회
      */
 

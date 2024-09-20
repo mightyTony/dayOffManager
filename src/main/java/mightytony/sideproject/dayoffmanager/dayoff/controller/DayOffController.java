@@ -114,6 +114,25 @@ public class DayOffController {
     }
 
     /**
-     * 관리자 - 휴가 신청 승인 / 반려
+     * 관리자 - 휴가 신청 승인
      */
+//    @Operation(summary = "")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "휴가 승인")
+//    })
+//    @PostMapping("/{companyId}/{dayoffId}/approve")
+//    public ResponseEntity<Void> approveDayOff() {
+//
+//    }
+//
+//    /**
+//     * 관리자 - 휴가 신청 반려
+//     */
+//    @Operation(summary = "")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", description = "휴가 반려")
+//    })
+//    public ResponseEntity<Void> rejectDayOff() {
+//
+//    }
 }
