@@ -1,39 +1,83 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
+    <!-- 공통 설정 -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
     <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n" />
     <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n" />
 
-    <!--  디스코드 웹훅  -->
-    <springProperty name="DISCORD_WEBHOOK_URL" source="logging.discord.webhook-url"/>
-    <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
-        <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
-        </layout>
-        <username>ALERT</username>
-        <tts>false</tts>
-    </appender>
-
+    <!-- 콘솔 출력 설정 (모든 프로파일에서 사용) -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="DISCORD" />
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-    </appender>
+    <!-- prod 프로파일일 때만 적용 -->
+    <springProfile name="prod">
+        <!-- 디스코드 웹훅 설정 -->
+        <springProperty name="DISCORD_WEBHOOK_URL" source="logging.discord.webhook-url"/>
+        <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
+            <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
+            </layout>
+            <username>ALERT</username>
+            <tts>false</tts>
+        </appender>
 
-    <!-- 로그 레벨 설정    -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="ASYNC_DISCORD" />
-    </root>
+        <!-- 비동기 디스코드 알람 설정 -->
+        <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+            <appender-ref ref="DISCORD" />
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+        </appender>
 
+        <!-- AWS CloudWatch 로그 설정 (prod) -->
+        <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.access-key"/>
+        <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secret-key"/>
+        <appender name="aws_cloud_watch_log" class="ca.pjer.logback.AwsLogsAppender">
+            <!-- ERROR 이상의 로그만 전송 -->
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+            <layout>
+                <pattern>[%thread] [%date] [%level] [%file:%line] - %msg%n</pattern>
+            </layout>
+            <logGroupName>aws-error-log-prod/error-log</logGroupName>
+            <logStreamUuidPrefix>error-log-prod-</logStreamUuidPrefix>
+            <logRegion>ap-northeast-2</logRegion>
+            <maxBatchLogEvents>50</maxBatchLogEvents>
+            <maxFlushTimeMillis>30000</maxFlushTimeMillis>
+            <maxBlockTimeMillis>5000</maxBlockTimeMillis>
+            <retentionTimeDays>0</retentionTimeDays>
+            <accessKeyId>${AWS_ACCESS_KEY}</accessKeyId>
+            <secretAccessKey>${AWS_SECRET_KEY}</secretAccessKey>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%5level] %logger{35}[%method:%line] %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- 에러 로거 (prod에서만 CloudWatch로 전송) -->
+        <logger name="errorLogger" level="error" additivity="false">
+            <appender-ref ref="aws_cloud_watch_log" />
+        </logger>
+
+        <!-- prod 환경에서만 DISCORD와 AWS CloudWatch 로그 전송 -->
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="ASYNC_DISCORD" />
+            <appender-ref ref="aws_cloud_watch_log" />
+        </root>
+    </springProfile>
+
+    <!-- 다른 프로파일에 대한 루트 로거 (예: local, dev) -->
+    <springProfile name="!prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
 </configuration>

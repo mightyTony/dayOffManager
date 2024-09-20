@@ -65,9 +65,12 @@ API:
   URL: https://api.odcloud.kr/api/nts-businessman/v1/validate
   SERVICE_KEY: IqDmlmBMv%2B8ecJBIEk0Ov0tKEbpxMaHvl%2BoXoS4oVObopGNqbvS9X1JDzm0WTwjWARIpqqTEYqLA8LFlrVS48w%3D%3D
 
-  #IqDmlmBMv+8ecJBIEk0Ov0tKEbpxMaHvl+oXoS4oVObopGNqbvS9X1JDzm0WTwjWARIpqqTEYqLA8LFlrVS48w==
-
-  #NxcABamlz1LxPmbQB0iKT7sbUwcgjvkChlZPNAWmybGKvHH0R%2BqqgttOECHW3sGYgpeRXTFPwnG0PFB7HoL4wg%3D%3D
-
-  #NxcABamlz1LxPmbQB0iKT7sbUwcgjvkChlZPNAWmybGKvHH0R%2BqqgttOECHW3sGYgpeRXTFPwnG0PFB7HoL4wg%3D%3D
-  #
+cloud:
+  aws:
+    credential:
+      access-key: AKIAS66UC552Q2OUEAUB
+      secret-key: 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
+    region:
+      static: ap-northeast-2  # 예시로 서울 리전 사용
+    stack:
+      auto: false

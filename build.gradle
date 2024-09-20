@@ -65,6 +65,10 @@ dependencies {
 
     //developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    // https://mvnrepository.com/artifact/ca.pjer/logback-awslogs-appender
+    // logback,cloudwatch
+    implementation 'ca.pjer:logback-awslogs-appender:1.6.0'
+
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
