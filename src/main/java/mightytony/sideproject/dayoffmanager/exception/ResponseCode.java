@@ -12,6 +12,10 @@ public enum ResponseCode {
 
     // 공통
     SUCCESS(200, "success"),
+    EMPTY_FILE_EXCEPTION(400,"파일이 없어요"),
+    NOT_SUPPORTED_EXTENSION(400,"이미지 파일만 가능 합니다."),
+    IO_EXCEPTION_ON_IMAGE_DELETE(400,"파일 삭제 중 오류 발생"),
+    NOT_FOUND_IMAGE(400,"이미지 파일을 찾을 수 없습니다"),
 
     // 공공데이터 open api
     ERROR_PROCESSING_REQUEST(400, "요청 과정 에러"),

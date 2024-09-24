@@ -9,20 +9,30 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateMasterRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberLoginRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.request.MemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberUpdateResponseDto;
+import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.AuthService;
+import mightytony.sideproject.dayoffmanager.auth.service.S3Service;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.config.jwt.JwtToken;
+import mightytony.sideproject.dayoffmanager.config.redis.RedisUtil;
+import mightytony.sideproject.dayoffmanager.exception.CustomException;
+import mightytony.sideproject.dayoffmanager.exception.ResponseCode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
@@ -36,6 +46,12 @@ public class AuthController {
 
     private final AuthService authService;
     //private final JwtTokenProvider jwtTokenProvider;
+    private final AuthRepository authRepository;
+    private final S3Service s3service;
+    private final RedisUtil redisUtil;
+
+    @Value("${cloud.aws.cloudfront.url")
+    private String cloudfrontUrl;
 
     @Operation(summary = "로그인", description = "회원 로그인, 토큰 부여")
     @ApiResponses({
@@ -129,5 +145,55 @@ public class AuthController {
         MemberUpdateResponseDto dto = authService.updateUserInfo(req, userId, updateRequestDto);
 
         return ResponseUtil.ok(dto);
+    }
+
+    /**
+     * 프사 바꾸는 폼 이후 유저 정보 업데이트 창에서 ok 누를시 저장되게 / ok 안 누르면 저장안됨.
+     */
+    @Operation(summary = "프로필 이미지 업로드", description = "프로필 이미지 업로드")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "SUCCESS"
+            )
+    })
+    @PostMapping("/info/{userId}/profileImage")
+    //@Transactional
+    public ResponseEntity<BasicResponse<String>> uploadProfileImage(@RequestParam(value = "file")MultipartFile file,
+                                                                  @PathVariable String userId) throws IOException {
+        // 1. 유저 체크
+        Member member = authRepository.findByUserId(userId).orElseThrow(()->
+                new CustomException(ResponseCode.NOT_FOUND_USER));
+
+        // 2. 유저 프로필 업데이트
+        String s3ProfileImageUrl = s3service.uploadFile(file);
+        log.info("LOG :: {} upload profileImage ", userId);
+//        member.updateProfileImage(profileImageUrl);
+//        authRepository.save(member);
+//
+//        // 3. 캐시 삭제/ 신규 정보 캐시 저장
+//        redisUtil.deleteUserFromCache(userId);
+
+        // 3. profile Url 주기
+        return ResponseUtil.ok(s3ProfileImageUrl);
+    }
+
+    @DeleteMapping("/info/{userId}/profileImage")
+    @Transactional
+    public ResponseEntity<BasicResponse<Void>> deleteProfileImage(@RequestParam String imageUrl,
+                                                                  @PathVariable String userId,
+                                                                  HttpServletRequest request) {
+        String requesterId = authService.isThatYou(request);
+
+        if(!userId.equals(requesterId)){
+            throw new CustomException(ResponseCode.PERMISSION_DENIED);
+        }
+
+        Member member = authRepository.findByUserId(userId).orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_USER));
+        //FIXME 기본 이미지 s3에 올려둬서 써야할 듯
+        member.updateProfileImage("default.jpg");
+
+        s3service.deleteImageFromS3(imageUrl);
+        authRepository.save(member);
+
+        return ResponseUtil.ok();
     }
 }

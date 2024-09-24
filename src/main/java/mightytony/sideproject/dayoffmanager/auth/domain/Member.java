@@ -122,6 +122,9 @@ public class Member extends BaseTimeEntity {
 //    public void settingDayOff(double dayOffCount) {
 //        this.dayOffCount = dayOffCount;
 //    }
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
 
     public void welcome(String employeeNumber, Department department) {
         this.status = MemberStatus.APPROVED;

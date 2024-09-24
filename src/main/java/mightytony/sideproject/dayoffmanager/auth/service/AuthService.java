@@ -23,4 +23,6 @@ public interface AuthService {
     String refreshAccessToken(HttpServletRequest req);
 
     MemberUpdateResponseDto updateUserInfo(HttpServletRequest req, String userId, MemberUpdateRequestDto updateRequestDto);
+
+    String isThatYou(HttpServletRequest request);
 }

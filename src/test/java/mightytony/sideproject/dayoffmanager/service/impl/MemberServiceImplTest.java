@@ -1,8 +1,6 @@
 package mightytony.sideproject.dayoffmanager.service.impl;
 
-import mightytony.sideproject.dayoffmanager.domain.member.Member;
-import mightytony.sideproject.dayoffmanager.domain.MemberRole;
-import mightytony.sideproject.dayoffmanager.repository.MemberRepository;
+import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +19,13 @@ import static org.assertj.core.api.Assertions.*;
 class MemberServiceImplTest {
 
     @Autowired
-    MemberRepository memberRepository;
+    AuthRepository memberRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @AfterEach
-    public void cleanUp() {
-        memberRepository.deleteAll();
-    }
+//    @AfterEach
+//    public void cleanUp() {
+//        memberRepository.deleteAll();
+//    }
+}
