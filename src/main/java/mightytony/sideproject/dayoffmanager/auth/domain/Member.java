@@ -66,8 +66,7 @@ public class Member extends BaseTimeEntity {
     private String phoneNumber;
 
     @Column(name = "profile_image")
-    @Builder.Default
-    private String profileImage = "default.jpg";
+    private String profileImage;
 
     @Column(name = "deleted")
     @Builder.Default

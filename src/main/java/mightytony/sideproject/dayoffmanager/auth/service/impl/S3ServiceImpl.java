@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -29,10 +30,10 @@ import java.util.Objects;
 public class S3ServiceImpl implements S3Service {
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.url}")
-    private String bucketUrl;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
 
-    @Value("${cloud.aws.cloudfront.url")
+    @Value("${cloud.aws.cloudfront.url}")
     private String cloudfrontUrl;
 
     private static final List<String> ALLOWED_FILE_EXTENSIONS = Arrays.asList("jpg","jpeg","png","gif");
@@ -57,7 +58,10 @@ public class S3ServiceImpl implements S3Service {
         metadata.setContentLength(image.getSize());
         metadata.setContentType(image.getContentType());
 
-        amazonS3.putObject(new PutObjectRequest(bucketUrl, imageName, image.getInputStream(), metadata));
+        // 'profile/' 폴더에 이미지 저장
+        String key = "profile/" + imageName;
+
+        amazonS3.putObject(new PutObjectRequest(bucketName, key, image.getInputStream(), metadata));
 
         //return amazonS3.getUrl(bucketUrl, imageName).toString();
         String imageUrlOnCloudfront = cloudfrontUrl + "/profile/" + imageName;
@@ -71,9 +75,9 @@ public class S3ServiceImpl implements S3Service {
     }
 
     public void deleteImageFromS3(String imageUrl) {
-        String key = getKeyFromImageAddress(imageUrl);
+        String key = "/profile/" + getKeyFromImageAddress(imageUrl);
         try {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucketUrl, key));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
         } catch (Exception e) {
             throw new CustomException(ResponseCode.IO_EXCEPTION_ON_IMAGE_DELETE);
         }
@@ -82,9 +86,9 @@ public class S3ServiceImpl implements S3Service {
     private String getKeyFromImageAddress(String imageAddress){
         try{
             URL url = new URL(imageAddress);
-            String decodingKey = URLDecoder.decode(url.getPath(), "UTF-8");
+            String decodingKey = URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8);
             return decodingKey.substring(1); // 맨 앞의 '/' 제거
-        }catch (MalformedURLException | UnsupportedEncodingException e){
+        }catch (MalformedURLException e){
             throw new CustomException(ResponseCode.IO_EXCEPTION_ON_IMAGE_DELETE);
         }
     }

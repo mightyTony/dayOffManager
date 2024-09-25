@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import static mightytony.sideproject.dayoffmanager.common.Constants.REFRESH_TOKEN_EXPIRED_TIME;
 
@@ -163,17 +164,25 @@ public class AuthController {
         Member member = authRepository.findByUserId(userId).orElseThrow(()->
                 new CustomException(ResponseCode.NOT_FOUND_USER));
 
+        if(!Objects.equals(userId, member.getUserId())){
+            throw new CustomException(ResponseCode.PERMISSION_DENIED);
+        }
+
         // 2. 유저 프로필 업데이트
-        String s3ProfileImageUrl = s3service.uploadFile(file);
+        String cloudfrontProfileUrl = s3service.uploadFile(file);
         log.info("LOG :: {} upload profileImage ", userId);
-//        member.updateProfileImage(profileImageUrl);
+//        member.updateProfileImage(cloudfrontProfileUrl);
 //        authRepository.save(member);
 //
 //        // 3. 캐시 삭제/ 신규 정보 캐시 저장
 //        redisUtil.deleteUserFromCache(userId);
+//
+//        // 4. 새 유저 정보 캐시 저장
+//        MemberLoginResponseDto loginResponseDto = memberMapper.toLoginDTO(member);
+//        redisUtil.saveUser(userId, loginResponseDto);
 
         // 3. profile Url 주기
-        return ResponseUtil.ok(s3ProfileImageUrl);
+        return ResponseUtil.ok(cloudfrontProfileUrl);
     }
 
     @DeleteMapping("/info/{userId}/profileImage")
