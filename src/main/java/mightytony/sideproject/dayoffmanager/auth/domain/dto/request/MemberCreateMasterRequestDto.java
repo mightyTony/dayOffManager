@@ -18,8 +18,8 @@ public class MemberCreateMasterRequestDto {
     private String email;
     @Schema(description = "전화번호", example = "01053612197")
     private String phoneNumber;
-    @Schema(description = "프로필 이미지", example = "testImage.jpg")
-    private String profileImage;
+//    @Schema(description = "프로필 이미지", example = "testImage.jpg")
+//    private String profileImage;
     //private String employeeNumber; // 사번
 
 }

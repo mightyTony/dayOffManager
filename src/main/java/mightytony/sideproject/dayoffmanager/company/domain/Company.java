@@ -34,7 +34,7 @@ public class Company extends BaseTimeEntity {
 
     @Comment("개업일자 (YYYYMMDD 포맷)")
     @Column(name = "start_date",nullable = false)
-    private String startDate;
+    private LocalDate startDate;
 
     @Comment("대표자성명1")
     @Column(name = "primary_represent_name", nullable = false)

@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Profile;
 public class SwaggerConfig {
     // http://localhost:4860/swagger-ui/index.html#/
 
-    @Profile("local,dev")
+    @Profile({"local","dev"})
     @Bean
     public OpenAPI devOpenAPI() {
         // FIXME

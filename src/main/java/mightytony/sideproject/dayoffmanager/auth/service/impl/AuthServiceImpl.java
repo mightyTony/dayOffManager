@@ -228,7 +228,7 @@ public class AuthServiceImpl implements AuthService {
                 .name(req.getName())
                 .email(req.getEmail())
                 .phoneNumber(req.getPhoneNumber())
-                .profileImage(req.getProfileImage())
+                .hireDate(LocalDate.now())
                 .roles(Collections.singletonList(MemberRole.MASTER))
                 .status(MemberStatus.APPROVED)
                 //.deleted(Boolean.FALSE)
