@@ -115,10 +115,10 @@ public class CompanyController {
      * 회사 내 모든 부서 출력
      */
     @Operation(summary = "회사 내 모든 부서 출력")
-    @GetMapping("/departments")
-    public ResponseEntity<BasicResponse<List<Department>>> getAllDepartments(HttpServletRequest request) {
+    @GetMapping("/{companyId}/departments")
+    public ResponseEntity<BasicResponse<List<String>>> getAllDepartments(HttpServletRequest request, @PathVariable Long companyId) {
 
-        List<Department> departments = departmentService.getDepartmentsByCompany(request);
+        List<String> departments = departmentService.getDepartmentsByCompany(request, companyId);
 
         return ResponseUtil.ok(departments);
     }

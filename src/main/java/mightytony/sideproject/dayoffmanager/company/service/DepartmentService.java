@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface DepartmentService {
 
-    List<Department> getDepartmentsByCompany(HttpServletRequest request);
+    List<String> getDepartmentsByCompany(HttpServletRequest request, Long companyId);
 }
