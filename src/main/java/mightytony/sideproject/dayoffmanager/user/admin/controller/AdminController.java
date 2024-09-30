@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminMemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.user.admin.service.AdminService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -74,6 +76,15 @@ public class AdminController {
     public ResponseEntity<BasicResponse<Void>> registerEmployee(@RequestBody AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
         adminService.registerEmployee(dto, request);
 
+        return ResponseUtil.ok();
+    }
+
+    @Operation(summary = "멤버 회사 등록 거절")
+    @DeleteMapping("/reject/{userId}")
+    public ResponseEntity<BasicResponse<Void>> rejectJoinMember(HttpServletRequest request,
+                                                                @PathVariable String userId) {
+        adminService.rejectJoinMember(request, userId);
+        log.info("멤버 회사 등록 거절 완료");
         return ResponseUtil.ok();
     }
 

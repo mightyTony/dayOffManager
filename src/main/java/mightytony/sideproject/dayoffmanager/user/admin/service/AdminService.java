@@ -19,6 +19,8 @@ public interface AdminService {
 
     void registerEmployee(AdminInviteNewMemberRequestDto dto, HttpServletRequest request);
 
+    void rejectJoinMember(HttpServletRequest request, String userId);
+
     Page<MemberResponseDto> getMembers(HttpServletRequest request, int page, int size);
 
     void registerDepartment(String departmentName, HttpServletRequest request);

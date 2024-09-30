@@ -107,7 +107,7 @@ public class AdminServiceImpl implements AdminService {
         Long myCompanyId = myCompany.getId();
 
         // 기준
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        Sort sort = Sort.by(Sort.Direction.ASC, "createdDate");
 
         // 페이징 객체
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -131,6 +131,7 @@ public class AdminServiceImpl implements AdminService {
         if(!admin.getRoles().contains(MemberRole.ADMIN)){
             throw new CustomException(ResponseCode.PERMISSION_DENIED);
         }
+
         //Company myCompany = checkYourCompany(request);
         // 2. 어드민 회사에 해당 userId를 가진 사람 조회
         Member newMember = adminRepository.findMemberByUserIdAndCompanyId(dto.getUserId(), admin.getCompanyId());
@@ -151,6 +152,28 @@ public class AdminServiceImpl implements AdminService {
         }
 
         newMember.welcome(dto.getEmployeeNumber(), department);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void rejectJoinMember(HttpServletRequest request, String userId) {
+        // 1. 어드민 회사 조회
+        String adminId = authService.isThatYou(request);
+        MemberLoginResponseDto admin = jwtTokenProvider.getCachedUserInformation(adminId);
+
+        if(!admin.getRoles().contains(MemberRole.ADMIN)){
+            throw new CustomException(ResponseCode.PERMISSION_DENIED);
+        }
+
+        //Company myCompany = checkYourCompany(request);
+        // 2. 어드민 회사에 해당 userId를 가진 사람 조회
+        Member newMember = adminRepository.findMemberByUserIdAndCompanyId(userId, admin.getCompanyId());
+        if(newMember == null) {
+            throw new CustomException(ResponseCode.NOT_FOUND_USER);
+        }
+
+        // 3. 반려
+        newMember.reject();
     }
 
     /**

@@ -165,4 +165,9 @@ public class Member extends BaseTimeEntity {
         this.deleteDate = LocalDate.now();
         this.resignationDate = LocalDate.now();
     }
+
+    public void reject() {
+        this.deleted = Boolean.TRUE;
+        this.deleteDate = LocalDate.now();
+    }
 }
