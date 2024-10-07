@@ -113,9 +113,9 @@ public class DayOffController {
         return ResponseUtil.ok(dayoffs);
     }
 
-    /**
-     * 관리자 - 휴가 신청 승인
-     */
+//    /**
+//     * 관리자 - 휴가 신청 승인
+//     */
 //    @Operation(summary = "")
 //    @ApiResponses({
 //            @ApiResponse(responseCode = "200", description = "휴가 승인")

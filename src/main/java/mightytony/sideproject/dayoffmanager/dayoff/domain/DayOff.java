@@ -1,5 +1,10 @@
 package mightytony.sideproject.dayoffmanager.dayoff.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.persistence.*;
 import lombok.*;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
@@ -48,9 +53,15 @@ public class DayOff extends BaseTimeEntity {
     private Boolean deleted = Boolean.FALSE;
 
     @Comment("휴가 시작일")
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate startDate;
 
     @Comment("휴가 종료일")
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate endDate;
 
     public void delete() {

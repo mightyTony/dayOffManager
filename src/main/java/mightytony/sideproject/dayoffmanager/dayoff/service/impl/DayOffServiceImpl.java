@@ -83,12 +83,8 @@ public class DayOffServiceImpl implements DayOffService {
         // 5. 날짜 유효성 검증
         validateDayOffRequest(requestDto.getStartDate(), requestDto.getEndDate(), requestDto.getDuration(), requestDto.getDayOffType());
 
-        // 어드민 인 경우 대기 상태 제외
-        DayOffStatus initStatus = DayOffStatus.PENDING;
-
-        if(user.getRole().equals(MemberRole.ADMIN)) {
-            initStatus = DayOffStatus.APPROVED;
-        }
+        // 역할에 따라 상태 분류 (승인, 팀장 승인, 대기)
+        DayOffStatus roleCheck = getRoleCheck(requestDto);
 
         // 6. 휴가 신청
         DayOff dayOff = DayOff.builder()
@@ -97,7 +93,7 @@ public class DayOffServiceImpl implements DayOffService {
                 .duration(requestDto.getDuration())
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
-                .status(initStatus)
+                .status(roleCheck)
                 .build();
 
         // TODO 신청이 허가 되면 user 휴가 카운트 - 해줘야함.
@@ -107,6 +103,20 @@ public class DayOffServiceImpl implements DayOffService {
          *     user.updateDayOffCount(remainingDayOff);
          */
         dayOffRepository.save(dayOff);
+    }
+
+    private DayOffStatus getRoleCheck(DayOffApplyRequestDto dto) {
+        MemberRole role = dto.getRole();
+        if(role.equals(MemberRole.ADMIN)){
+            return DayOffStatus.APPROVED;
+        }
+        if(role.equals(MemberRole.TEAM_LEADER)){
+            return DayOffStatus.TL_APPROVED;
+        }
+        if(role.equals(MemberRole.EMPLOYEE)){
+            return DayOffStatus.PENDING;
+        }
+        return null;
     }
 
     // 휴가 일수 계산 및 검증
