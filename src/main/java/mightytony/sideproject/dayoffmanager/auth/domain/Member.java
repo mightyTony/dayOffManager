@@ -153,6 +153,7 @@ public class Member extends BaseTimeEntity {
         this.department = department;
         this.role = requestDto.getRole();
         this.dayOffCount = requestDto.getDayOffCount();
+        this.employeeNumber = requestDto.getEmployeeNumber();
     }
 
     public void updatePassword(String password) {

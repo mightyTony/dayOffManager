@@ -220,7 +220,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional(readOnly = false)
-    public void updateMemberInfo(HttpServletRequest request, Long companyId, String userId, AdminMemberUpdateRequestDto requestDto) {
+    public MemberResponseDto updateMemberInfo(HttpServletRequest request, Long companyId, String userId, AdminMemberUpdateRequestDto requestDto) {
         // 1. 멤버 체크
         Member member = memberRepository.findByUserIdAndCompanyId(userId, companyId)
                 .orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_USER));
@@ -233,12 +233,16 @@ public class AdminServiceImpl implements AdminService {
 
         // 3. 업데이트
         member.updateFromAdmin(requestDto, department);
-
         memberRepository.save(member);
 
         // 4. 유저 정보 캐시 새로 갱신
         MemberLoginResponseDto loginDTO = memberMapper.toLoginDTO(member);
         redisUtil.saveUser(userId, loginDTO);
+
+        log.info("멤버 정보 수정 : {}",memberMapper.toDTO(member));
+        log.info("멤버 : {}", member.getEmployeeNumber());
+
+        return memberMapper.toDTO(member);
     }
 
 

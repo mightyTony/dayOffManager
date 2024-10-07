@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminMemberUpdateRequestDto;
 import mightytony.sideproject.dayoffmanager.user.admin.service.AdminService;
@@ -94,14 +95,14 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "success")
     })
     @PatchMapping("/{companyId}/{userId}")
-    public ResponseEntity<BasicResponse<Void>> adminUpdateMemberInfo(HttpServletRequest request,
+    public ResponseEntity<BasicResponse<MemberResponseDto>> adminUpdateMemberInfo(HttpServletRequest request,
                                                                      @PathVariable Long companyId,
                                                                      @PathVariable String userId,
                                                                      @RequestBody AdminMemberUpdateRequestDto requestDto) {
 
-        adminService.updateMemberInfo(request, companyId, userId, requestDto);
+        MemberResponseDto memberResponseDto = adminService.updateMemberInfo(request, companyId, userId, requestDto);
 
-        return ResponseUtil.ok();
+        return ResponseUtil.ok(memberResponseDto);
     }
 
     @Operation(summary = "해당 멤버 정보 삭제(soft)")

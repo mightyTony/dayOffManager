@@ -25,7 +25,7 @@ public interface AdminService {
 
     void registerDepartment(String departmentName, HttpServletRequest request);
 
-    void updateMemberInfo(HttpServletRequest request, Long companyId, String userId, AdminMemberUpdateRequestDto requestDto);
+    MemberResponseDto updateMemberInfo(HttpServletRequest request, Long companyId, String userId, AdminMemberUpdateRequestDto requestDto);
 
     void deleteUserFromAdmin(HttpServletRequest request, Long companyId, String userId);
 }

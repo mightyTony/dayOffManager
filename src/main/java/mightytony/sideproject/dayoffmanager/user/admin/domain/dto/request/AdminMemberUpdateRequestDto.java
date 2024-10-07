@@ -24,6 +24,9 @@ public class AdminMemberUpdateRequestDto {
     @Pattern(regexp = "^010[0-9]{8}$", message = "010으로 시작해서 총 11자 이어야 합니다.")
     private String phoneNumber;
 
+    @NotNull
+    private String employeeNumber;
+
     @Nullable
     private String profileImage;
 
