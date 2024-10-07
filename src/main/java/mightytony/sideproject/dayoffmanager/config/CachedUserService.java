@@ -29,12 +29,12 @@ public class CachedUserService {
     }
 
     private UserDetails createUserDetails(Member member) {
-        List<MemberRole> roles = member.getRoles() != null ? member.getRoles() : new ArrayList<>();
+        MemberRole role = member.getRole();
 
         return User.builder()
                 .username(member.getUserId())
                 .password(member.getPassword())
-                .roles(roles.stream().map(MemberRole::name).toArray(String[]::new))
+                .roles(role != null ? new String[]{role.name()} : new String[]{})
                 .build();
     }
 }

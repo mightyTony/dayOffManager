@@ -16,7 +16,7 @@ public class MemberUpdateResponseDto {
     private String email;
     private String phoneNumber;
     private String profileImage;
-    private List<MemberRole> roles;
+    private MemberRole role;
     private String employeeNumber;
     private double dayOffCount;
     private MemberStatus status;

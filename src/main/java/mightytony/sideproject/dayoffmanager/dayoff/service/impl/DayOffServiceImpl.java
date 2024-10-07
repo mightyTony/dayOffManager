@@ -86,7 +86,7 @@ public class DayOffServiceImpl implements DayOffService {
         // 어드민 인 경우 대기 상태 제외
         DayOffStatus initStatus = DayOffStatus.PENDING;
 
-        if(user.getRoles().contains(MemberRole.ADMIN)) {
+        if(user.getRole().equals(MemberRole.ADMIN)) {
             initStatus = DayOffStatus.APPROVED;
         }
 

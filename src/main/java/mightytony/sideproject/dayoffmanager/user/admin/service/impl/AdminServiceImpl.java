@@ -124,15 +124,18 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional(readOnly = false)
     public void registerEmployee(AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
+
         // 1. 어드민 회사 조회
         String adminId = authService.isThatYou(request);
         MemberLoginResponseDto admin = jwtTokenProvider.getCachedUserInformation(adminId);
 
-        if(!admin.getRoles().contains(MemberRole.ADMIN)){
+        if(!admin.getRole().equals(MemberRole.ADMIN)){
             throw new CustomException(ResponseCode.PERMISSION_DENIED);
         }
 
         //Company myCompany = checkYourCompany(request);
+        log.info("adminCompanyId, dto userId : {}, {}", admin.getCompanyId(), dto.getUserId());
+
         // 2. 어드민 회사에 해당 userId를 가진 사람 조회
         Member newMember = adminRepository.findMemberByUserIdAndCompanyId(dto.getUserId(), admin.getCompanyId());
         if(newMember == null) {
@@ -151,7 +154,7 @@ public class AdminServiceImpl implements AdminService {
             throw new CustomException(ResponseCode.NOT_FOUND_DEPARTMENT);
         }
 
-        newMember.welcome(dto.getEmployeeNumber(), department);
+        newMember.welcome(dto.getEmployeeNumber(), department, dto.getRole());
     }
 
     @Override
@@ -161,7 +164,7 @@ public class AdminServiceImpl implements AdminService {
         String adminId = authService.isThatYou(request);
         MemberLoginResponseDto admin = jwtTokenProvider.getCachedUserInformation(adminId);
 
-        if(!admin.getRoles().contains(MemberRole.ADMIN)){
+        if(!admin.getRole().equals(MemberRole.ADMIN)){
             throw new CustomException(ResponseCode.PERMISSION_DENIED);
         }
 
@@ -224,10 +227,6 @@ public class AdminServiceImpl implements AdminService {
         Member member = memberRepository.findByUserIdAndCompanyId(userId, companyId)
                 .orElseThrow(()-> new CustomException(ResponseCode.NOT_FOUND_USER));
 
-        if(!isValidRole(requestDto.getRoles())){
-            throw new CustomException(ResponseCode.INVALID_ROLE);
-        }
-
         Department department = departmentRepository.findDepartmentByCompany_IdAndName(companyId, requestDto.getDepartmentName());
         //requestDto.getDepartmentName()
 
@@ -244,14 +243,6 @@ public class AdminServiceImpl implements AdminService {
         redisUtil.saveUser(userId, loginDTO);
     }
 
-    public boolean isValidRole(List<MemberRole> roles) {
-        for(MemberRole role : roles) {
-            if(roles.contains(role)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     @Transactional(readOnly = false)

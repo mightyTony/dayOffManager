@@ -24,7 +24,7 @@ public class MemberResponseDto {
     private String email;
     private String phoneNumber;
     private String profileImage;
-    private List<MemberRole> roles;
+    private MemberRole role;
     private String employeeNumber;
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)

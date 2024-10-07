@@ -13,6 +13,7 @@ import mightytony.sideproject.dayoffmanager.common.domain.BaseTimeEntity;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
 import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOff;
+import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminInviteNewMemberRequestDto;
 import mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request.AdminMemberUpdateRequestDto;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
@@ -83,11 +84,10 @@ public class Member extends BaseTimeEntity {
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate deleteDate;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(name = "roles", nullable = false)
+    @Column(name = "role", nullable = false)
     @Builder.Default
-    private List<MemberRole> roles = new ArrayList<>(Arrays.asList(MemberRole.EMPLOYEE));
+    private MemberRole role = MemberRole.USER;
 
     @Column(name = "employee_number")
     private String employeeNumber;
@@ -133,10 +133,11 @@ public class Member extends BaseTimeEntity {
         this.profileImage = profileImage;
     }
 
-    public void welcome(String employeeNumber, Department department) {
+    public void welcome(String employeeNumber, Department department, MemberRole role) {
         this.status = MemberStatus.APPROVED;
         this.employeeNumber = employeeNumber;
         this.department = department;
+        this.role = role;
     }
 
     public void updateInformation(MemberUpdateRequestDto requestDto) {
@@ -152,7 +153,7 @@ public class Member extends BaseTimeEntity {
         this.phoneNumber = requestDto.getPhoneNumber();
         this.profileImage = requestDto.getProfileImage();
         this.department = department;
-        this.roles = new ArrayList<>(requestDto.getRoles());
+        this.role = requestDto.getRole();
         this.dayOffCount = requestDto.getDayOffCount();
     }
 
@@ -169,5 +170,6 @@ public class Member extends BaseTimeEntity {
     public void reject() {
         this.deleted = Boolean.TRUE;
         this.deleteDate = LocalDate.now();
+        this.status = MemberStatus.REJECTED;
     }
 }

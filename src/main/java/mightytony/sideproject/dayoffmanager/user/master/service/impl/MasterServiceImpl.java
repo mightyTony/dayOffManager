@@ -53,7 +53,7 @@ public class MasterServiceImpl implements MasterService {
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .phoneNumber(dto.getPhoneNumber())
-                .roles(Collections.singletonList(MemberRole.ADMIN))
+                .role(MemberRole.ADMIN)
                 .company(targetCompany)
                 .status(MemberStatus.APPROVED)
                 .dayOffCount(authService.calculateMonthsWorked())

@@ -104,7 +104,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 request.setAttribute("Authorization", "Bearer " + newAccessToken);
-                log.info("new Acc : {}", newAccessToken);
+                //log.info("new Acc : {}", newAccessToken);
             }
             else {
                 throw new CustomException(ResponseCode.InvalidAccessToken);

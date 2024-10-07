@@ -26,7 +26,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // 전달 받은 아이디를 DB에서 조회해서 있는지 체크 한다.
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        log.info("토큰 재발급 신청한 유저 DB 에서 조회 : {} ", userId );
+        //fixme
+        //log.info("토큰 재발급 신청한 유저 DB 에서 조회 : {} ", userId );
 
         return memberRepository.findByUserId(userId)
                 .map(this::createUserDetails)
@@ -46,18 +47,34 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // 해당하는 User 의 데이터가 존재한다면 UserDetails 객체로 만들어서 return
     private UserDetails createUserDetails(Member member) {
-        // Null 체크
-        List<MemberRole> roles = member.getRoles() != null ? member.getRoles() : new ArrayList<>();
+        // null 체크
+        String role = member.getRole() != null ? member.getRole().name() : null;
 
-        return User.builder()
+        User.UserBuilder builder = User.builder()
                 .username(member.getUserId())
-                .password(member.getPassword())
-                .roles(roles.stream().map(MemberRole::name).toArray(String[]::new))
-//                .accountExpired(!member.isAccountNonExpired())
+                .password(member.getPassword());
+
+        // 역할 설정
+        if (role != null) {
+            builder.roles(role);  // roles 메소드는 내부적으로 권한 접두어 "ROLE_"를 추가합니다.
+        }
+
+        // 계정 관련 상태 설정
+//        builder.accountExpired(!member.isAccountNonExpired())
 //                .accountLocked(!member.isAccountNonLocked())
 //                .credentialsExpired(!member.isCredentialsNonExpired())
-//                .disabled(!member.isEnabled())
-                .build();
+//                .disabled(!member.isEnabled());
+
+        return builder.build();
+//        return User.builder()
+//                .username(member.getUserId())
+//                .password(member.getPassword())
+//                .roles(roles.stream().map(MemberRole::name).toArray(String[]::new))
+////                .accountExpired(!member.isAccountNonExpired())
+////                .accountLocked(!member.isAccountNonLocked())
+////                .credentialsExpired(!member.isCredentialsNonExpired())
+////                .disabled(!member.isEnabled())
+//                .build();
     }
 
     public Authentication getUserAuthentication(String userId) {

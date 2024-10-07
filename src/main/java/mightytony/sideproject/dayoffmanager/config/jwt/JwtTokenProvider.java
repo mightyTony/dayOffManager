@@ -286,7 +286,8 @@ public class JwtTokenProvider {
         MemberLoginResponseDto cachedUserInformation = redisUtil.getUserFromCache(userId);
 
         if(cachedUserInformation != null) {
-            log.info("캐시 히트: 유저 정보 = {}", cachedUserInformation);
+            //fixme
+            //log.info("캐시 히트: 유저 정보 = {}", cachedUserInformation);
         }
         else {
             log.info("캐시에서 사용자 정보를 찾을 수 없음, DB 조회 : {}", userId);

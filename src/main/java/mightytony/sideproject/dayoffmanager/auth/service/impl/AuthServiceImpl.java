@@ -133,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
                 .name(req.getName())
                 .email(req.getEmail())
                 .phoneNumber(req.getPhoneNumber())
-                .roles(Collections.singletonList(MemberRole.USER))
+                .role(MemberRole.USER)
                 .company(company)
                 .hireDate(req.getHireDate())
                 .dayOffCount(calculateMonthsWorked())
@@ -229,7 +229,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(req.getEmail())
                 .phoneNumber(req.getPhoneNumber())
                 .hireDate(LocalDate.now())
-                .roles(Collections.singletonList(MemberRole.MASTER))
+                .role(MemberRole.MASTER)
                 .status(MemberStatus.APPROVED)
                 //.deleted(Boolean.FALSE)
                 .build();

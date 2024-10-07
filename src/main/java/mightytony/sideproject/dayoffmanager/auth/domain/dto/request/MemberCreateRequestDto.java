@@ -43,7 +43,7 @@ public class MemberCreateRequestDto {
     @NotNull
     @Size(min = 10, max = 10, message = "사업자등록번호는 10자리여야 합니다.")
     @JsonProperty("b_no")
-    @Schema(description = "사업자등록번호", example = "6081469076")
+    @Schema(description = "사업자등록번호", example = "6518100883")
     private String businessNumber;
 
     @Schema(description = "입사 날짜", example = "2024-04-23")

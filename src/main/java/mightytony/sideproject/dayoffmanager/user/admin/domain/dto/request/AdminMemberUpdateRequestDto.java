@@ -1,6 +1,7 @@
 package mightytony.sideproject.dayoffmanager.user.admin.domain.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -25,19 +26,15 @@ public class AdminMemberUpdateRequestDto {
     @Pattern(regexp = "^010[0-9]{8}$", message = "010으로 시작해서 총 11자 이어야 합니다.")
     private String phoneNumber;
 
-    // TODO if null = 기본 이미지 저장
-    //@Nullable
+    @Nullable
     private String profileImage;
 
     @Schema(description = "부서")
     private String departmentName;
 
-    @Schema(description = "유저 등급", example = "['ADMIN']")
-    private List<MemberRole> roles;
+    @Schema(description = "유저 등급", example = "ADMIN")
+    private MemberRole role;
 
     @Schema(description = "휴가 갯수", example = "15.5")
     private Double dayOffCount;
-
-
-
 }

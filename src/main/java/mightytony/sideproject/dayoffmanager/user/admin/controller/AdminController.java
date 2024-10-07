@@ -74,6 +74,7 @@ public class AdminController {
     @Operation(summary = "멤버 회사 등록 승인, 사번 부여, 부서 배치")
     @PutMapping("/register")
     public ResponseEntity<BasicResponse<Void>> registerEmployee(@RequestBody AdminInviteNewMemberRequestDto dto, HttpServletRequest request) {
+        log.info("new member dto : {}", dto);
         adminService.registerEmployee(dto, request);
 
         return ResponseUtil.ok();
