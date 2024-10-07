@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
-import mightytony.sideproject.dayoffmanager.company.domain.Department;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyCreateRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanySearchRequestDto;
 import mightytony.sideproject.dayoffmanager.company.domain.dto.request.CompanyUpdateRequestDto;

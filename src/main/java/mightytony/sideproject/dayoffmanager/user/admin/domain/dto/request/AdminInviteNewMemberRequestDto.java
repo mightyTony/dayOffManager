@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 
-import java.util.List;
-
 @Data
 public class AdminInviteNewMemberRequestDto {
     @Schema(description = "이름", example = "테스트")

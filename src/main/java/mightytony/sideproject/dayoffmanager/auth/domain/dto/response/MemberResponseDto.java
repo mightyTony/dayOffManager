@@ -10,7 +10,6 @@ import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 public class MemberResponseDto {

@@ -4,8 +4,6 @@ import lombok.Data;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
 
-import java.util.List;
-
 @Data
 public class MemberUpdateResponseDto {
 

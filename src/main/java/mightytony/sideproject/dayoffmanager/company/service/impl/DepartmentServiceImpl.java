@@ -3,10 +3,8 @@ package mightytony.sideproject.dayoffmanager.company.service.impl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
 import mightytony.sideproject.dayoffmanager.company.repository.DepartmentRepository;
 import mightytony.sideproject.dayoffmanager.company.service.DepartmentService;
-import mightytony.sideproject.dayoffmanager.config.jwt.JwtTokenProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
