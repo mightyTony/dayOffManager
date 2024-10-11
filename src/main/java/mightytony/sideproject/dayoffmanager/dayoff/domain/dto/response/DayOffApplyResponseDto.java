@@ -13,7 +13,9 @@ import java.time.LocalDate;
 
 @Data
 public class DayOffApplyResponseDto {
+    private Long id;
     private String userId;
+    private String name;
     private Long companyId;
     private String companyName;
     private DayOffType type;

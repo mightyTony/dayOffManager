@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {MemberMapper.class})
 public interface DayOffMapper {
 
+    @Mapping(source = "member.name", target = "name")
     @Mapping(source = "member.userId", target = "userId")
     @Mapping(source = "member.company.id", target = "companyId")
     @Mapping(source = "member.company.brandName", target = "companyName")

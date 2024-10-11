@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberRole;
 import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberLoginResponseDto;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
@@ -159,7 +160,6 @@ public class DayOffServiceImpl implements DayOffService {
     public Page<DayOffApplyResponseDto> getAllDayOff(Long companyId, HttpServletRequest request, int page, int size) {
 
         Company myCompany = adminService.checkYourCompany(request);
-        Long myCompanyId = companyId;
 
         if(!myCompany.getId().equals(companyId)){
             throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
@@ -255,6 +255,64 @@ public class DayOffServiceImpl implements DayOffService {
         // 6. 업데이트
         dayOff.update(dto);
         dayOffRepository.save(dayOff);
+    }
+
+    @Override
+    public Page<DayOffApplyResponseDto> getDayOffHistory(Long companyId, HttpServletRequest request, int page, int size) {
+        Company myCompany = adminService.checkYourCompany(request);
+
+        if(!myCompany.getId().equals(companyId)){
+            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+        }
+
+        // Sort
+        Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
+        //Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
+
+        // Paging
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<DayOff> dayOffs = dayOffRepository.findByMember_Company_IdAndStatus(companyId, DayOffStatus.APPROVED, pageable);
+
+        return dayOffs.map(dayOffMapper::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void approveDayOff(HttpServletRequest request, Long companyId, Long dayoffId, boolean reject) {
+        // 1. 승인 하는 사람 역할 체크
+        String approverId = authService.isThatYou(request);
+        MemberLoginResponseDto approver = jwtTokenProvider.getCachedUserInformation(approverId);
+
+        // 2. 회사 체크
+        Long company = approver.getCompanyId();
+        companyRepository.findById(company)
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_COMPANY));
+
+        // 3. 휴가 체크
+        DayOff dayOff = dayOffRepository.findById(dayoffId)
+                .orElseThrow(() -> new CustomException(ResponseCode.NOT_FOUND_DAYOFF));
+
+        DayOffStatus status = dayOff.getStatus();
+
+        log.info("승인자 역할 : {}", approver.getRole());
+        if(reject){
+            status = DayOffStatus.REJECTED;
+        } else{
+            if(approver.getRole().equals(MemberRole.ADMIN) && status.equals(DayOffStatus.TL_APPROVED)){
+                status = DayOffStatus.APPROVED;
+                // 휴가 차감
+                dayOff.getMember().updateDayOffCount(dayOff.getDuration());
+            }
+            else if(approver.getRole().equals(MemberRole.TEAM_LEADER) && status.equals(DayOffStatus.PENDING)){
+                status = DayOffStatus.TL_APPROVED;
+            }
+        }
+
+        // 4. 휴가 상태 변경
+        dayOff.ApproveOrReject(status);
+        dayOffRepository.save(dayOff);
+        log.info("DayOff approved or Reject : {}", dayOff.getStatus());
     }
 
 }

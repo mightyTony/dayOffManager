@@ -16,7 +16,8 @@ public interface DayOffRepository extends JpaRepository<DayOff, Long>, QueryDayO
 
     Page<DayOff> findByMember_Company_Id_AndStatusAndMember_Department_Id(Long companyId, DayOffStatus status, Long departmentId ,Pageable pageable);
 
-    //Page<DayOff> findByMember_Company_IdAndMemberUserId(Long companyId, String userId, Pageable pageable);
+    Page<DayOff> findByMember_Company_Id(Long companyId, DayOffStatus status, Pageable pageable);
 
     boolean existsByMemberAndStartDateLessThanEqualAndEndDateGreaterThanEqual(Member member, LocalDate startDate, LocalDate endDate);
+
 }

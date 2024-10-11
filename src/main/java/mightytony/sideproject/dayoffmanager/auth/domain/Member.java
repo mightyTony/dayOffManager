@@ -158,4 +158,8 @@ public class Member extends BaseTimeEntity {
         this.deleteDate = LocalDate.now();
         this.status = MemberStatus.REJECTED;
     }
+
+    public void updateDayOffCount(double duration) {
+        this.dayOffCount -= duration;
+    }
 }

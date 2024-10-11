@@ -34,8 +34,8 @@ public class TeamLeaderController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
     })
-    @GetMapping("/comapany/{companyId}/departments/{departmentId}/list")
-    public ResponseEntity<BasicResponse<Void>> getMyTeamDayOffs(@PathVariable Long companyId,
+    @GetMapping("/company/{companyId}/departments/{departmentId}/list")
+    public ResponseEntity<BasicResponse<Page<DayOffApplyResponseDto>>> getMyTeamDayOffs(@PathVariable Long companyId,
                                                                 @PathVariable Long departmentId,
                                                                 HttpServletRequest request,
                                                                 @RequestParam(defaultValue = "0") int page,
@@ -43,7 +43,7 @@ public class TeamLeaderController {
 
         Page<DayOffApplyResponseDto> dayoffs = teamLeaderService.getMyTeamDayOffs(companyId,departmentId,request,page,size);
 
-        return ResponseUtil.ok();
+        return ResponseUtil.ok(dayoffs);
     }
 
     /**

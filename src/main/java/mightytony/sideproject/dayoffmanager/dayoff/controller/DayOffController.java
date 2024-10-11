@@ -96,7 +96,7 @@ public class DayOffController {
 
 
 
-    @Operation(summary = "모든 휴가 신청 조회")
+    @Operation(summary = "모든 휴가 신청 조회(팀장만 승인)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "success")
     })
@@ -113,26 +113,39 @@ public class DayOffController {
         return ResponseUtil.ok(dayoffs);
     }
 
-//    /**
-//     * 관리자 - 휴가 신청 승인
-//     */
-//    @Operation(summary = "")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "200", description = "휴가 승인")
-//    })
-//    @PostMapping("/{companyId}/{dayoffId}/approve")
-//    public ResponseEntity<Void> approveDayOff() {
-//
-//    }
-//
-//    /**
-//     * 관리자 - 휴가 신청 반려
-//     */
-//    @Operation(summary = "")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "200", description = "휴가 반려")
-//    })
-//    public ResponseEntity<Void> rejectDayOff() {
-//
-//    }
+    @Operation(summary = "휴가 목록")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @GetMapping("/company/{companyId}/history")
+    public ResponseEntity<BasicResponse<Page<DayOffApplyResponseDto>>> getDayOffHistory(
+            @PathVariable("companyId") Long companyId,
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Page<DayOffApplyResponseDto> dayoffs = dayOffService.getDayOffHistory(companyId, request, page, size);
+
+        return ResponseUtil.ok(dayoffs);
+    }
+
+    /**
+     * 관리자,팀장  - 휴가 신청 승인/반려
+     */
+    @Operation(summary = " 팀장, 관리자 휴가 신청 승인/반려")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "휴가 승인")
+    })
+    @PreAuthorize("hasAuthority('TEAM_LEADER') or hasAuthority('ADMIN')")
+    @PatchMapping("/{companyId}/{dayoffId}/action")
+    public ResponseEntity<BasicResponse<Void>> approveDayOff(HttpServletRequest request,
+                                                             @PathVariable Long companyId,
+                                                             @PathVariable Long dayoffId,
+                                                             @RequestParam boolean reject) {
+
+        dayOffService.approveDayOff(request, companyId, dayoffId, reject);
+        return ResponseUtil.ok();
+    }
+
 }

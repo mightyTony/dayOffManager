@@ -17,4 +17,8 @@ public interface DayOffService {
     void deleteDayOff(Long companyId, String userId, Long dayoffId);
 
     void updateDayOffInfo(HttpServletRequest request, Long companyId, String userId, Long dayoffId, DayOffUpdateRequestDto dto);
+
+    Page<DayOffApplyResponseDto> getDayOffHistory(Long companyId, HttpServletRequest request, int page, int size);
+
+    void approveDayOff(HttpServletRequest request, Long companyId, Long dayoffId, boolean reject);
 }
