@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mightytony.sideproject.dayoffmanager.auth.domain.Member;
+import mightytony.sideproject.dayoffmanager.auth.domain.MemberStatus;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
+import mightytony.sideproject.dayoffmanager.auth.mapper.MemberMapper;
 import mightytony.sideproject.dayoffmanager.auth.repository.AuthRepository;
 import mightytony.sideproject.dayoffmanager.auth.service.impl.AuthServiceImpl;
 import mightytony.sideproject.dayoffmanager.company.domain.Company;
@@ -42,6 +45,7 @@ public class TeamLeaderServiceImpl implements TeamLeaderService {
     private final AuthRepository authRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final DayOffMapper dayOffMapper;
+    private final MemberMapper memberMapper;
     @Override
     @Transactional
     public void processDayOffRequest(Long companyId, Long departmentId, String userId, Long dayOffId, DayOffStatus status, HttpServletRequest request) {
@@ -79,6 +83,25 @@ public class TeamLeaderServiceImpl implements TeamLeaderService {
         Page<DayOff> dayOffs = dayOffRepository.findByMember_Company_Id_AndStatusAndMember_Department_Id(companyId, DayOffStatus.PENDING, departmentId, pageable);
 
         return dayOffs.map(dayOffMapper::toDTO);
+    }
+
+    @Override
+    public Page<MemberResponseDto> getMembers(Long companyId, Long departmentId, HttpServletRequest request, int page, int size) {
+        Company myCompany = adminService.checkYourCompany(request);
+
+        if(!myCompany.getId().equals(companyId)) {
+            throw new CustomException(ResponseCode.NOT_FOUND_COMPANY);
+        }
+
+        // Sort
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+
+        // Paging
+        Pageable pageable = PageRequest.of(page,size,sort);
+
+        Page<Member> members = authRepository.findByCompany_IdAndDepartment_IdAndStatus(companyId, departmentId, MemberStatus.APPROVED, pageable);
+
+        return members.map(memberMapper::toDTO);
     }
 
     private boolean isSameDepartment(HttpServletRequest request, Long departmentId) {

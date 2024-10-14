@@ -14,6 +14,7 @@ import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.user.master.domain.dto.request.MasterInviteAdminRequestDto;
 import mightytony.sideproject.dayoffmanager.user.master.service.MasterService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/master")
 @Tag(name = "마스터(웹마스터)", description = "마스터 관련 api / 마스터 권한 필요")
+@PreAuthorize("hasAuthority('MASTER')") // MASTER 권한이 있어야 해당 메서드 접근 가능
 public class MasterController {
     private final MasterService masterService;
 

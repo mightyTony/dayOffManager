@@ -27,4 +27,5 @@ public interface AuthRepository extends JpaRepository<Member, Long>, QueryAuthRe
 
     Page<Member> findByCompanyIdAndStatus(Long companyId, MemberStatus status, Pageable pageable);
 
+    Page<Member> findByCompany_IdAndDepartment_IdAndStatus(Long companyId, Long departmentId, MemberStatus memberStatus, Pageable pageable);
 }

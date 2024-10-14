@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mightytony.sideproject.dayoffmanager.auth.domain.dto.response.MemberResponseDto;
 import mightytony.sideproject.dayoffmanager.common.response.BasicResponse;
 import mightytony.sideproject.dayoffmanager.common.response.ResponseUtil;
 import mightytony.sideproject.dayoffmanager.dayoff.domain.DayOffStatus;
@@ -64,6 +65,25 @@ public class TeamLeaderController {
         teamLeaderService.processDayOffRequest(companyId, departmentId, userId, dayOffId, dayOffStatus, request);
 
         return ResponseUtil.ok();
+    }
+
+    /**
+     *  팀원 정보 조회 페이징
+     */
+    @Operation(summary = "팀원 정보 조회 페이징")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @GetMapping("/company/{companyId}/departments/{departmentId}/members")
+    public ResponseEntity<BasicResponse<Page<MemberResponseDto>>> getMembers(@PathVariable Long companyId,
+                                                                            @PathVariable Long departmentId,
+                                                                            HttpServletRequest request,
+                                                                            @RequestParam(defaultValue = "0") int page,
+                                                                            @RequestParam(defaultValue = "10") int size) {
+
+        Page<MemberResponseDto> members = teamLeaderService.getMembers(companyId, departmentId, request, page, size);
+
+        return ResponseUtil.ok(members);
     }
 
 }

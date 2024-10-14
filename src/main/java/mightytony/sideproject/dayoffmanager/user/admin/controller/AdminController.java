@@ -127,20 +127,7 @@ public class AdminController {
         return ResponseUtil.ok();
     }
 
-    /**
-     * 휴가 신청 상세 조회
-     */
-
-
-
-
-
-    /**
-     * 휴가 신청 승인/반려
-     */
-
-    /**
-     * 모든 휴가 히스토리 조회
-     */
+    // TODO
+    // 휴가 신청 상세 조회
 
 }
