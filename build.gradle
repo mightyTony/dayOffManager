@@ -37,8 +37,10 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-     //query parameterlog
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
+    //query parameterlog
+//    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+
     // swagger
     // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
