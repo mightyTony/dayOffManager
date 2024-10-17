@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "디스코드", description = "디스코드 테스트 api 입니다")
 public class TestController {
 
-    @Operation(summary = "디스코드", description = "에러 웹훅")
+    @Operation(summary = "디스코드", description = "에러 웹훅, 알람 주소 : https://discord.gg/6A4jWdBDew")
     @GetMapping("/test")
     public void test(){
         log.warn("위험...");
         log.error("에러 발생 ! ");
-        log.error("에러 발생 ! 2");
     }
 }
