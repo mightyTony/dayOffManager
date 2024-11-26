@@ -58,36 +58,25 @@ public class SecurityConfig {
 
         return http
                 .cors((cors) -> cors.configurationSource(corsConfiguration()))
-                // REST API 이므로 base auth, csrf 보안을 사용하지 않음.
                 .httpBasic((basic) -> basic.disable())
                 .csrf((csrf) -> csrf.disable())
-                // JWT 를 사용하기 때문에 세션을 사용하지 않음
                 .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/swagger-ui/**","/swagger-resource/**","/error","/v3/api-docs/**").permitAll()
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                )
+
                 .authorizeHttpRequests((authorize) -> authorize
                         // 해당하는 API에 대해서는 모든 사람 접속 허용
-                        // FIXME : master 나중에 막아야함
-                        //.requestMatchers("/",
-                                // "/api/v1/auth/login",
-                                // "/swagger-ui/**",
-                                // "/api/v1/auth/join",
-                                // "/api/v1/auth/logout",
-                                // "/api/v1/auth/master",
-                                // "/api/v1/auth/refresh",
-                                // ).permitAll()
-                        // 해당하는 API에 대해서는 유저의 권한이 팀장, 관리자인 사람만 가능
-                        //.requestMatchers("/api/v1/auth/test").hasAnyRole(MemberRole.TEAM_LEADER.name(), MemberRole.ADMIN.name())
-                        // Master
-                        //.requestMatchers("/api/v1/master/**").hasRole(MemberRole.MASTER.name())
-                        // 그 이외의 요청 API는 인증이 필요하다.
-                        // FIXME: 추후 막기
-                        .requestMatchers( "/","/api/v1/auth/**","/swagger-ui/**","/healthcheck").permitAll()
-                        .anyRequest().permitAll()
-                        //.anyRequest.().permitAll()//.authenticated()
+                        .requestMatchers(
+                                "/",
+                                "/api/v1/auth/**",
+                                "/swagger-ui/**",
+                                "/healthcheck",
+                                "/api/v1/companies/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
+//                .authorizeHttpRequests((auth) -> auth
+//                        .requestMatchers("/swagger-ui/**","/swagger-resource/**","/error","/v3/api-docs/**").permitAll()
+//                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+//                )
                 .exceptionHandling((except) -> except
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
