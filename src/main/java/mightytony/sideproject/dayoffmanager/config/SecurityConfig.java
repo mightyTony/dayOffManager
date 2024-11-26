@@ -71,7 +71,7 @@ public class SecurityConfig {
                                 "/healthcheck",
                                 "/api/v1/companies/**"
                         ).permitAll()
-                        //.anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
 //                .authorizeHttpRequests((auth) -> auth
 //                        .requestMatchers("/swagger-ui/**","/swagger-resource/**","/error","/v3/api-docs/**").permitAll()
